@@ -182,12 +182,12 @@
                     </div>
                 @endif
                 @if ($followingOnly)
-                    <div class="glass-panel border-amber-500/20 bg-amber-500/10 p-6 text-sm font-medium text-amber-200">
+                    <div class="forum-notice forum-notice--follow p-6 text-sm font-medium">
                         Affichage des sujets publies par les membres que vous suivez.
                     </div>
                 @endif
                 @if ($followingOnly && $followedUserIds->isEmpty())
-                    <div class="glass-panel border-white/10 bg-white/5 p-6 text-sm font-medium text-white/80">
+                    <div class="forum-notice forum-notice--empty p-6 text-sm font-medium">
                         Tu ne suis encore personne. Ouvre un profil membre pour commencer a suivre des personnes et voir ici uniquement leurs sujets.
                     </div>
                 @endif

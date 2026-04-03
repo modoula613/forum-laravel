@@ -367,6 +367,37 @@
         border: 1px solid var(--line);
     }
 
+    .forum-notice {
+        border: 1px solid var(--line);
+        border-radius: 1.5rem;
+        background: color-mix(in srgb, var(--panel-strong) 94%, var(--surface-soft) 6%);
+        color: var(--content-soft);
+    }
+
+    .forum-notice--follow {
+        border-color: color-mix(in srgb, var(--brand) 24%, var(--line) 76%);
+        background: color-mix(in srgb, var(--brand) 10%, var(--panel-strong) 90%);
+        color: color-mix(in srgb, var(--content-strong) 76%, var(--brand) 24%);
+    }
+
+    .forum-notice--empty {
+        border-color: color-mix(in srgb, var(--line) 78%, var(--brand) 22%);
+        background: color-mix(in srgb, var(--surface-soft) 72%, var(--panel-strong) 28%);
+        color: var(--content-soft);
+    }
+
+    html[data-theme='dark'] .forum-notice--follow {
+        border-color: rgba(29, 155, 240, 0.28);
+        background: rgba(29, 155, 240, 0.1);
+        color: #bfe3ff;
+    }
+
+    html[data-theme='dark'] .forum-notice--empty {
+        border-color: rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.05);
+        color: rgba(255, 255, 255, 0.8);
+    }
+
     .social-page .glass-panel.rounded-none,
     .social-page .glass-panel-strong.rounded-none {
         border-radius: 1.75rem !important;
