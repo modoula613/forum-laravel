@@ -15,22 +15,31 @@
         <div class="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
             <section class="glass-panel rounded-[2rem] p-5 sm:p-6">
                 <form method="GET" action="{{ route('news.index') }}" class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-                    <div class="w-full max-w-sm">
-                        <label for="category" class="mb-2 block text-sm font-semibold uppercase tracking-[0.16em] text-stone-600">
-                            Categorie
-                        </label>
-                        <select
-                            id="category"
-                            name="category"
-                            class="block w-full rounded-[1.25rem] border-[rgba(71,85,135,0.16)] bg-white/80 px-4 py-3 shadow-sm focus:border-[var(--brand)] focus:ring-[var(--brand)]"
-                        >
-                            <option value="">Toutes les categories</option>
-                            @foreach ($categories as $category)
-                                <option value="{{ $category->slug }}" @selected(request('category') === $category->slug)>
-                                    {{ $category->name }}
-                                </option>
-                            @endforeach
-                        </select>
+                    <div class="space-y-3">
+                        <div>
+                            <p class="section-kicker">Filtre</p>
+                            <h3 class="mt-2 text-xl font-semibold text-stone-950">Garder l'actu a sa place</h3>
+                            <p class="mt-2 max-w-2xl text-sm leading-6 text-stone-500">
+                                Ce fil sert surtout a alimenter les conversations. L'important reste ce que les membres en disent ensuite dans le forum.
+                            </p>
+                        </div>
+                        <div class="w-full max-w-sm">
+                            <label for="category" class="mb-2 block text-sm font-semibold uppercase tracking-[0.16em] text-stone-600">
+                                Categorie
+                            </label>
+                            <select
+                                id="category"
+                                name="category"
+                                class="block w-full rounded-[1.25rem] border-[rgba(71,85,135,0.16)] bg-white/80 px-4 py-3 shadow-sm focus:border-[var(--brand)] focus:ring-[var(--brand)]"
+                            >
+                                <option value="">Toutes les categories</option>
+                                @foreach ($categories as $category)
+                                    <option value="{{ $category->slug }}" @selected(request('category') === $category->slug)>
+                                        {{ $category->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
                     <div class="flex items-center gap-3">
                         @if (request()->filled('category'))
@@ -68,21 +77,26 @@
                         @if ($article->excerpt)
                             <p class="muted-copy mt-3 text-sm leading-7">{{ $article->excerpt }}</p>
                         @endif
-                        <div class="mt-5 flex items-center justify-between gap-3">
+                        <div class="mt-5 flex flex-wrap items-center justify-between gap-3">
                             <a href="{{ $article->source_url }}" target="_blank" rel="noopener noreferrer" class="rounded-full bg-[var(--brand)] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[var(--brand-deep)]">
                                 Lire l'article
                             </a>
                             @if ($article->category)
-                                <a href="{{ route('categories.show', $article->category) }}" class="text-sm font-semibold text-stone-700 transition hover:text-[var(--brand-deep)]">
-                                    Voir la categorie
-                                </a>
+                                <div class="flex flex-wrap items-center gap-3">
+                                    <a href="{{ route('categories.show', $article->category) }}" class="text-sm font-semibold text-stone-700 transition hover:text-[var(--brand-deep)]">
+                                        Voir la categorie
+                                    </a>
+                                    <a href="{{ route('topics.index', ['category' => $article->category->id]) }}" class="text-sm font-semibold text-[var(--brand-deep)] transition hover:text-[var(--brand)]">
+                                        Voir les discussions
+                                    </a>
+                                </div>
                             @endif
                         </div>
                     </article>
                 @empty
                     <div class="glass-panel rounded-[2rem] border-dashed p-12 text-center md:col-span-2 xl:col-span-3">
                         <p class="section-kicker">Aucune actualite</p>
-                        <h3 class="mt-3 text-3xl font-semibold text-stone-950">Le fil d’actualites est vide pour le moment</h3>
+                        <h3 class="mt-3 text-3xl font-semibold text-stone-950">Le fil d'actualites est vide pour le moment</h3>
                         <p class="muted-copy mt-3 text-base">
                             Lance la synchronisation avec <code class="rounded bg-white/70 px-2 py-1 text-sm">php artisan news:sync</code> apres avoir renseigne ta cle GNews.
                         </p>

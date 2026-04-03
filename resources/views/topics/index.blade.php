@@ -57,6 +57,16 @@
                 </div>
             @endguest
 
+            @php
+                $activeFilters = array_filter([
+                    request('search') ? 'Recherche : '.request('search') : null,
+                    request('category') ? 'Categorie active' : null,
+                    request('tag') ? 'Tag : '.request('tag') : null,
+                    request('order') === 'popular' ? 'Tri : plus actifs' : null,
+                    request('recommended') ? 'Suggestions personnalisees' : null,
+                ]);
+            @endphp
+
             <div class="space-y-4">
                 <div class="glass-panel-strong rounded-[1.9rem] p-5 sm:p-6">
                     <form method="GET" action="{{ route('topics.index') }}" class="flex flex-col gap-4 lg:flex-row lg:items-center">
@@ -98,6 +108,16 @@
                             @endif
                         </div>
                     </form>
+
+                    @if ($activeFilters)
+                        <div class="mt-4 flex flex-wrap gap-2">
+                            @foreach ($activeFilters as $filter)
+                                <span class="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-stone-600">
+                                    {{ $filter }}
+                                </span>
+                            @endforeach
+                        </div>
+                    @endif
                 </div>
 
                 <div class="glass-panel rounded-[1.75rem] p-5 sm:p-6">
@@ -214,6 +234,9 @@
                             <div>
                                 <p class="section-kicker">Flux</p>
                                 <h3 class="mt-2 text-2xl font-semibold text-stone-950">Ce que les membres racontent</h3>
+                                <p class="mt-2 text-sm text-stone-500">
+                                    Des sujets simples, des prises de position, des questions directes. Le forum vit d'abord par les messages des membres.
+                                </p>
                             </div>
                             @auth
                                 <a href="{{ route('topics.create') }}" class="hidden rounded-full border border-[rgba(71,85,135,0.16)] bg-white/80 px-4 py-2 text-sm font-semibold text-stone-800 transition hover:bg-white sm:inline-flex">
@@ -254,11 +277,13 @@
                                             </a>
                                         </h4>
                                         <p class="muted-copy max-w-3xl text-base leading-8">
-                                            {{ \Illuminate\Support\Str::limit($topic->content, 220) }}
+                                            {{ \Illuminate\Support\Str::limit($topic->content, 180) }}
                                         </p>
                                         <div class="flex flex-wrap items-center gap-4 text-sm text-stone-500">
                                             <span>{{ $topic->replies_count }} reponse(s)</span>
-                                            <span>{{ $topic->favorites_count }} favori(s)</span>
+                                            @if ($topic->favorites_count > 0)
+                                                <span>{{ $topic->favorites_count }} favori(s)</span>
+                                            @endif
                                             <a href="{{ route('topics.show', $topic) }}" class="font-semibold text-[var(--brand-deep)] transition hover:text-[var(--brand)]">
                                                 Voir la discussion
                                             </a>
@@ -270,7 +295,7 @@
                             <div class="glass-panel rounded-[2.25rem] border-dashed p-12 text-center">
                                 <p class="section-kicker">Aucun contenu</p>
                                 <h3 class="mt-3 text-3xl font-semibold text-stone-950">Le flux attend ses premiers messages</h3>
-                                <p class="muted-copy mt-3 text-base">L’actualite peut donner des idees, mais ce sont surtout les sujets des membres qui feront vivre le forum.</p>
+                                <p class="muted-copy mt-3 text-base">L'actualite peut donner des idees, mais ce sont surtout les sujets des membres qui feront vivre le forum.</p>
                                 @auth
                                     <a
                                         href="{{ route('topics.create') }}"
@@ -289,7 +314,7 @@
                         <section class="glass-panel rounded-[1.8rem] p-5">
                             <div class="flex items-center justify-between gap-3">
                                 <div>
-                                    <p class="section-kicker">Actu</p>
+                                    <p class="section-kicker">Actualites reliees</p>
                                     <h3 class="mt-2 text-xl font-semibold text-stone-950">A commenter</h3>
                                 </div>
                                 <a href="{{ route('news.index', array_filter(['category' => request('category') ? $categories->firstWhere('id', request('category'))?->slug : null])) }}" class="text-sm font-semibold text-stone-800 transition hover:text-[var(--brand-deep)]">
@@ -297,7 +322,7 @@
                                 </a>
                             </div>
                             <p class="mt-3 text-sm leading-6 text-stone-600">
-                                Les actualites restent un point de depart. Le vrai coeur du forum, c’est la discussion qui nait derriere.
+                                Les actualites restent un point de depart. Le vrai coeur du forum, c'est la discussion qui nait derriere.
                             </p>
 
                             <div class="mt-5 space-y-3">
@@ -330,8 +355,15 @@
                                         </p>
                                         @if ($article->excerpt)
                                             <p class="mt-2 text-sm leading-6 text-stone-600">
-                                                {{ \Illuminate\Support\Str::limit($article->excerpt, 110) }}
+                                                {{ \Illuminate\Support\Str::limit($article->excerpt, 95) }}
                                             </p>
+                                        @endif
+                                        @if ($article->category)
+                                            <div class="mt-3">
+                                                <span class="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--brand-deep)]">
+                                                    Ouvrir la discussion dans {{ $article->category->name }}
+                                                </span>
+                                            </div>
                                         @endif
                                     </a>
                                 @endforeach

@@ -22,12 +22,18 @@ class TopicController extends Controller
 {
     public function index(): View
     {
-        $query = request('search');
+        $query = trim((string) request('search'));
         $order = request('order', 'latest');
         $category = request('category');
         $tag = request('tag');
-        $categories = Category::orderBy('name')->get();
-        $tags = Tag::orderBy('name')->get();
+        $categories = Category::query()
+            ->select(['id', 'name', 'slug'])
+            ->orderBy('name')
+            ->get();
+        $tags = Tag::query()
+            ->select(['id', 'name', 'slug'])
+            ->orderBy('name')
+            ->get();
         $topicsWithUnreadReplies = auth()->check()
             ? auth()->user()->unreadNotifications
                 ->where('type', \App\Notifications\NewReplyNotification::class)
@@ -45,10 +51,21 @@ class TopicController extends Controller
                 ->all()
             : [];
 
-        $baseQuery = Topic::with(['user', 'category', 'tags'])
+        $baseQuery = Topic::query()
+            ->with([
+                'user:id,name',
+                'category:id,name,slug',
+            ])
             ->withCount(['replies', 'favorites', 'edits'])
             ->where('is_draft', false)
-            ->when($query, fn ($builder) => $builder->where('title', 'like', "%{$query}%"))
+            ->when(
+                $query,
+                fn ($builder) => $builder->where(function ($searchQuery) use ($query) {
+                    $searchQuery
+                        ->where('title', 'like', "%{$query}%")
+                        ->orWhere('content', 'like', "%{$query}%");
+                })
+            )
             ->when($category, fn ($builder) => $builder->where('category_id', $category))
             ->when($tag, fn ($builder) => $builder->whereHas('tags', fn ($tagQuery) => $tagQuery->where('slug', $tag)))
             ->when(
@@ -82,7 +99,7 @@ class TopicController extends Controller
             ? NewsArticle::with('category')
                 ->when($category, fn ($builder) => $builder->where('category_id', $category))
                 ->latest('published_at')
-                ->take(4)
+                ->take(3)
                 ->get()
             : collect();
 

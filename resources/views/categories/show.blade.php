@@ -12,6 +12,13 @@
                 <div class="rounded-full border border-[rgba(71,85,135,0.14)] bg-white/70 px-4 py-2 text-sm font-medium text-stone-600">
                     {{ $category->topics_count }} sujet(s)
                 </div>
+                @auth
+                    @if (! auth()->user()->is_blocked)
+                        <a href="{{ route('topics.create') }}" class="rounded-full bg-[var(--brand)] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[var(--brand-deep)]">
+                            Creer un sujet ici
+                        </a>
+                    @endif
+                @endauth
                 <a href="{{ route('categories.index') }}" class="rounded-full border border-[rgba(71,85,135,0.16)] bg-white/70 px-4 py-2 text-sm font-semibold text-stone-700 transition hover:bg-white">
                     Toutes les categories
                 </a>
@@ -22,84 +29,55 @@
     <div class="py-10">
         <div class="mx-auto max-w-6xl space-y-8 px-4 sm:px-6 lg:px-8">
             @if ($categoryNews->isNotEmpty())
-                @php($headline = $categoryNews->first())
-
-                <section class="grid gap-5 lg:grid-cols-[1.15fr_0.85fr]">
-                    <a
-                        href="{{ $headline->source_url }}"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="glass-panel group overflow-hidden rounded-[2.2rem] bg-[linear-gradient(145deg,rgba(21,58,91,0.98),rgba(34,92,143,0.92),rgba(154,90,46,0.84))] text-white shadow-[0_30px_60px_rgba(21,58,91,0.18)] transition duration-200 hover:-translate-y-1"
-                    >
-                        @if ($headline->image_url)
-                            <div class="border-b border-white/10 bg-black/10">
-                                <img
-                                    src="{{ $headline->image_url }}"
-                                    alt="{{ $headline->title }}"
-                                    class="block h-auto w-full opacity-95 transition duration-300 group-hover:scale-[1.02]"
-                                >
-                            </div>
-                        @endif
-                        <div class="p-6 sm:p-8">
-                            <div class="flex flex-wrap items-center gap-3 text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-white/70">
-                                <span class="rounded-full bg-white/12 px-3 py-1 text-white">Actualites liees</span>
-                                @if ($headline->source_name)
-                                    <span>{{ $headline->source_name }}</span>
-                                @endif
-                                @if ($headline->published_at)
-                                    <span>{{ $headline->published_at->format('d/m/Y H:i') }}</span>
-                                @endif
-                            </div>
-                            <p class="mt-4 max-w-3xl text-3xl font-semibold leading-tight text-white">
-                                {{ $headline->title }}
+                <section class="glass-panel rounded-[2rem] p-6">
+                    <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+                        <div>
+                            <p class="section-kicker">Actualites liees</p>
+                            <h3 class="mt-2 text-2xl font-semibold text-stone-950">De quoi lancer des discussions</h3>
+                            <p class="mt-2 max-w-2xl text-sm leading-6 text-stone-500">
+                                Ici, l'actualite reste un point de depart. Le plus important, ce sont les sujets que la communaute ouvre autour.
                             </p>
-                            @if ($headline->excerpt)
-                                <p class="mt-4 max-w-2xl text-sm leading-7 text-white/78">
-                                    {{ \Illuminate\Support\Str::limit($headline->excerpt, 180) }}
-                                </p>
-                            @endif
-                            <p class="mt-5 inline-flex text-sm font-semibold text-white">Lire l'article</p>
                         </div>
-                    </a>
-
-                    <section class="glass-panel rounded-[2.2rem] p-6">
-                        <div class="flex items-center justify-between gap-4">
-                            <div>
-                                <p class="section-kicker">Actualites liees</p>
-                                <h3 class="mt-2 text-2xl font-semibold text-stone-950">A la une</h3>
-                            </div>
-                            <a href="{{ route('news.index', ['category' => $category->slug]) }}" class="text-sm font-semibold text-stone-800 transition hover:text-[var(--brand-deep)]">
-                                Voir le fil
-                            </a>
-                        </div>
-                        <div class="mt-5 grid gap-3">
-                            @foreach ($categoryNews->skip(1) as $article)
-                                <a
-                                    href="{{ $article->source_url }}"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    class="rounded-[1.35rem] bg-white/72 px-5 py-4 transition duration-200 hover:-translate-y-0.5 hover:bg-white"
-                                >
-                                    <div class="flex flex-wrap items-center gap-2 text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-stone-500">
-                                        @if ($article->source_name)
-                                            <span>{{ $article->source_name }}</span>
-                                        @endif
-                                        @if ($article->published_at)
-                                            <span>{{ $article->published_at->format('d/m/Y H:i') }}</span>
-                                        @endif
+                        <a href="{{ route('news.index', ['category' => $category->slug]) }}" class="text-sm font-semibold text-stone-800 transition hover:text-[var(--brand-deep)]">
+                            Voir le fil
+                        </a>
+                    </div>
+                    <div class="mt-5 grid gap-3 lg:grid-cols-3">
+                        @foreach ($categoryNews as $article)
+                            <a
+                                href="{{ $article->source_url }}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="rounded-[1.35rem] bg-white/72 p-4 transition duration-200 hover:-translate-y-0.5 hover:bg-white"
+                            >
+                                @if ($article->image_url)
+                                    <div class="overflow-hidden rounded-[1rem] border border-slate-100 bg-slate-50">
+                                        <img
+                                            src="{{ $article->image_url }}"
+                                            alt="{{ $article->title }}"
+                                            class="block h-auto w-full"
+                                        >
                                     </div>
-                                    <p class="mt-3 text-base font-semibold leading-6 text-stone-900">
-                                        {{ $article->title }}
-                                    </p>
-                                    @if ($article->excerpt)
-                                        <p class="mt-2 text-sm leading-6 text-stone-600">
-                                            {{ \Illuminate\Support\Str::limit($article->excerpt, 110) }}
-                                        </p>
+                                @endif
+                                <div class="mt-3 flex flex-wrap items-center gap-2 text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-stone-500">
+                                    @if ($article->source_name)
+                                        <span>{{ $article->source_name }}</span>
                                     @endif
-                                </a>
-                            @endforeach
-                        </div>
-                    </section>
+                                    @if ($article->published_at)
+                                        <span>{{ $article->published_at->format('d/m/Y H:i') }}</span>
+                                    @endif
+                                </div>
+                                <p class="mt-3 text-base font-semibold leading-6 text-stone-900">
+                                    {{ $article->title }}
+                                </p>
+                                @if ($article->excerpt)
+                                    <p class="mt-2 text-sm leading-6 text-stone-600">
+                                        {{ \Illuminate\Support\Str::limit($article->excerpt, 100) }}
+                                    </p>
+                                @endif
+                            </a>
+                        @endforeach
+                    </div>
                 </section>
             @endif
 
@@ -165,7 +143,7 @@
                         <div class="rounded-[1.85rem] border border-dashed border-[rgba(71,85,135,0.16)] bg-white/60 p-12 text-center">
                             <p class="section-kicker">Aucun sujet</p>
                             <h3 class="mt-3 text-3xl font-semibold text-stone-950">Cette categorie est encore vide</h3>
-                            <p class="muted-copy mt-3 text-base">Elle commencera a vivre des qu’un premier sujet sera publie ici.</p>
+                            <p class="muted-copy mt-3 text-base">Elle commencera a vivre des qu'un premier sujet sera publie ici.</p>
                         </div>
                     @endforelse
                 </div>

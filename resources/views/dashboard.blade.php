@@ -19,9 +19,35 @@
 
     <div class="py-10">
         <div class="mx-auto max-w-6xl space-y-8 px-4 sm:px-6 lg:px-8">
-            <p class="text-sm text-stone-500">
-                {{ $overview['favorites'] }} favoris · {{ $overview['followed_tags'] }} tags suivis · {{ $overview['unread_notifications'] }} notifications · {{ $overview['unread_messages'] }} messages
-            </p>
+            <section class="glass-panel rounded-[2rem] p-6 sm:p-7">
+                <div class="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+                    <div>
+                        <p class="section-kicker">Resume</p>
+                        <h3 class="mt-2 text-2xl font-semibold text-stone-950">Ton espace en un coup d'oeil</h3>
+                        <p class="mt-2 text-sm leading-6 text-stone-500">
+                            Retrouve ce qui t'attend sans passer par une page surchargee de chiffres.
+                        </p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                        <div class="rounded-[1.4rem] bg-white/80 px-4 py-4">
+                            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-stone-400">Favoris</p>
+                            <p class="mt-2 text-2xl font-semibold text-stone-950">{{ $overview['favorites'] }}</p>
+                        </div>
+                        <div class="rounded-[1.4rem] bg-white/80 px-4 py-4">
+                            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-stone-400">Tags suivis</p>
+                            <p class="mt-2 text-2xl font-semibold text-stone-950">{{ $overview['followed_tags'] }}</p>
+                        </div>
+                        <div class="rounded-[1.4rem] bg-white/80 px-4 py-4">
+                            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-stone-400">Notifications</p>
+                            <p class="mt-2 text-2xl font-semibold text-stone-950">{{ $overview['unread_notifications'] }}</p>
+                        </div>
+                        <div class="rounded-[1.4rem] bg-white/80 px-4 py-4">
+                            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-stone-400">Messages</p>
+                            <p class="mt-2 text-2xl font-semibold text-stone-950">{{ $overview['unread_messages'] }}</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
             <section class="glass-panel rounded-[2.25rem] p-6 sm:p-8">
                 <div class="flex flex-wrap items-center justify-between gap-4">
@@ -67,6 +93,11 @@
                             <p class="mt-2 text-sm text-stone-500">
                                 Par <span class="font-semibold text-stone-700">{{ $topic->user->name }}</span>
                             </p>
+                            <div class="mt-4">
+                                <a href="{{ route('topics.show', $topic) }}" class="text-sm font-semibold text-[var(--brand-deep)] transition hover:text-[var(--brand)]">
+                                    Ouvrir la discussion
+                                </a>
+                            </div>
                         </article>
                     @empty
                         <div class="rounded-[1.5rem] bg-white/70 p-6 text-sm text-stone-500">

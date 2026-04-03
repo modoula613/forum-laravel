@@ -1,3 +1,9 @@
+@php
+    $navUser = auth()->user();
+    $unreadNotificationCount = $navUser ? $navUser->unreadNotifications()->count() : 0;
+    $unreadMessageCount = $navUser ? $navUser->unreadMessages()->count() : 0;
+@endphp
+
 <nav x-data="{ open: false }" class="relative z-[70]">
     <div class="mx-auto max-w-7xl lg:max-w-none">
         <div class="mb-4 flex items-center justify-between rounded-[1.6rem] border border-[rgba(255,255,255,0.75)] bg-white/90 px-4 py-3 shadow-[0_18px_40px_rgba(15,23,42,0.06)] backdrop-blur-xl lg:hidden">
@@ -63,14 +69,14 @@
                             </a>
                             <a href="{{ route('notifications.index') }}" class="rounded-2xl bg-white px-4 py-3 font-semibold text-stone-800 transition hover:bg-slate-50">
                                 Notifications
-                                @if (auth()->user()->unreadNotifications->count() > 0)
-                                    <span class="ml-1 text-rose-600">({{ auth()->user()->unreadNotifications->count() }})</span>
+                                @if ($unreadNotificationCount > 0)
+                                    <span class="ml-1 text-rose-600">({{ $unreadNotificationCount }})</span>
                                 @endif
                             </a>
                             <a href="{{ route('messages.index') }}" class="rounded-2xl bg-white px-4 py-3 font-semibold text-stone-800 transition hover:bg-slate-50">
                                 Messages
-                                @if (auth()->user()->unreadMessages()->count() > 0)
-                                    <span class="ml-1 text-sky-600">({{ auth()->user()->unreadMessages()->count() }})</span>
+                                @if ($unreadMessageCount > 0)
+                                    <span class="ml-1 text-sky-600">({{ $unreadMessageCount }})</span>
                                 @endif
                             </a>
                         </div>
@@ -150,14 +156,14 @@
                         </x-responsive-nav-link>
                         <x-responsive-nav-link :href="route('notifications.index')">
                             Notifications
-                            @if (auth()->user()->unreadNotifications->count() > 0)
-                                ({{ auth()->user()->unreadNotifications->count() }})
+                            @if ($unreadNotificationCount > 0)
+                                ({{ $unreadNotificationCount }})
                             @endif
                         </x-responsive-nav-link>
                         <x-responsive-nav-link :href="route('messages.index')">
                             Messages
-                            @if (auth()->user()->unreadMessages()->count() > 0)
-                                ({{ auth()->user()->unreadMessages()->count() }})
+                            @if ($unreadMessageCount > 0)
+                                ({{ $unreadMessageCount }})
                             @endif
                         </x-responsive-nav-link>
                         <x-responsive-nav-link :href="route('profile.edit')">
