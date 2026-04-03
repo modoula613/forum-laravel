@@ -29,7 +29,7 @@
                             <p>{{ $conversation->last_message->created_at->format('d/m/Y H:i') }}</p>
                             @if ($conversation->unread_count > 0)
                                 <div class="mt-3">
-                                    <span class="inline-flex rounded-full bg-sky-100 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-sky-700">
+                                    <span class="inline-flex rounded-full bg-[rgba(139,92,246,0.12)] px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--brand)]">
                                         Nouveau
                                     </span>
                                 </div>

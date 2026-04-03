@@ -84,7 +84,7 @@
                                     @method('PATCH')
                                     <button
                                         type="submit"
-                                        class="rounded-full px-4 py-2 font-semibold text-white transition {{ $user->is_banned ? 'bg-sky-600 hover:bg-sky-500' : 'bg-stone-900 hover:bg-stone-800' }}"
+                                        class="rounded-full px-4 py-2 font-semibold text-white transition {{ $user->is_banned ? 'bg-[var(--brand)] hover:bg-[var(--brand-deep)]' : 'bg-stone-900 hover:bg-stone-800' }}"
                                     >
                                         {{ $user->is_banned ? 'Debannir' : 'Bannir' }}
                                     </button>

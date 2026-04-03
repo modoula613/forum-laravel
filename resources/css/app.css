@@ -103,13 +103,13 @@
         --panel: rgba(255, 255, 255, 0.9);
         --panel-strong: rgba(255, 255, 255, 0.97);
         --line: rgba(15, 20, 25, 0.08);
-        --brand: #1d9bf0;
-        --brand-deep: #1a8cd8;
+        --brand: #8b5cf6;
+        --brand-deep: #7c3aed;
         --accent: #0f1419;
-        --accent-soft: #8ecdf8;
+        --accent-soft: #c4b5fd;
         --muted: #536471;
-        --glow-a: rgba(29, 155, 240, 0.08);
-        --glow-b: rgba(29, 155, 240, 0.06);
+        --glow-a: rgba(139, 92, 246, 0.1);
+        --glow-b: rgba(168, 85, 247, 0.08);
         --glow-c: rgba(15, 20, 25, 0.03);
         --lift-shadow: 0 18px 36px rgba(15, 20, 25, 0.08);
         --sidebar-bg: rgba(255, 255, 255, 0.78);
@@ -137,7 +137,7 @@
         --line: rgba(47, 51, 54, 1);
         --accent: #e7e9ea;
         --muted: #71767b;
-        --glow-a: rgba(29, 155, 240, 0.08);
+        --glow-a: rgba(139, 92, 246, 0.1);
         --glow-b: rgba(255, 255, 255, 0.02);
         --glow-c: rgba(255, 255, 255, 0.02);
         --lift-shadow: 0 14px 34px rgba(0, 0, 0, 0.22);
@@ -184,7 +184,7 @@
     }
 
     ::selection {
-        background: rgba(29, 155, 240, 0.22);
+        background: rgba(139, 92, 246, 0.22);
     }
 
     textarea,
@@ -218,8 +218,8 @@
         pointer-events: none;
         z-index: -1;
         background:
-            radial-gradient(circle at top left, rgba(29, 155, 240, 0.08), transparent 25%),
-            radial-gradient(circle at 100% 0%, rgba(29, 155, 240, 0.04), transparent 20%);
+            radial-gradient(circle at top left, rgba(139, 92, 246, 0.08), transparent 25%),
+            radial-gradient(circle at 100% 0%, rgba(139, 92, 246, 0.04), transparent 20%);
     }
 
     .ambient-page::after {
@@ -252,7 +252,7 @@
         height: 20rem;
         top: 2rem;
         right: -5rem;
-        background: rgba(29, 155, 240, 0.08);
+        background: rgba(139, 92, 246, 0.08);
     }
 
     .page-shell::after {
@@ -260,7 +260,7 @@
         height: 18rem;
         left: -4rem;
         bottom: 4rem;
-        background: rgba(29, 155, 240, 0.06);
+        background: rgba(139, 92, 246, 0.06);
     }
 
     .glass-panel {
@@ -306,8 +306,8 @@
 
     .brand-dot {
         @apply inline-block h-2.5 w-2.5 rounded-full;
-        background: linear-gradient(135deg, var(--brand), #6ec9ff);
-        box-shadow: 0 0 0 4px rgba(29, 155, 240, 0.12);
+        background: linear-gradient(135deg, var(--brand), #c4b5fd);
+        box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.12);
     }
 
     .x-mark {
@@ -415,9 +415,9 @@
     }
 
     html[data-theme='dark'] .forum-notice--follow {
-        border-color: rgba(29, 155, 240, 0.28);
-        background: rgba(29, 155, 240, 0.1);
-        color: #bfe3ff;
+        border-color: rgba(139, 92, 246, 0.28);
+        background: rgba(139, 92, 246, 0.1);
+        color: #e9ddff;
     }
 
     html[data-theme='dark'] .forum-notice--empty {
@@ -427,16 +427,16 @@
     }
 
     html[data-theme='dark'] .forum-empty-state {
-        border-color: rgba(29, 155, 240, 0.18);
+        border-color: rgba(139, 92, 246, 0.18);
         background:
-            radial-gradient(circle at top right, rgba(29, 155, 240, 0.12) 0, transparent 40%),
+            radial-gradient(circle at top right, rgba(139, 92, 246, 0.12) 0, transparent 40%),
             rgba(255, 255, 255, 0.04);
         box-shadow: 0 18px 34px rgba(0, 0, 0, 0.28);
     }
 
     html[data-theme='dark'] .forum-empty-state__icon {
-        background: rgba(29, 155, 240, 0.14);
-        color: #8ecdf8;
+        background: rgba(139, 92, 246, 0.14);
+        color: #d8c4ff;
     }
 
     .social-page .glass-panel.rounded-none,
@@ -488,9 +488,9 @@
     }
 
     .x-search-shell.is-open .x-search-field {
-        border-color: rgba(29, 155, 240, 0.55);
+        border-color: rgba(139, 92, 246, 0.55);
         background: rgba(255, 255, 255, 1);
-        box-shadow: 0 0 0 1px rgba(29, 155, 240, 0.28), 0 18px 40px rgba(15, 23, 42, 0.12);
+        box-shadow: 0 0 0 1px rgba(139, 92, 246, 0.28), 0 18px 40px rgba(15, 23, 42, 0.12);
     }
 
     .x-search-field {
@@ -506,9 +506,9 @@
     }
 
     .x-search-field:focus-within {
-        border-color: rgba(29, 155, 240, 0.55);
+        border-color: rgba(139, 92, 246, 0.55);
         background: rgba(255, 255, 255, 1);
-        box-shadow: 0 0 0 1px rgba(29, 155, 240, 0.28), 0 18px 40px rgba(15, 23, 42, 0.12);
+        box-shadow: 0 0 0 1px rgba(139, 92, 246, 0.28), 0 18px 40px rgba(15, 23, 42, 0.12);
     }
 
     .x-search-field:hover {
@@ -675,9 +675,9 @@
     }
 
     html[data-theme='dark'] .x-search-shell.is-open .x-search-field {
-        border-color: rgba(29, 155, 240, 0.72);
+        border-color: rgba(139, 92, 246, 0.72);
         background: rgba(0, 0, 0, 1);
-        box-shadow: 0 0 0 1px rgba(29, 155, 240, 0.35), 0 20px 44px rgba(0, 0, 0, 0.38);
+        box-shadow: 0 0 0 1px rgba(139, 92, 246, 0.35), 0 20px 44px rgba(0, 0, 0, 0.38);
     }
 
     html[data-theme='dark'] .x-search-field {
@@ -687,9 +687,9 @@
     }
 
     html[data-theme='dark'] .x-search-field:focus-within {
-        border-color: rgba(29, 155, 240, 0.72);
+        border-color: rgba(139, 92, 246, 0.72);
         background: rgba(0, 0, 0, 1);
-        box-shadow: 0 0 0 1px rgba(29, 155, 240, 0.35), 0 20px 44px rgba(0, 0, 0, 0.38);
+        box-shadow: 0 0 0 1px rgba(139, 92, 246, 0.35), 0 20px 44px rgba(0, 0, 0, 0.38);
     }
 
     html[data-theme='dark'] .x-search-field:hover {

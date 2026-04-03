@@ -185,7 +185,7 @@
                 @forelse ($topic->replies as $reply)
                     <article class="glass-panel rounded-[1.85rem] p-5 sm:p-6">
                         <div class="flex gap-4">
-                            <span class="mt-1 flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[rgba(29,155,240,0.12)] text-sm font-semibold uppercase text-[var(--brand)]">
+                            <span class="mt-1 flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[rgba(139,92,246,0.12)] text-sm font-semibold uppercase text-[var(--brand)]">
                                 {{ strtoupper(substr($reply->user->name, 0, 1)) }}
                             </span>
                             <div class="min-w-0 flex-1">
@@ -218,7 +218,7 @@
                                                 @csrf
                                                 <button
                                                     type="submit"
-                                                    class="inline-flex items-center gap-2 rounded-full border border-[rgba(29,155,240,0.18)] bg-white/80 px-4 py-2 text-sm font-semibold text-stone-700 transition hover:border-[var(--brand)] hover:text-[var(--brand)]"
+                                                    class="inline-flex items-center gap-2 rounded-full border border-[rgba(139,92,246,0.18)] bg-white/80 px-4 py-2 text-sm font-semibold text-stone-700 transition hover:border-[var(--brand)] hover:text-[var(--brand)]"
                                                 >
                                                     <span>{{ $reply->likes->contains('user_id', auth()->id()) ? 'Aime' : 'Like' }}</span>
                                                     <span>{{ $reply->likes_count }}</span>
