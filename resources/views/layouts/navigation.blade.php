@@ -6,14 +6,14 @@
 
 <nav x-data="{ open: false }" class="relative z-[70]">
     <div class="mx-auto max-w-7xl lg:max-w-none">
-        <div class="mb-4 flex items-center justify-between rounded-[1.6rem] border border-[rgba(255,255,255,0.75)] bg-white/90 px-4 py-3 shadow-[0_18px_40px_rgba(15,23,42,0.06)] backdrop-blur-xl lg:hidden">
-            <a href="{{ route('home') }}" class="inline-flex items-center gap-3 text-lg font-bold tracking-tight text-gray-950">
-                <span class="brand-dot"></span>
+        <div class="mb-3 flex items-center justify-between border-b border-white/10 bg-black px-4 py-3 text-white lg:hidden">
+            <a href="{{ route('home') }}" class="inline-flex items-center gap-3 text-lg font-bold tracking-tight text-white">
+                <span class="x-mark text-2xl">S</span>
                 {{ config('app.name', 'Sphere') }}
             </a>
 
             <div class="-me-2 flex items-center">
-                <button @click="open = ! open" class="inline-flex items-center justify-center rounded-full p-2 text-stone-500 transition hover:bg-slate-100 hover:text-stone-800 focus:outline-none">
+                <button @click="open = ! open" class="inline-flex items-center justify-center rounded-full p-2 text-white/80 transition hover:bg-white/10 hover:text-white focus:outline-none">
                     <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                         <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                         <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -23,107 +23,97 @@
         </div>
 
         <div class="hidden lg:block">
-            <div class="rounded-[2rem] border border-[rgba(255,255,255,0.78)] bg-white/88 p-4 shadow-[0_22px_55px_rgba(15,23,42,0.06)] backdrop-blur-xl">
-                <a href="{{ route('home') }}" class="mb-4 inline-flex items-center gap-3 px-3 py-2 text-xl font-bold tracking-tight text-gray-950">
-                    <span class="brand-dot"></span>
-                    {{ config('app.name', 'Sphere') }}
-                </a>
+            <div class="flex h-screen flex-col justify-between px-3 py-4 text-white">
+                <div>
+                    <a href="{{ route('home') }}" class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full text-3xl font-semibold tracking-tight text-white transition hover:bg-white/10">
+                        <span class="x-mark">S</span>
+                    </a>
 
-                <div class="space-y-2">
-                    <x-nav-link :href="route('home')" :active="request()->routeIs('home') || request()->routeIs('topics.*')">
-                        Forum
-                    </x-nav-link>
-                    <x-nav-link :href="route('categories.index')" :active="request()->routeIs('categories.*')">
-                        Categories
-                    </x-nav-link>
-                    <x-nav-link :href="route('news.index')" :active="request()->routeIs('news.*')">
-                        Actualites
-                    </x-nav-link>
-                    @auth
-                        @if (auth()->user()->role === 'admin')
-                            <x-nav-link :href="route('admin.index')" :active="request()->routeIs('admin.*')">
-                                Espace admin
+                    <div class="space-y-1">
+                        <x-nav-link :href="route('home')" :active="request()->routeIs('home') || request()->routeIs('topics.*')">
+                            Forum
+                        </x-nav-link>
+                        <x-nav-link :href="route('categories.index')" :active="request()->routeIs('categories.*')">
+                            Categories
+                        </x-nav-link>
+                        <x-nav-link :href="route('news.index')" :active="request()->routeIs('news.*')">
+                            Actualites
+                        </x-nav-link>
+                        @auth
+                            <x-nav-link :href="route('notifications.index')" :active="request()->routeIs('notifications.*')">
+                                Notifications
+                                @if ($unreadNotificationCount > 0)
+                                    <span class="ml-2 rounded-full bg-[var(--brand)] px-2 py-0.5 text-[0.7rem] font-bold text-white">{{ $unreadNotificationCount }}</span>
+                                @endif
                             </x-nav-link>
+                            <x-nav-link :href="route('messages.index')" :active="request()->routeIs('messages.*')">
+                                Messages
+                                @if ($unreadMessageCount > 0)
+                                    <span class="ml-2 rounded-full bg-white/15 px-2 py-0.5 text-[0.7rem] font-bold text-white">{{ $unreadMessageCount }}</span>
+                                @endif
+                            </x-nav-link>
+                            <x-nav-link :href="route('profile.edit')" :active="request()->routeIs('profile.*')">
+                                Profil
+                            </x-nav-link>
+                            @if (auth()->user()->role === 'admin')
+                                <x-nav-link :href="route('admin.index')" :active="request()->routeIs('admin.*')">
+                                    Espace admin
+                                </x-nav-link>
+                            @endif
+                        @else
+                            <x-nav-link :href="route('login')" :active="request()->routeIs('login')">
+                                Connexion
+                            </x-nav-link>
+                        @endauth
+                    </div>
+
+                    @auth
+                        @if (! auth()->user()->is_blocked)
+                            <a href="{{ route('topics.create') }}" class="mt-6 inline-flex w-full items-center justify-center rounded-full bg-white px-5 py-3 text-base font-semibold text-black transition hover:bg-white/90">
+                                Poster
+                            </a>
                         @endif
+                    @else
+                        <a href="{{ route('register') }}" class="mt-6 inline-flex w-full items-center justify-center rounded-full bg-white px-5 py-3 text-base font-semibold text-black transition hover:bg-white/90">
+                            Rejoindre
+                        </a>
                     @endauth
                 </div>
 
                 @auth
-                    <div class="mt-5 rounded-[1.5rem] border border-[rgba(71,85,135,0.12)] bg-[linear-gradient(180deg,rgba(248,250,252,0.95),rgba(241,245,249,0.9))] p-4">
+                    <div class="rounded-full p-2 transition hover:bg-white/6">
                         <div class="flex items-center gap-3">
-                            <span class="flex h-11 w-11 items-center justify-center rounded-full bg-[var(--brand)] text-sm font-semibold uppercase text-white shadow-[0_10px_24px_rgba(29,155,240,0.2)]">
+                            <span class="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-sm font-semibold uppercase text-white">
                                 {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
                             </span>
-                            <div class="min-w-0">
-                                <p class="truncate font-semibold text-stone-900">{{ Auth::user()->name }}</p>
-                                <p class="truncate text-sm text-stone-500">{{ Auth::user()->email }}</p>
+                            <div class="min-w-0 flex-1">
+                                <p class="truncate font-semibold text-white">{{ Auth::user()->name }}</p>
+                                <p class="truncate text-sm text-white/45">{{ '@'.\Illuminate\Support\Str::slug(Auth::user()->name, '') }}</p>
                             </div>
                         </div>
 
-                        <div class="mt-4 grid grid-cols-2 gap-2 text-sm">
-                            <a href="{{ route('dashboard') }}" class="rounded-2xl bg-white px-4 py-3 font-semibold text-stone-800 transition hover:bg-slate-50">
+                        <div class="mt-3 flex items-center gap-2">
+                            <a href="{{ route('dashboard') }}" class="rounded-full border border-white/10 px-3 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-white/70 transition hover:bg-white/10 hover:text-white">
                                 Mon espace
                             </a>
-                            <a href="{{ route('profile.edit') }}" class="rounded-2xl bg-white px-4 py-3 font-semibold text-stone-800 transition hover:bg-slate-50">
-                                Profil
-                            </a>
-                            <a href="{{ route('notifications.index') }}" class="rounded-2xl bg-white px-4 py-3 font-semibold text-stone-800 transition hover:bg-slate-50">
-                                Notifications
-                                @if ($unreadNotificationCount > 0)
-                                    <span class="ml-1 text-rose-600">({{ $unreadNotificationCount }})</span>
-                                @endif
-                            </a>
-                            <a href="{{ route('messages.index') }}" class="rounded-2xl bg-white px-4 py-3 font-semibold text-stone-800 transition hover:bg-slate-50">
-                                Messages
-                                @if ($unreadMessageCount > 0)
-                                    <span class="ml-1 text-sky-600">({{ $unreadMessageCount }})</span>
-                                @endif
-                            </a>
-                        </div>
-
-                        @if (auth()->user()->role === 'admin')
-                            <div class="mt-4 border-t border-[rgba(71,85,135,0.12)] pt-4">
-                                <p class="px-1 text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-stone-400">Administration</p>
-                                <div class="mt-3 space-y-2">
-                                    <a href="{{ route('admin.reports.index') }}" class="block rounded-2xl bg-white px-4 py-3 text-sm font-semibold text-stone-800 transition hover:bg-slate-50">
-                                        Signalements
-                                    </a>
-                                    <a href="{{ route('admin.users.index') }}" class="block rounded-2xl bg-white px-4 py-3 text-sm font-semibold text-stone-800 transition hover:bg-slate-50">
-                                        Utilisateurs
-                                    </a>
-                                </div>
-                            </div>
-                        @endif
-
-                        <form method="POST" action="{{ route('logout') }}" class="mt-4">
-                            @csrf
-                            <button
-                                type="submit"
-                                class="block w-full rounded-2xl bg-rose-600 px-4 py-3 text-left text-sm font-semibold text-white transition hover:bg-rose-500 focus:outline-none"
-                            >
-                                Deconnexion
-                            </button>
-                        </form>
-                    </div>
-                @else
-                    <div class="mt-5 rounded-[1.5rem] border border-[rgba(71,85,135,0.12)] bg-[linear-gradient(180deg,rgba(248,250,252,0.95),rgba(241,245,249,0.9))] p-4">
-                        <p class="text-sm leading-6 text-stone-600">Rejoins le flux pour publier, suivre des sujets et recevoir tes notifications.</p>
-                        <div class="mt-4 space-y-2">
-                            <a href="{{ route('login') }}" class="block rounded-2xl bg-[var(--brand)] px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-[var(--brand-deep)]">
-                                Connexion
-                            </a>
-                            <a href="{{ route('register') }}" class="block rounded-2xl bg-white px-4 py-3 text-center text-sm font-semibold text-stone-800 transition hover:bg-slate-50">
-                                Inscription
-                            </a>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button
+                                    type="submit"
+                                    class="rounded-full border border-white/10 px-3 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-white/70 transition hover:bg-white/10 hover:text-white focus:outline-none"
+                                >
+                                    Deconnexion
+                                </button>
+                            </form>
                         </div>
                     </div>
-                @endauth
+                @endif
             </div>
         </div>
     </div>
 
     <div :class="{'block': open, 'hidden': ! open}" class="hidden lg:hidden">
-        <div class="rounded-[1.75rem] border border-[rgba(255,255,255,0.78)] bg-white/92 p-3 shadow-[0_20px_45px_rgba(15,23,42,0.08)] backdrop-blur-xl">
+        <div class="border-b border-white/10 bg-black p-3 text-white shadow-[0_20px_45px_rgba(0,0,0,0.22)]">
             <div class="space-y-1">
                 <x-responsive-nav-link :href="route('home')" :active="request()->routeIs('home') || request()->routeIs('topics.*')">
                     Forum
@@ -143,11 +133,11 @@
                 @endauth
             </div>
 
-            <div class="mt-4 border-t soft-divider pt-4">
+            <div class="mt-4 border-t border-white/10 pt-4">
                 @auth
                     <div class="px-3">
-                        <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
-                        <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
+                        <div class="font-medium text-base text-white">{{ Auth::user()->name }}</div>
+                        <div class="font-medium text-sm text-white/45">{{ Auth::user()->email }}</div>
                     </div>
 
                     <div class="mt-3 space-y-1">
@@ -174,7 +164,7 @@
                             @csrf
                             <button
                                 type="submit"
-                                class="block w-full rounded-2xl bg-rose-600 px-4 py-3 text-left text-base font-semibold text-white transition hover:bg-rose-500 focus:outline-none"
+                                class="block w-full rounded-full border border-white/10 px-4 py-3 text-left text-base font-semibold text-white transition hover:bg-white/10 focus:outline-none"
                             >
                                 Deconnexion
                             </button>

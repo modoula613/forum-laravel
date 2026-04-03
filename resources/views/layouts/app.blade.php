@@ -16,22 +16,22 @@
     </head>
     <body class="ambient-page social-page antialiased">
         <div class="page-shell">
-            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                <div class="app-frame lg:grid lg:grid-cols-[18rem_minmax(0,1fr)] lg:gap-8">
-                    <aside class="app-sidebar lg:sticky lg:top-0 lg:h-screen lg:py-6">
+            <div class="mx-auto max-w-[1380px] px-0 sm:px-4 lg:px-6">
+                <div class="app-frame lg:grid lg:grid-cols-[17rem_minmax(0,1fr)] lg:gap-8">
+                    <aside class="app-sidebar lg:sticky lg:top-0 lg:h-screen lg:py-3">
                         @include('layouts.navigation')
                     </aside>
 
-                    <div class="app-main pb-14 lg:py-6">
+                    <div class="app-main pb-14 lg:py-3">
                         @isset($header)
-                            <header class="page-header-shell pt-4 lg:pt-0">
-                                <div class="app-header-card rounded-[2rem] px-6 py-7 sm:px-8">
+                            <header class="page-header-shell x-shell-divider pt-0">
+                                <div class="app-header-card px-5 py-5 sm:px-6">
                                     {{ $header }}
                                 </div>
                             </header>
                         @endisset
 
-                        <main class="page-content mt-6">
+                        <main class="page-content">
                             {{ $slot }}
                         </main>
                     </div>
