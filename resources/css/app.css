@@ -704,6 +704,25 @@
         border-color: var(--line);
     }
 
+    .app-theme-fab {
+        width: 3rem;
+        height: 3rem;
+        border-color: var(--line);
+        background: color-mix(in srgb, var(--panel-strong) 92%, transparent);
+        color: var(--content-strong);
+        box-shadow: 0 12px 26px rgba(15, 20, 25, 0.12);
+        backdrop-filter: blur(18px);
+    }
+
+    .app-theme-fab:hover {
+        background: color-mix(in srgb, var(--panel-strong) 100%, var(--surface-soft-hover) 10%);
+        transform: translateY(-1px);
+    }
+
+    html[data-theme='dark'] .app-theme-fab {
+        box-shadow: 0 14px 28px rgba(0, 0, 0, 0.34);
+    }
+
     .social-page .text-stone-950,
     .social-page .text-stone-900,
     .social-page .text-slate-900,

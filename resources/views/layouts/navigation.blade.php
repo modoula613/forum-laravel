@@ -67,10 +67,6 @@
                         @endauth
                     </div>
 
-                    <button type="button" @click="$store.theme.toggle()" class="theme-toggle-button mt-4 inline-flex w-full items-center justify-center rounded-full border px-4 py-3 text-sm font-semibold uppercase tracking-[0.16em] transition">
-                        <span x-text="$store.theme.mode === 'dark' ? 'Mode clair' : 'Mode nuit'"></span>
-                    </button>
-
                     @auth
                         @if (! auth()->user()->is_blocked)
                             <a href="{{ route('topics.create') }}" class="app-cta-button mt-6 inline-flex w-full items-center justify-center rounded-full px-5 py-3 text-base font-semibold transition">
@@ -100,9 +96,6 @@
                             <a href="{{ route('dashboard') }}" class="app-profile-chip rounded-full border px-3 py-2 text-xs font-semibold uppercase tracking-[0.16em] transition">
                                 Mon espace
                             </a>
-                            <button type="button" @click="$store.theme.toggle()" class="theme-toggle-button rounded-full border px-3 py-2 text-xs font-semibold uppercase tracking-[0.16em] transition">
-                                <span x-text="$store.theme.mode === 'dark' ? 'Mode clair' : 'Mode nuit'"></span>
-                            </button>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
                                 <button
@@ -138,13 +131,6 @@
                         </x-responsive-nav-link>
                     @endif
                 @endauth
-                <button
-                    type="button"
-                    @click="$store.theme.toggle()"
-                    class="theme-toggle-button block w-full rounded-full border px-4 py-3 text-left text-base font-medium transition"
-                >
-                    <span x-text="$store.theme.mode === 'dark' ? 'Passer en mode clair' : 'Passer en mode nuit'"></span>
-                </button>
             </div>
 
             <div class="mt-4 border-t app-mobile-divider pt-4">

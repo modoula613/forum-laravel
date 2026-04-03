@@ -25,8 +25,24 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="ambient-page social-page antialiased">
+    <body class="ambient-page social-page antialiased" x-data>
         <div class="page-shell">
+            <div class="fixed right-4 top-4 z-[95] sm:right-6 sm:top-6">
+                <button
+                    type="button"
+                    @click="$store.theme.toggle()"
+                    class="app-theme-fab inline-flex items-center justify-center rounded-full border transition"
+                    :aria-label="$store.theme.mode === 'dark' ? 'Activer le mode clair' : 'Activer le mode nuit'"
+                    :title="$store.theme.mode === 'dark' ? 'Mode clair' : 'Mode nuit'"
+                >
+                    <svg x-show="$store.theme.mode !== 'dark'" x-cloak class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" fill="currentColor"/>
+                    </svg>
+                    <svg x-show="$store.theme.mode === 'dark'" x-cloak class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M12 4V2m0 20v-2m8-8h2M2 12h2m13.657 5.657 1.414 1.414M4.929 4.929l1.414 1.414m11.314-1.414-1.414 1.414M6.343 17.657l-1.414 1.414M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
             <div class="mx-auto max-w-[1380px] px-0 sm:px-4 lg:px-6">
                 <div class="app-frame lg:grid lg:grid-cols-[17rem_minmax(0,1fr)] lg:gap-8">
                     <aside class="app-sidebar lg:sticky lg:top-0 lg:h-screen lg:py-3">
