@@ -187,9 +187,30 @@
                     </div>
                 @endif
                 @if ($followingOnly && $followedUserIds->isEmpty())
-                    <div class="forum-notice forum-notice--empty p-6 text-sm font-medium">
-                        Tu ne suis encore personne. Ouvre un profil membre pour commencer a suivre des personnes et voir ici uniquement leurs sujets.
-                    </div>
+                    <section class="forum-empty-state p-7 sm:p-8">
+                        <div class="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+                            <div class="max-w-2xl">
+                                <span class="forum-empty-state__icon">
+                                    <svg class="h-6 w-6" viewBox="0 0 24 24" aria-hidden="true">
+                                        <path fill="currentColor" d="M17 7a3 3 0 1 1-2.999 3A3 3 0 0 1 17 7Zm-10 1a3 3 0 1 1-3 3 3 3 0 0 1 3-3Zm10 7c2.761 0 5 1.567 5 3.5V20h-8v-1.5c0-.941.43-1.8 1.136-2.474A7.57 7.57 0 0 1 17 15Zm-10 1c3.314 0 6 1.79 6 4v1H1v-1c0-2.21 2.686-4 6-4Z"/>
+                                    </svg>
+                                </span>
+                                <p class="section-kicker mt-5">Ton reseau</p>
+                                <h3 class="forum-empty-state__title mt-3 text-3xl font-semibold">Tu ne suis encore personne</h3>
+                                <p class="forum-empty-state__copy mt-3 text-base leading-7">
+                                    Ouvre un profil membre pour commencer a suivre des personnes et voir ici uniquement leurs sujets.
+                                </p>
+                            </div>
+                            <div class="flex flex-wrap gap-3">
+                                <a href="{{ route('users.index') }}" class="rounded-full bg-[var(--brand)] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[var(--brand-deep)]">
+                                    Decouvrir des membres
+                                </a>
+                                <a href="{{ route('topics.index') }}" class="rounded-full border border-[var(--line)] px-5 py-3 text-sm font-semibold text-[var(--content-strong)] transition hover:bg-[var(--surface-soft-hover)]">
+                                    Revenir au flux
+                                </a>
+                            </div>
+                        </div>
+                    </section>
                 @endif
             @endauth
 

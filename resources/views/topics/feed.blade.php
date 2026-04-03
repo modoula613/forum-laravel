@@ -59,18 +59,30 @@
                     </div>
                 </article>
             @empty
-                <div class="glass-panel rounded-[2rem] border-dashed p-12 text-center">
-                    <p class="section-kicker">Flux vide</p>
-                    <h3 class="mt-3 text-3xl font-semibold text-stone-950">
-                        {{ $followedUserIds->isEmpty() ? 'Tu ne suis encore personne' : 'Aucun sujet recent dans tes suivis' }}
-                    </h3>
-                    <p class="muted-copy mt-3 text-base">
-                        {{ $followedUserIds->isEmpty() ? 'Suis quelques membres pour voir apparaitre ici uniquement leurs sujets.' : 'Les membres que tu suis n’ont pas encore publie de nouveau sujet.' }}
-                    </p>
-                    <a href="{{ route('users.index') }}" class="mt-6 inline-flex items-center rounded-full bg-[var(--brand)] px-5 py-3 text-sm font-semibold uppercase tracking-[0.18em] text-white transition hover:bg-[var(--brand-deep)]">
-                        Decouvrir des membres
-                    </a>
-                </div>
+                <section class="forum-empty-state p-8 sm:p-10">
+                    <div class="mx-auto max-w-3xl text-center">
+                        <span class="forum-empty-state__icon mx-auto">
+                            <svg class="h-6 w-6" viewBox="0 0 24 24" aria-hidden="true">
+                                <path fill="currentColor" d="M17 7a3 3 0 1 1-2.999 3A3 3 0 0 1 17 7Zm-10 1a3 3 0 1 1-3 3 3 3 0 0 1 3-3Zm10 7c2.761 0 5 1.567 5 3.5V20h-8v-1.5c0-.941.43-1.8 1.136-2.474A7.57 7.57 0 0 1 17 15Zm-10 1c3.314 0 6 1.79 6 4v1H1v-1c0-2.21 2.686-4 6-4Z"/>
+                            </svg>
+                        </span>
+                        <p class="section-kicker mt-5">Flux vide</p>
+                        <h3 class="forum-empty-state__title mt-3 text-3xl font-semibold">
+                            {{ $followedUserIds->isEmpty() ? 'Tu ne suis encore personne' : 'Aucun sujet recent dans tes suivis' }}
+                        </h3>
+                        <p class="forum-empty-state__copy mt-3 text-base leading-7">
+                            {{ $followedUserIds->isEmpty() ? 'Suis quelques membres pour voir apparaitre ici uniquement leurs sujets.' : 'Les membres que tu suis n’ont pas encore publie de nouveau sujet.' }}
+                        </p>
+                        <div class="mt-6 flex flex-wrap items-center justify-center gap-3">
+                            <a href="{{ route('users.index') }}" class="inline-flex items-center rounded-full bg-[var(--brand)] px-5 py-3 text-sm font-semibold uppercase tracking-[0.18em] text-white transition hover:bg-[var(--brand-deep)]">
+                                Decouvrir des membres
+                            </a>
+                            <a href="{{ route('topics.index') }}" class="inline-flex items-center rounded-full border border-[var(--line)] px-5 py-3 text-sm font-semibold uppercase tracking-[0.18em] text-[var(--content-strong)] transition hover:bg-[var(--surface-soft-hover)]">
+                                Retour au forum
+                            </a>
+                        </div>
+                    </div>
+                </section>
             @endforelse
 
             <div class="glass-panel rounded-[2rem] px-4 py-4 sm:px-6">
