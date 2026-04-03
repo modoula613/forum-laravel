@@ -24,6 +24,9 @@
         <div class="mt-4">
             <x-input-label for="password" value="Mot de passe" />
             <x-text-input id="password" class="block mt-1 w-full" type="password" name="password" required autocomplete="new-password" />
+            <p class="mt-2 text-xs leading-6 text-stone-500">
+                Minimum 8 caracteres, avec une minuscule, une majuscule, un chiffre et un caractere special. Les balises type <code>&lt;script&gt;</code> ou <code>&lt;?php</code> sont refusees.
+            </p>
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
 

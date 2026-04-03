@@ -34,8 +34,8 @@
                             <p class="mt-2 text-2xl font-semibold text-stone-950">{{ $overview['favorites'] }}</p>
                         </div>
                         <div class="rounded-[1.4rem] bg-white/80 px-4 py-4">
-                            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-stone-400">Tags suivis</p>
-                            <p class="mt-2 text-2xl font-semibold text-stone-950">{{ $overview['followed_tags'] }}</p>
+                            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-stone-400">Membres suivis</p>
+                            <p class="mt-2 text-2xl font-semibold text-stone-950">{{ $overview['following_members'] }}</p>
                         </div>
                         <div class="rounded-[1.4rem] bg-white/80 px-4 py-4">
                             <p class="text-xs font-semibold uppercase tracking-[0.18em] text-stone-400">Notifications</p>
@@ -101,7 +101,7 @@
                         </article>
                     @empty
                         <div class="rounded-[1.5rem] bg-white/70 p-6 text-sm text-stone-500">
-                            Suivez quelques tags pour recevoir ici des suggestions plus utiles.
+                            Suis quelques membres pour voir ici uniquement leurs derniers sujets.
                         </div>
                     @endforelse
                 </div>

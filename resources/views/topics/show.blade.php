@@ -248,15 +248,18 @@
                                                     <summary class="cursor-pointer list-none rounded-full border border-[rgba(71,85,135,0.16)] bg-white/80 px-4 py-2 text-sm font-semibold text-stone-700 transition hover:bg-white">
                                                         Modifier
                                                     </summary>
-                                                    <form method="POST" action="{{ route('replies.update', $reply) }}" class="mt-4 space-y-3">
+                                                    <form method="POST" action="{{ route('replies.update', $reply) }}" class="mt-4 space-y-3" x-data="emojiComposer({ initialValue: @js($reply->content) })">
                                                         @csrf
                                                         @method('PUT')
+                                                        <x-emoji-toolbar helper="Ajoute un emoji si tu veux nuancer rapidement la reponse." />
                                                         <textarea
                                                             name="content"
                                                             rows="4"
+                                                            x-ref="input"
+                                                            x-model="value"
                                                             class="block w-full rounded-[1.25rem] border-[rgba(71,85,135,0.16)] bg-white/80 px-4 py-4 text-sm shadow-sm focus:border-[var(--brand)] focus:ring-[var(--brand)]"
                                                             required
-                                                        >{{ old('content', $reply->content) }}</textarea>
+                                                        ></textarea>
                                                         <div class="flex justify-end">
                                                             <x-primary-button>Enregistrer</x-primary-button>
                                                         </div>
@@ -306,16 +309,21 @@
                     <section class="glass-panel-strong rounded-[2.25rem] p-6 sm:p-8">
                         <p class="section-kicker">Participer</p>
                         <h3 class="mt-3 text-3xl font-semibold text-stone-950">Ajouter une reponse</h3>
-                        <form method="POST" action="{{ route('replies.store', $topic) }}" class="mt-4 space-y-4">
+                        <form method="POST" action="{{ route('replies.store', $topic) }}" class="mt-4 space-y-4" x-data="emojiComposer({ initialValue: @js(old('content')) })">
                             @csrf
                             <div>
+                                <div class="mb-3">
+                                    <x-emoji-toolbar helper="Un emoji peut rendre la reponse plus naturelle sans la surcharger." />
+                                </div>
                                 <textarea
                                     id="content"
                                     name="content"
                                     rows="5"
+                                    x-ref="input"
+                                    x-model="value"
                                     class="block w-full rounded-[1.5rem] border-[rgba(71,85,135,0.16)] bg-white/80 px-4 py-4 shadow-sm focus:border-[var(--brand)] focus:ring-[var(--brand)]"
                                     required
-                                >{{ old('content') }}</textarea>
+                                ></textarea>
                                 <x-input-error class="mt-2" :messages="$errors->get('content')" />
                             </div>
                             <div class="flex justify-end">

@@ -11,15 +11,15 @@ test('password can be updated', function () {
         ->from('/profile')
         ->put('/password', [
             'current_password' => 'password',
-            'password' => 'new-password',
-            'password_confirmation' => 'new-password',
+            'password' => 'NewPassword1!',
+            'password_confirmation' => 'NewPassword1!',
         ]);
 
     $response
         ->assertSessionHasNoErrors()
         ->assertRedirect('/profile');
 
-    $this->assertTrue(Hash::check('new-password', $user->refresh()->password));
+    $this->assertTrue(Hash::check('NewPassword1!', $user->refresh()->password));
 });
 
 test('correct password must be provided to update password', function () {
@@ -30,11 +30,30 @@ test('correct password must be provided to update password', function () {
         ->from('/profile')
         ->put('/password', [
             'current_password' => 'wrong-password',
-            'password' => 'new-password',
-            'password_confirmation' => 'new-password',
+            'password' => 'NewPassword1!',
+            'password_confirmation' => 'NewPassword1!',
         ]);
 
     $response
         ->assertSessionHasErrorsIn('updatePassword', 'current_password')
+        ->assertRedirect('/profile');
+});
+
+test('password update rejects unsafe password patterns', function () {
+    $user = User::factory()->create();
+
+    $response = $this
+        ->actingAs($user)
+        ->from('/profile')
+        ->put('/password', [
+            'current_password' => 'password',
+            'password' => '<script>alert(1)</script>Aa1!',
+            'password_confirmation' => '<script>alert(1)</script>Aa1!',
+        ]);
+
+    $response
+        ->assertSessionHasErrorsIn('updatePassword', [
+            'password' => 'Le mot de passe contient des sequences interdites.',
+        ])
         ->assertRedirect('/profile');
 });

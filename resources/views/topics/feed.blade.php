@@ -5,11 +5,11 @@
                 <p class="section-kicker">Flux</p>
                 <h2 class="mt-3 text-4xl font-semibold text-stone-950">Mon flux</h2>
                 <p class="muted-copy mt-3 text-base leading-7">
-                    Les derniers sujets correspondant aux tags que tu suis.
+                    Les derniers sujets publies par les membres que tu suis.
                 </p>
             </div>
-            <a href="{{ route('tags.followed') }}" class="rounded-full border border-[rgba(71,85,135,0.16)] bg-white/70 px-4 py-3 text-sm font-semibold text-stone-700 transition hover:bg-white">
-                Mes tags suivis
+            <a href="{{ route('users.index') }}" class="rounded-full border border-[rgba(71,85,135,0.16)] bg-white/70 px-4 py-3 text-sm font-semibold text-stone-700 transition hover:bg-white">
+                Trouver des membres
             </a>
         </div>
     </x-slot>
@@ -21,7 +21,7 @@
                     <div class="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
                         <div class="space-y-3">
                             <div class="flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-[0.18em] text-stone-500">
-                                <span class="rounded-full bg-amber-100 px-3 py-1 text-amber-700">Recommande</span>
+                                <span class="rounded-full bg-amber-100 px-3 py-1 text-amber-700">Suivi</span>
                                 @if ($topic->category)
                                     <a href="{{ route('categories.show', $topic->category) }}" class="rounded-full bg-[rgba(20,184,166,0.12)] px-3 py-1 text-[var(--accent)] transition hover:bg-[rgba(20,184,166,0.2)]">
                                         {{ $topic->category->name }}
@@ -61,8 +61,15 @@
             @empty
                 <div class="glass-panel rounded-[2rem] border-dashed p-12 text-center">
                     <p class="section-kicker">Flux vide</p>
-                    <h3 class="mt-3 text-3xl font-semibold text-stone-950">Aucun sujet recommande</h3>
-                    <p class="muted-copy mt-3 text-base">Suis des tags pour voir ici les nouveaux sujets associes.</p>
+                    <h3 class="mt-3 text-3xl font-semibold text-stone-950">
+                        {{ $followedUserIds->isEmpty() ? 'Tu ne suis encore personne' : 'Aucun sujet recent dans tes suivis' }}
+                    </h3>
+                    <p class="muted-copy mt-3 text-base">
+                        {{ $followedUserIds->isEmpty() ? 'Suis quelques membres pour voir apparaitre ici uniquement leurs sujets.' : 'Les membres que tu suis n’ont pas encore publie de nouveau sujet.' }}
+                    </p>
+                    <a href="{{ route('users.index') }}" class="mt-6 inline-flex items-center rounded-full bg-[var(--brand)] px-5 py-3 text-sm font-semibold uppercase tracking-[0.18em] text-white transition hover:bg-[var(--brand-deep)]">
+                        Decouvrir des membres
+                    </a>
                 </div>
             @endforelse
 

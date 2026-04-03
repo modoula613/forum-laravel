@@ -83,15 +83,20 @@
                                 <x-input-error class="mt-2" :messages="$errors->get('tags.*')" />
                             </div>
 
-                            <div>
+                            <div x-data="emojiComposer({ initialValue: @js(old('content', $topic->content ?? '')) })">
                                 <x-input-label for="content" :value="__('Contenu')" />
+                                <div class="mt-3">
+                                    <x-emoji-toolbar helper="Ajoute un emoji pour donner le ton sans alourdir le sujet." />
+                                </div>
                                 <textarea
                                     id="content"
                                     name="content"
                                     rows="8"
+                                    x-ref="input"
+                                    x-model="value"
                                     class="mt-1 block w-full rounded-[1.5rem] border-[rgba(71,85,135,0.16)] bg-white/80 px-4 py-4 shadow-sm focus:border-[var(--brand)] focus:ring-[var(--brand)]"
                                     required
-                                >{{ old('content', $topic->content ?? '') }}</textarea>
+                                ></textarea>
                                 <x-input-error class="mt-2" :messages="$errors->get('content')" />
                             </div>
 

@@ -85,13 +85,18 @@
                 <form method="POST" action="{{ route('messages.send') }}" class="mt-6 space-y-4">
                     @csrf
                     <input type="hidden" name="receiver_id" value="{{ $user->id }}">
-                    <div>
+                    <div x-data="emojiComposer({ initialValue: @js(old('content')) })">
+                        <div class="mb-3">
+                            <x-emoji-toolbar helper="Ajoute une reaction ou une nuance rapide a ton message prive." />
+                        </div>
                         <textarea
                             name="content"
                             rows="5"
+                            x-ref="input"
+                            x-model="value"
                             class="block w-full rounded-[1.5rem] border-[rgba(71,85,135,0.16)] bg-white/80 px-4 py-4 shadow-sm focus:border-[var(--brand)] focus:ring-[var(--brand)]"
                             required
-                        >{{ old('content') }}</textarea>
+                        ></textarea>
                         <x-input-error class="mt-2" :messages="$errors->get('content')" />
                     </div>
                     <div class="flex justify-end">

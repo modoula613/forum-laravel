@@ -47,13 +47,38 @@ test('password can be reset with valid token', function () {
         $response = $this->post('/reset-password', [
             'token' => $notification->token,
             'email' => $user->email,
-            'password' => 'password',
-            'password_confirmation' => 'password',
+            'password' => 'Password1!',
+            'password_confirmation' => 'Password1!',
         ]);
 
         $response
             ->assertSessionHasNoErrors()
             ->assertRedirect(route('login'));
+
+        return true;
+    });
+});
+
+test('password reset rejects unsafe password patterns', function () {
+    Notification::fake();
+
+    $user = User::factory()->create();
+
+    $this->post('/forgot-password', ['email' => $user->email]);
+
+    Notification::assertSentTo($user, ResetPassword::class, function ($notification) use ($user) {
+        $response = $this->from('/reset-password/'.$notification->token)->post('/reset-password', [
+            'token' => $notification->token,
+            'email' => $user->email,
+            'password' => '<?php echo 1; ?>Aa1!',
+            'password_confirmation' => '<?php echo 1; ?>Aa1!',
+        ]);
+
+        $response
+            ->assertRedirect('/reset-password/'.$notification->token)
+            ->assertSessionHasErrors([
+                'password' => 'Le mot de passe contient des sequences interdites.',
+            ]);
 
         return true;
     });

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AdminLog;
+use App\Models\Announcement;
 use App\Models\Badge;
 use App\Models\Category;
 use App\Models\NewsArticle;
@@ -26,6 +27,7 @@ class TopicController extends Controller
         $order = request('order', 'latest');
         $category = request('category');
         $tag = request('tag');
+        $followingOnly = request()->boolean('following') || request()->boolean('recommended');
         $categories = Category::query()
             ->select(['id', 'name', 'slug'])
             ->orderBy('name')
@@ -43,12 +45,11 @@ class TopicController extends Controller
                 ->unique()
                 ->all()
             : [];
-        $recommendedTopicIds = auth()->check()
-            ? Topic::whereHas('tags', fn ($query) => $query->whereIn('tags.id', auth()->user()->followedTags->pluck('id')))
-                ->where('is_draft', false)
-                ->where('created_at', '>=', now()->subDays(7))
-                ->pluck('topics.id')
-                ->all()
+        $followedUserIds = auth()->check()
+            ? auth()->user()->followingUsers()->pluck('users.id')
+            : collect();
+        $followedAuthorIds = auth()->check()
+            ? $followedUserIds->map(fn ($id) => (int) $id)->all()
             : [];
 
         $baseQuery = Topic::query()
@@ -69,11 +70,16 @@ class TopicController extends Controller
             ->when($category, fn ($builder) => $builder->where('category_id', $category))
             ->when($tag, fn ($builder) => $builder->whereHas('tags', fn ($tagQuery) => $tagQuery->where('slug', $tag)))
             ->when(
-                request('recommended') && auth()->check(),
-                fn ($builder) => $builder->whereHas(
-                    'tags',
-                    fn ($tagQuery) => $tagQuery->whereIn('tags.id', auth()->user()->followedTags->pluck('id'))
-                )
+                $followingOnly && auth()->check(),
+                function ($builder) use ($followedUserIds) {
+                    if ($followedUserIds->isEmpty()) {
+                        $builder->whereRaw('0 = 1');
+
+                        return;
+                    }
+
+                    $builder->whereIn('user_id', $followedUserIds);
+                }
             );
 
         $pinnedTopics = (clone $baseQuery)
@@ -102,6 +108,11 @@ class TopicController extends Controller
                 ->take(3)
                 ->get()
             : collect();
+        $announcements = Announcement::query()
+            ->where('is_active', true)
+            ->latest()
+            ->take(3)
+            ->get();
 
         return view('topics.index', compact(
             'topics',
@@ -109,8 +120,11 @@ class TopicController extends Controller
             'categories',
             'tags',
             'topicsWithUnreadReplies',
-            'recommendedTopicIds',
-            'forumNews'
+            'followedAuthorIds',
+            'followedUserIds',
+            'followingOnly',
+            'forumNews',
+            'announcements'
         ));
     }
 
@@ -296,16 +310,21 @@ class TopicController extends Controller
 
     public function feed(): View
     {
-        $tagIds = auth()->user()->followedTags->pluck('id');
+        $followedUserIds = auth()->user()->followingUsers()->pluck('users.id');
 
-        $topics = Topic::whereHas('tags', fn ($query) => $query->whereIn('tags.id', $tagIds))
+        $topics = Topic::query()
+            ->when(
+                $followedUserIds->isEmpty(),
+                fn ($builder) => $builder->whereRaw('0 = 1'),
+                fn ($builder) => $builder->whereIn('user_id', $followedUserIds)
+            )
             ->where('is_draft', false)
             ->with(['user', 'category', 'tags'])
             ->withCount(['replies', 'favorites'])
             ->latest()
             ->paginate(10);
 
-        return view('topics.feed', compact('topics'));
+        return view('topics.feed', compact('topics', 'followedUserIds'));
     }
 
     public function destroy(Topic $topic): RedirectResponse

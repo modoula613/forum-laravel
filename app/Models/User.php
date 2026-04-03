@@ -115,6 +115,58 @@ class User extends Authenticatable
         return $this->receivedMessages()->where('is_read', false);
     }
 
+    public function followingUsers()
+    {
+        return $this->belongsToMany(User::class, 'user_follows', 'follower_id', 'followed_id')->withTimestamps();
+    }
+
+    public function followerUsers()
+    {
+        return $this->belongsToMany(User::class, 'user_follows', 'followed_id', 'follower_id')->withTimestamps();
+    }
+
+    public function sentFollowRequests()
+    {
+        return $this->belongsToMany(User::class, 'follow_requests', 'requester_id', 'requested_id')->withTimestamps();
+    }
+
+    public function receivedFollowRequests()
+    {
+        return $this->belongsToMany(User::class, 'follow_requests', 'requested_id', 'requester_id')->withTimestamps();
+    }
+
+    public function isFollowing(User $user): bool
+    {
+        return $this->followingUsers()->where('users.id', $user->id)->exists();
+    }
+
+    public function isFollowedBy(User $user): bool
+    {
+        return $this->followerUsers()->where('users.id', $user->id)->exists();
+    }
+
+    public function isFriendWith(User $user): bool
+    {
+        return $this->isFollowing($user) && $this->isFollowedBy($user);
+    }
+
+    public function hasPendingFollowRequestTo(User $user): bool
+    {
+        return $this->sentFollowRequests()->where('users.id', $user->id)->exists();
+    }
+
+    public function hasPendingFollowRequestFrom(User $user): bool
+    {
+        return $this->receivedFollowRequests()->where('users.id', $user->id)->exists();
+    }
+
+    public function friendsCount(): int
+    {
+        return $this->followingUsers()
+            ->whereIn('users.id', $this->followerUsers()->select('users.id'))
+            ->count();
+    }
+
     public function badges()
     {
         return $this->belongsToMany(Badge::class);

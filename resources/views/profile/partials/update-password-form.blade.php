@@ -23,6 +23,9 @@
         <div>
             <x-input-label for="update_password_password" value="Nouveau mot de passe" />
             <x-text-input id="update_password_password" name="password" type="password" class="mt-1 block w-full" autocomplete="new-password" />
+            <p class="mt-2 text-xs leading-6 text-stone-500">
+                Minimum 8 caracteres, avec une minuscule, une majuscule, un chiffre et un caractere special. Les balises type <code>&lt;script&gt;</code> ou <code>&lt;?php</code> sont refusees.
+            </p>
             <x-input-error :messages="$errors->updatePassword->get('password')" class="mt-2" />
         </div>
 

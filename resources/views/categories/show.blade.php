@@ -67,12 +67,12 @@
                                         <span>{{ $article->published_at->format('d/m/Y H:i') }}</span>
                                     @endif
                                 </div>
-                                <p class="mt-3 text-base font-semibold leading-6 text-stone-900">
+                                <p class="text-clamp-3 mt-3 text-base font-semibold leading-6 text-stone-900">
                                     {{ $article->title }}
                                 </p>
                                 @if ($article->excerpt)
-                                    <p class="mt-2 text-sm leading-6 text-stone-600">
-                                        {{ \Illuminate\Support\Str::limit($article->excerpt, 100) }}
+                                    <p class="text-clamp-3 mt-2 text-sm leading-6 text-stone-600">
+                                        {{ $article->excerpt }}
                                     </p>
                                 @endif
                             </a>

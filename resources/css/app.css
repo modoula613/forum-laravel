@@ -556,6 +556,52 @@
         color: #536471;
     }
 
+    .emoji-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.45rem;
+    }
+
+    .emoji-toolbar__button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 2.4rem;
+        height: 2.4rem;
+        border: 1px solid var(--line);
+        border-radius: 9999px;
+        background: var(--surface-soft);
+        font-size: 1.05rem;
+        line-height: 1;
+        transition: transform 180ms ease, background-color 180ms ease, border-color 180ms ease;
+    }
+
+    .emoji-toolbar__button:hover {
+        background: var(--surface-soft-hover);
+        border-color: color-mix(in srgb, var(--line) 70%, var(--brand) 30%);
+        transform: translateY(-1px);
+    }
+
+    .emoji-toolbar__helper {
+        font-size: 0.78rem;
+        color: var(--content-faint);
+    }
+
+    .text-clamp-2,
+    .text-clamp-3 {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .text-clamp-2 {
+        -webkit-line-clamp: 2;
+    }
+
+    .text-clamp-3 {
+        -webkit-line-clamp: 3;
+    }
+
     html[data-theme='dark'] .x-search-shell.is-open .x-search-field {
         border-color: rgba(29, 155, 240, 0.72);
         background: rgba(0, 0, 0, 1);

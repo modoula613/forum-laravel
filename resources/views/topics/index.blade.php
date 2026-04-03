@@ -2,11 +2,11 @@
     <x-slot name="header">
         <div class="space-y-5">
             <div class="x-feed-tabs">
-                <a href="{{ route('topics.index') }}" class="x-feed-tab {{ request('recommended') ? '' : 'is-active' }}">
+                <a href="{{ route('topics.index') }}" class="x-feed-tab {{ $followingOnly ? '' : 'is-active' }}">
                     Pour toi
                 </a>
                 @auth
-                    <a href="{{ route('topics.index', ['recommended' => 1]) }}" class="x-feed-tab {{ request('recommended') ? 'is-active' : '' }}">
+                    <a href="{{ route('topics.index', ['following' => 1]) }}" class="x-feed-tab {{ $followingOnly ? 'is-active' : '' }}">
                         Abonnements
                     </a>
                 @else
@@ -35,8 +35,8 @@
                     @if (request()->filled('order'))
                         <input type="hidden" name="order" value="{{ request('order') }}">
                     @endif
-                    @if (request()->filled('recommended'))
-                        <input type="hidden" name="recommended" value="{{ request('recommended') }}">
+                    @if ($followingOnly)
+                        <input type="hidden" name="following" value="1">
                     @endif
 
                     <div class="min-w-0 flex-1">
@@ -129,11 +129,20 @@
                             <span class="rounded-full border border-white/10 px-3 py-1 text-white/62">user:nom</span>
                             <span class="rounded-full border border-white/10 px-3 py-1 text-white/62">#hashtag</span>
                         </div>
-                        @if (request()->filled('search') || request()->filled('category') || request()->filled('tag') || request()->filled('order') || request()->filled('recommended'))
-                            <a href="{{ route('topics.index') }}" class="rounded-full border border-white/10 px-4 py-3 text-sm font-semibold text-white/72 transition hover:bg-white/8 hover:text-white">
-                                Reinitialiser
-                            </a>
-                        @endif
+                        <div class="flex flex-wrap items-center gap-3">
+                            <button
+                                type="button"
+                                x-on:click="$dispatch('toggle-filters')"
+                                class="rounded-full border border-white/10 px-4 py-3 text-sm font-semibold text-white/72 transition hover:bg-white/8 hover:text-white"
+                            >
+                                Filtres
+                            </button>
+                            @if (request()->filled('search') || request()->filled('category') || request()->filled('tag') || request()->filled('order') || $followingOnly)
+                                <a href="{{ route('topics.index') }}" class="rounded-full border border-white/10 px-4 py-3 text-sm font-semibold text-white/72 transition hover:bg-white/8 hover:text-white">
+                                    Reinitialiser
+                                </a>
+                            @endif
+                        </div>
                     </div>
                 </form>
             </div>
@@ -142,6 +151,18 @@
 
     <div class="py-10">
         <div class="mx-auto max-w-[1080px] space-y-8 px-0 sm:px-0 lg:px-0">
+            @if ($announcements->isNotEmpty())
+                <section class="space-y-3">
+                    @foreach ($announcements as $announcement)
+                        <div class="glass-panel border-[var(--brand)]/20 bg-[var(--brand)]/8 px-5 py-4 text-sm">
+                            <p class="section-kicker">Annonce</p>
+                            <p class="mt-2 text-lg font-semibold text-white">{{ $announcement->title }}</p>
+                            <p class="mt-2 max-w-4xl text-white/70">{{ $announcement->content }}</p>
+                        </div>
+                    @endforeach
+                </section>
+            @endif
+
             @if (session('success'))
                 <div class="glass-panel border-emerald-500/20 bg-emerald-500/10 px-5 py-4 text-sm text-emerald-200">
                     {{ session('success') }}
@@ -160,9 +181,14 @@
                         Votre compte est bloque suite a plusieurs infractions.
                     </div>
                 @endif
-                @if (request('recommended'))
+                @if ($followingOnly)
                     <div class="glass-panel border-amber-500/20 bg-amber-500/10 p-6 text-sm font-medium text-amber-200">
-                        Affichage des sujets recommandes selon les tags que vous suivez.
+                        Affichage des sujets publies par les membres que vous suivez.
+                    </div>
+                @endif
+                @if ($followingOnly && $followedUserIds->isEmpty())
+                    <div class="glass-panel border-white/10 bg-white/5 p-6 text-sm font-medium text-white/80">
+                        Tu ne suis encore personne. Ouvre un profil membre pour commencer a suivre des personnes et voir ici uniquement leurs sujets.
                     </div>
                 @endif
             @endauth
@@ -182,11 +208,16 @@
                     request('category') ? 'Categorie active' : null,
                     request('tag') ? 'Tag : '.request('tag') : null,
                     request('order') === 'popular' ? 'Tri : plus actifs' : null,
-                    request('recommended') ? 'Suggestions personnalisees' : null,
+                    $followingOnly ? 'Suivi des membres' : null,
                 ]);
+                $hasAdvancedFilters = request()->filled('category') || request()->filled('tag') || request()->filled('order');
             @endphp
 
-            <div class="space-y-4">
+            <div
+                x-data="{ filtersOpen: @js($hasAdvancedFilters) }"
+                x-on:toggle-filters.window="filtersOpen = ! filtersOpen"
+                class="space-y-4"
+            >
                 @if ($activeFilters)
                     <div class="glass-panel-strong p-5">
                         <div class="flex flex-wrap gap-2">
@@ -199,14 +230,22 @@
                     </div>
                 @endif
 
-                <div class="glass-panel x-shell-divider p-5 sm:p-6">
-                    <div class="mb-4">
-                        <p class="section-kicker">Filtres</p>
-                        <h3 class="mt-2 text-xl font-semibold text-white">Affiner le flux</h3>
+                <div x-cloak x-show="filtersOpen" x-transition.opacity.duration.200ms class="glass-panel x-shell-divider p-5 sm:p-6">
+                    <div class="mb-4 flex items-center justify-between gap-4">
+                        <div>
+                            <p class="section-kicker">Filtres</p>
+                            <h3 class="mt-2 text-xl font-semibold text-white">Affiner le flux</h3>
+                        </div>
+                        <button type="button" @click="filtersOpen = false" class="rounded-full border border-white/10 px-3 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-white/70 transition hover:bg-white/8 hover:text-white">
+                            Fermer
+                        </button>
                     </div>
 
                     <form method="GET" action="{{ route('topics.index') }}" class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
                         <input type="hidden" name="search" value="{{ request('search') }}">
+                        @if ($followingOnly)
+                            <input type="hidden" name="following" value="1">
+                        @endif
 
                         <div class="grid gap-4 sm:grid-cols-2 lg:w-full xl:grid-cols-3">
                         <div>
@@ -257,18 +296,18 @@
                             </select>
                         </div>
                     </div>
-                    <div class="flex items-center gap-3">
-                        @auth
-                            <a href="{{ route('topics.index', ['recommended' => 1]) }}" class="rounded-full border border-white/10 px-4 py-3 text-sm font-semibold text-white/72 transition hover:bg-white/8 hover:text-white">
-                                Voir les sujets recommandes
-                            </a>
-                        @endauth
-                        <x-primary-button class="justify-center">
-                            Filtrer
-                        </x-primary-button>
-                    </div>
-                </form>
-            </div>
+                        <div class="flex items-center gap-3">
+                            @auth
+                                <a href="{{ route('topics.index', ['following' => 1]) }}" class="rounded-full border border-white/10 px-4 py-3 text-sm font-semibold text-white/72 transition hover:bg-white/8 hover:text-white">
+                                    Voir mes suivis
+                                </a>
+                            @endauth
+                            <x-primary-button class="justify-center">
+                                Filtrer
+                            </x-primary-button>
+                        </div>
+                    </form>
+                </div>
             </div>
 
             <div class="grid gap-6 xl:grid-cols-[minmax(0,1fr)_21rem]">
@@ -379,8 +418,8 @@
                                                 @endif
                                             @endauth
                                             @auth
-                                                @if (in_array($topic->id, $recommendedTopicIds ?? [], true))
-                                                    <span class="rounded-full bg-amber-500/10 px-3 py-1 text-amber-300">Recommande</span>
+                                                @if (in_array($topic->user_id, $followedAuthorIds ?? [], true))
+                                                    <span class="rounded-full bg-amber-500/10 px-3 py-1 text-amber-300">Suivi</span>
                                                 @endif
                                             @endauth
                                             <span>{{ $topic->created_at->diffForHumans() }}</span>
@@ -481,12 +520,12 @@
                                                 <span>{{ $article->source_name }}</span>
                                             @endif
                                         </div>
-                                        <p class="mt-3 text-sm font-semibold leading-6 text-white transition group-hover:text-[var(--brand)]">
-                                            {{ \Illuminate\Support\Str::limit($article->title, 105) }}
+                                        <p class="text-clamp-3 mt-3 text-sm font-semibold leading-6 text-white transition group-hover:text-[var(--brand)]">
+                                            {{ $article->title }}
                                         </p>
                                         @if ($article->excerpt)
-                                            <p class="mt-2 text-sm leading-6 text-white/52">
-                                                {{ \Illuminate\Support\Str::limit($article->excerpt, 95) }}
+                                            <p class="text-clamp-3 mt-2 text-sm leading-6 text-white/52">
+                                                {{ $article->excerpt }}
                                             </p>
                                         @endif
                                         @if ($article->category)

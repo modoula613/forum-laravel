@@ -165,9 +165,9 @@
                                                 <span>{{ $article->source_name }}</span>
                                             @endif
                                         </div>
-                                        <p class="mt-3 text-lg font-semibold text-stone-950">{{ $article->title }}</p>
+                                        <p class="text-clamp-3 mt-3 text-lg font-semibold text-stone-950">{{ $article->title }}</p>
                                         @if ($article->excerpt)
-                                            <p class="mt-2 text-sm text-stone-500">{{ \Illuminate\Support\Str::limit($article->excerpt, 110) }}</p>
+                                            <p class="text-clamp-3 mt-2 text-sm text-stone-500">{{ $article->excerpt }}</p>
                                         @endif
                                 </a>
                             @empty

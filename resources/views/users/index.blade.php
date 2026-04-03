@@ -57,6 +57,39 @@
                             <div class="flex flex-wrap items-center gap-3 text-sm">
                                 <span class="rounded-full bg-white/80 px-4 py-2 font-medium text-stone-700">{{ $user->topics_count }} sujets</span>
                                 <span class="rounded-full bg-[rgba(79,70,229,0.12)] px-4 py-2 font-medium text-[var(--brand)]">{{ $user->replies_count }} reponses</span>
+                                <span class="rounded-full bg-white/80 px-4 py-2 font-medium text-stone-700">{{ $user->follower_users_count }} abonnes</span>
+                                @auth
+                                    @if (auth()->id() !== $user->id)
+                                        @if (in_array($user->id, $followingIds ?? [], true))
+                                            <form method="POST" action="{{ route('users.follow', $user) }}">
+                                                @csrf
+                                                <input type="hidden" name="action" value="unfollow">
+                                                <button type="submit" class="rounded-full bg-[var(--brand)] px-4 py-2 font-medium text-white transition hover:bg-[var(--brand-deep)]">
+                                                    Suivi
+                                                </button>
+                                            </form>
+                                        @elseif (in_array($user->id, $pendingOutgoingIds ?? [], true))
+                                            <form method="POST" action="{{ route('users.follow', $user) }}">
+                                                @csrf
+                                                <input type="hidden" name="action" value="cancel_request">
+                                                <button type="submit" class="rounded-full border border-[rgba(71,85,135,0.16)] bg-white/80 px-4 py-2 font-medium text-stone-700 transition hover:bg-white">
+                                                    Demande envoyee
+                                                </button>
+                                            </form>
+                                        @elseif (in_array($user->id, $pendingIncomingIds ?? [], true))
+                                            <a href="{{ route('users.show', $user) }}" class="rounded-full border border-amber-200 bg-amber-50/90 px-4 py-2 font-medium text-amber-700 transition hover:bg-amber-100">
+                                                Demande recue
+                                            </a>
+                                        @else
+                                            <form method="POST" action="{{ route('users.follow', $user) }}">
+                                                @csrf
+                                                <button type="submit" class="rounded-full bg-[var(--brand)] px-4 py-2 font-medium text-white transition hover:bg-[var(--brand-deep)]">
+                                                    Demander a suivre
+                                                </button>
+                                            </form>
+                                        @endif
+                                    @endif
+                                @endauth
                                 <a href="{{ route('users.show', $user) }}" class="rounded-full border border-[rgba(71,85,135,0.16)] bg-white/80 px-4 py-2 font-medium text-stone-700 transition hover:bg-white">
                                     Voir le profil
                                 </a>

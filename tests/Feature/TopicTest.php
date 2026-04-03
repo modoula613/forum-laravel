@@ -351,87 +351,80 @@ test('topic show marks edited topics as modified', function () {
         ->assertSee('Modifie');
 });
 
-test('authenticated users can view a personalized feed based on followed tags', function () {
+test('authenticated users can view a personalized feed based on followed members', function () {
     $user = User::factory()->create();
-    $followedTag = Tag::create([
-        'name' => 'Laravel',
-        'slug' => 'laravel',
-    ]);
-    $otherTag = Tag::create([
-        'name' => 'Vue',
-        'slug' => 'vue',
-    ]);
-    $user->followedTags()->attach($followedTag);
+    $followedAuthor = User::factory()->create();
+    $otherAuthor = User::factory()->create();
 
-    $matchingTopic = $user->topics()->create([
-        'title' => 'Sujet recommande',
-        'content' => 'Contenu recommande',
-    ]);
-    $matchingTopic->tags()->attach($followedTag);
+    $user->followingUsers()->attach($followedAuthor->id);
 
-    $otherTopic = $user->topics()->create([
+    $followedTopic = $followedAuthor->topics()->create([
+        'title' => 'Sujet du membre suivi',
+        'content' => 'Contenu suivi',
+    ]);
+
+    $otherAuthor->topics()->create([
         'title' => 'Sujet hors flux',
         'content' => 'Contenu hors flux',
     ]);
-    $otherTopic->tags()->attach($otherTag);
 
     $this
         ->actingAs($user)
         ->get(route('topics.feed'))
         ->assertOk()
-        ->assertSee('Sujet recommande')
+        ->assertSee($followedTopic->title)
         ->assertDontSee('Sujet hors flux');
 });
 
-test('topics index shows recommended badge for followed tag topics', function () {
+test('topics index shows follow badge for followed members topics', function () {
     $user = User::factory()->create();
-    $followedTag = Tag::create([
-        'name' => 'PHP',
-        'slug' => 'php',
-    ]);
-    $user->followedTags()->attach($followedTag);
+    $followedAuthor = User::factory()->create();
 
-    $topic = $user->topics()->create([
+    $user->followingUsers()->attach($followedAuthor->id);
+
+    $followedAuthor->topics()->create([
         'title' => 'Sujet suivi',
         'content' => 'Contenu suivi',
     ]);
-    $topic->tags()->attach($followedTag);
 
     $this
         ->actingAs($user)
         ->get(route('topics.index'))
         ->assertOk()
-        ->assertSee('Recommande');
+        ->assertSee('Suivi');
 });
 
-test('topics index can filter recommended topics for authenticated users', function () {
+test('topics index can filter followed members topics for authenticated users', function () {
     $user = User::factory()->create();
-    $followedTag = Tag::create([
-        'name' => 'Laravel',
-        'slug' => 'laravel',
-    ]);
-    $otherTag = Tag::create([
-        'name' => 'Vue',
-        'slug' => 'vue',
-    ]);
-    $user->followedTags()->attach($followedTag);
+    $followedAuthor = User::factory()->create();
+    $otherAuthor = User::factory()->create();
 
-    $recommendedTopic = $user->topics()->create([
-        'title' => 'Sujet recommande filtre',
+    $user->followingUsers()->attach($followedAuthor->id);
+
+    $followedAuthor->topics()->create([
+        'title' => 'Sujet de mon suivi',
         'content' => 'Contenu',
     ]);
-    $recommendedTopic->tags()->attach($followedTag);
 
-    $otherTopic = $user->topics()->create([
-        'title' => 'Sujet non recommande',
+    $otherAuthor->topics()->create([
+        'title' => 'Sujet hors suivi',
         'content' => 'Contenu',
     ]);
-    $otherTopic->tags()->attach($otherTag);
 
     $this
         ->actingAs($user)
-        ->get(route('topics.index', ['recommended' => 1]))
+        ->get(route('topics.index', ['following' => 1]))
         ->assertOk()
-        ->assertSee('Sujet recommande filtre')
-        ->assertDontSee('Sujet non recommande');
+        ->assertSee('Sujet de mon suivi')
+        ->assertDontSee('Sujet hors suivi');
+});
+
+test('topics index shows a clear message when user follows nobody', function () {
+    $user = User::factory()->create();
+
+    $this
+        ->actingAs($user)
+        ->get(route('topics.index', ['following' => 1]))
+        ->assertOk()
+        ->assertSee('Tu ne suis encore personne');
 });

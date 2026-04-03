@@ -73,9 +73,9 @@
                                 <span>{{ $article->published_at->format('d/m/Y H:i') }}</span>
                             @endif
                         </div>
-                        <h3 class="mt-4 text-2xl font-semibold text-stone-950">{{ $article->title }}</h3>
+                        <h3 class="text-clamp-3 mt-4 text-2xl font-semibold text-stone-950">{{ $article->title }}</h3>
                         @if ($article->excerpt)
-                            <p class="muted-copy mt-3 text-sm leading-7">{{ $article->excerpt }}</p>
+                            <p class="text-clamp-3 muted-copy mt-3 text-sm leading-7">{{ $article->excerpt }}</p>
                         @endif
                         <div class="mt-5 flex flex-wrap items-center justify-between gap-3">
                             <a href="{{ $article->source_url }}" target="_blank" rel="noopener noreferrer" class="rounded-full bg-[var(--brand)] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[var(--brand-deep)]">

@@ -28,6 +28,7 @@ use App\Http\Controllers\StatsController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\TagFollowController;
 use App\Http\Controllers\TopicController;
+use App\Http\Controllers\UserFollowController;
 use App\Http\Controllers\UserController;
 use App\Models\Topic;
 use Illuminate\Support\Facades\Route;
@@ -40,10 +41,10 @@ Route::get('/dashboard', function () {
     }
 
     $user = request()->user();
-    $followedTagIds = $user->followedTags->pluck('id');
+    $followedUserIds = $user->followingUsers()->pluck('users.id');
 
-    $recommendedTopics = $followedTagIds->isNotEmpty()
-        ? Topic::whereHas('tags', fn ($query) => $query->whereIn('tags.id', $followedTagIds))
+    $recommendedTopics = $followedUserIds->isNotEmpty()
+        ? Topic::whereIn('user_id', $followedUserIds)
             ->where('is_draft', false)
             ->with(['user', 'tags'])
             ->latest()
@@ -53,7 +54,7 @@ Route::get('/dashboard', function () {
 
     $overview = [
         'favorites' => $user->favorites()->count(),
-        'followed_tags' => $user->followedTags()->count(),
+        'following_members' => $user->followingUsers()->count(),
         'bookmarks' => $user->bookmarkedReplies()->count(),
         'unread_notifications' => $user->unreadNotifications()->count(),
         'unread_messages' => $user->unreadMessages()->count(),
@@ -115,6 +116,8 @@ Route::middleware(['auth', 'legacy_badge'])->group(function () {
         ->name('tags.followed');
     Route::get('/feed', [TopicController::class, 'feed'])
         ->name('topics.feed');
+    Route::post('/users/{user}/follow', [UserFollowController::class, 'toggle'])
+        ->name('users.follow');
 
     Route::get('/notifications', function () {
         request()->user()->unreadNotifications->markAsRead();

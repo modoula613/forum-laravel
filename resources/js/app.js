@@ -39,6 +39,37 @@ Alpine.store('theme', {
     },
 });
 
+Alpine.data('emojiComposer', ({
+    initialValue = '',
+    emojis = ['🙂', '😂', '🔥', '👏', '😍', '🤔', '😮', '🥲', '💬', '❤️'],
+} = {}) => ({
+    value: initialValue,
+    emojis,
+
+    insertEmoji(emoji) {
+        const textarea = this.$refs.input;
+
+        if (!textarea) {
+            this.value = `${this.value}${emoji}`;
+            return;
+        }
+
+        const start = textarea.selectionStart ?? this.value.length;
+        const end = textarea.selectionEnd ?? this.value.length;
+        const prefix = this.value.slice(0, start);
+        const suffix = this.value.slice(end);
+        const spacer = prefix && !prefix.endsWith(' ') ? ' ' : '';
+
+        this.value = `${prefix}${spacer}${emoji} ${suffix}`.trimEnd();
+
+        this.$nextTick(() => {
+            const nextPosition = prefix.length + spacer.length + emoji.length + 1;
+            textarea.focus();
+            textarea.setSelectionRange(nextPosition, nextPosition);
+        });
+    },
+}));
+
 Alpine.data('forumSearch', ({
     initialQuery = '',
     action = '',
