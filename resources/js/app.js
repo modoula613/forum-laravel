@@ -4,6 +4,41 @@ import Alpine from 'alpinejs';
 
 window.Alpine = Alpine;
 
+const THEME_KEY = 'sphere-theme';
+
+function resolveTheme() {
+    try {
+        return window.localStorage.getItem(THEME_KEY) === 'dark' ? 'dark' : 'light';
+    } catch {
+        return 'light';
+    }
+}
+
+function applyTheme(mode) {
+    document.documentElement.dataset.theme = mode === 'dark' ? 'dark' : 'light';
+}
+
+applyTheme(resolveTheme());
+
+Alpine.store('theme', {
+    mode: resolveTheme(),
+
+    set(mode) {
+        this.mode = mode === 'dark' ? 'dark' : 'light';
+        applyTheme(this.mode);
+
+        try {
+            window.localStorage.setItem(THEME_KEY, this.mode);
+        } catch {
+            // Ignore storage errors and keep the current session theme.
+        }
+    },
+
+    toggle() {
+        this.set(this.mode === 'dark' ? 'light' : 'dark');
+    },
+});
+
 Alpine.data('forumSearch', ({
     initialQuery = '',
     action = '',

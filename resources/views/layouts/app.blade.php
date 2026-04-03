@@ -11,6 +11,17 @@
         <title>{{ config('app.name', 'Sphere') }}</title>
         <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
 
+        <script>
+            (() => {
+                try {
+                    const storedTheme = localStorage.getItem('sphere-theme');
+                    document.documentElement.dataset.theme = storedTheme === 'dark' ? 'dark' : 'light';
+                } catch (error) {
+                    document.documentElement.dataset.theme = 'light';
+                }
+            })();
+        </script>
+
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>

@@ -6,14 +6,14 @@
 
 <nav x-data="{ open: false }" class="relative z-[70]">
     <div class="mx-auto max-w-7xl lg:max-w-none">
-        <div class="mb-3 flex items-center justify-between border-b border-white/10 bg-black px-4 py-3 text-white lg:hidden">
-            <a href="{{ route('home') }}" class="inline-flex items-center gap-3 text-lg font-bold tracking-tight text-white">
+        <div class="app-mobile-bar mb-3 flex items-center justify-between border-b px-4 py-3 lg:hidden">
+            <a href="{{ route('home') }}" class="app-mobile-brand inline-flex items-center gap-3 text-lg font-bold tracking-tight">
                 <span class="x-mark text-2xl">S</span>
                 {{ config('app.name', 'Sphere') }}
             </a>
 
             <div class="-me-2 flex items-center">
-                <button @click="open = ! open" class="inline-flex items-center justify-center rounded-full p-2 text-white/80 transition hover:bg-white/10 hover:text-white focus:outline-none">
+                <button @click="open = ! open" class="app-mobile-icon inline-flex items-center justify-center rounded-full p-2 transition focus:outline-none">
                     <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                         <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                         <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -23,9 +23,9 @@
         </div>
 
         <div class="hidden lg:block">
-            <div class="flex h-screen flex-col justify-between px-3 py-4 text-white">
+            <div class="app-sidebar-card flex h-screen flex-col justify-between px-3 py-4">
                 <div>
-                    <a href="{{ route('home') }}" class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full text-3xl font-semibold tracking-tight text-white transition hover:bg-white/10">
+                    <a href="{{ route('home') }}" class="app-sidebar-brand mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full text-3xl font-semibold tracking-tight transition">
                         <span class="x-mark">S</span>
                     </a>
 
@@ -67,40 +67,47 @@
                         @endauth
                     </div>
 
+                    <button type="button" @click="$store.theme.toggle()" class="theme-toggle-button mt-4 inline-flex w-full items-center justify-center rounded-full border px-4 py-3 text-sm font-semibold uppercase tracking-[0.16em] transition">
+                        <span x-text="$store.theme.mode === 'dark' ? 'Mode clair' : 'Mode nuit'"></span>
+                    </button>
+
                     @auth
                         @if (! auth()->user()->is_blocked)
-                            <a href="{{ route('topics.create') }}" class="mt-6 inline-flex w-full items-center justify-center rounded-full bg-white px-5 py-3 text-base font-semibold text-black transition hover:bg-white/90">
+                            <a href="{{ route('topics.create') }}" class="app-cta-button mt-6 inline-flex w-full items-center justify-center rounded-full px-5 py-3 text-base font-semibold transition">
                                 Poster
                             </a>
                         @endif
                     @else
-                        <a href="{{ route('register') }}" class="mt-6 inline-flex w-full items-center justify-center rounded-full bg-white px-5 py-3 text-base font-semibold text-black transition hover:bg-white/90">
+                        <a href="{{ route('register') }}" class="app-cta-button mt-6 inline-flex w-full items-center justify-center rounded-full px-5 py-3 text-base font-semibold transition">
                             Rejoindre
                         </a>
                     @endauth
                 </div>
 
                 @auth
-                    <div class="rounded-full p-2 transition hover:bg-white/6">
+                    <div class="app-profile-card rounded-[1.6rem] p-2 transition">
                         <div class="flex items-center gap-3">
-                            <span class="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-sm font-semibold uppercase text-white">
+                            <span class="app-profile-avatar flex h-11 w-11 items-center justify-center rounded-full text-sm font-semibold uppercase">
                                 {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
                             </span>
                             <div class="min-w-0 flex-1">
-                                <p class="truncate font-semibold text-white">{{ Auth::user()->name }}</p>
-                                <p class="truncate text-sm text-white/45">{{ '@'.\Illuminate\Support\Str::slug(Auth::user()->name, '') }}</p>
+                                <p class="truncate font-semibold app-profile-name">{{ Auth::user()->name }}</p>
+                                <p class="truncate text-sm app-profile-handle">{{ '@'.\Illuminate\Support\Str::slug(Auth::user()->name, '') }}</p>
                             </div>
                         </div>
 
-                        <div class="mt-3 flex items-center gap-2">
-                            <a href="{{ route('dashboard') }}" class="rounded-full border border-white/10 px-3 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-white/70 transition hover:bg-white/10 hover:text-white">
+                        <div class="mt-3 flex flex-wrap items-center gap-2">
+                            <a href="{{ route('dashboard') }}" class="app-profile-chip rounded-full border px-3 py-2 text-xs font-semibold uppercase tracking-[0.16em] transition">
                                 Mon espace
                             </a>
+                            <button type="button" @click="$store.theme.toggle()" class="theme-toggle-button rounded-full border px-3 py-2 text-xs font-semibold uppercase tracking-[0.16em] transition">
+                                <span x-text="$store.theme.mode === 'dark' ? 'Mode clair' : 'Mode nuit'"></span>
+                            </button>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
                                 <button
                                     type="submit"
-                                    class="rounded-full border border-white/10 px-3 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-white/70 transition hover:bg-white/10 hover:text-white focus:outline-none"
+                                    class="app-profile-chip rounded-full border px-3 py-2 text-xs font-semibold uppercase tracking-[0.16em] transition focus:outline-none"
                                 >
                                     Deconnexion
                                 </button>
@@ -113,7 +120,7 @@
     </div>
 
     <div :class="{'block': open, 'hidden': ! open}" class="hidden lg:hidden">
-        <div class="border-b border-white/10 bg-black p-3 text-white shadow-[0_20px_45px_rgba(0,0,0,0.22)]">
+        <div class="app-mobile-dropdown border-b p-3 shadow-[0_20px_45px_rgba(0,0,0,0.22)]">
             <div class="space-y-1">
                 <x-responsive-nav-link :href="route('home')" :active="request()->routeIs('home') || request()->routeIs('topics.*')">
                     Forum
@@ -131,13 +138,20 @@
                         </x-responsive-nav-link>
                     @endif
                 @endauth
+                <button
+                    type="button"
+                    @click="$store.theme.toggle()"
+                    class="theme-toggle-button block w-full rounded-full border px-4 py-3 text-left text-base font-medium transition"
+                >
+                    <span x-text="$store.theme.mode === 'dark' ? 'Passer en mode clair' : 'Passer en mode nuit'"></span>
+                </button>
             </div>
 
-            <div class="mt-4 border-t border-white/10 pt-4">
+            <div class="mt-4 border-t app-mobile-divider pt-4">
                 @auth
                     <div class="px-3">
-                        <div class="font-medium text-base text-white">{{ Auth::user()->name }}</div>
-                        <div class="font-medium text-sm text-white/45">{{ Auth::user()->email }}</div>
+                        <div class="font-medium text-base app-profile-name">{{ Auth::user()->name }}</div>
+                        <div class="font-medium text-sm app-profile-handle">{{ Auth::user()->email }}</div>
                     </div>
 
                     <div class="mt-3 space-y-1">
@@ -159,12 +173,11 @@
                         <x-responsive-nav-link :href="route('profile.edit')">
                             Profil
                         </x-responsive-nav-link>
-
                         <form method="POST" action="{{ route('logout') }}" class="px-3 pt-2">
                             @csrf
                             <button
                                 type="submit"
-                                class="block w-full rounded-full border border-white/10 px-4 py-3 text-left text-base font-semibold text-white transition hover:bg-white/10 focus:outline-none"
+                                class="app-mobile-logout block w-full rounded-full border px-4 py-3 text-left text-base font-semibold transition focus:outline-none"
                             >
                                 Deconnexion
                             </button>
