@@ -143,32 +143,32 @@
     <div class="py-10">
         <div class="mx-auto max-w-[1080px] space-y-8 px-0 sm:px-0 lg:px-0">
             @if (session('success'))
-                <div class="glass-panel rounded-none border-emerald-500/20 bg-emerald-500/10 px-5 py-4 text-sm text-emerald-200 sm:rounded-[1.5rem]">
+                <div class="glass-panel border-emerald-500/20 bg-emerald-500/10 px-5 py-4 text-sm text-emerald-200">
                     {{ session('success') }}
                 </div>
             @endif
 
             @if (session('error'))
-                <div class="glass-panel rounded-none border-rose-500/20 bg-rose-500/10 px-5 py-4 text-sm text-rose-200 sm:rounded-[1.5rem]">
+                <div class="glass-panel border-rose-500/20 bg-rose-500/10 px-5 py-4 text-sm text-rose-200">
                     {{ session('error') }}
                 </div>
             @endif
 
             @auth
                 @if (auth()->user()->is_blocked)
-                    <div class="glass-panel rounded-none border-rose-500/20 bg-rose-500/10 p-6 text-sm font-medium text-rose-200 sm:rounded-[2rem]">
+                    <div class="glass-panel border-rose-500/20 bg-rose-500/10 p-6 text-sm font-medium text-rose-200">
                         Votre compte est bloque suite a plusieurs infractions.
                     </div>
                 @endif
                 @if (request('recommended'))
-                    <div class="glass-panel rounded-none border-amber-500/20 bg-amber-500/10 p-6 text-sm font-medium text-amber-200 sm:rounded-[2rem]">
+                    <div class="glass-panel border-amber-500/20 bg-amber-500/10 p-6 text-sm font-medium text-amber-200">
                         Affichage des sujets recommandes selon les tags que vous suivez.
                     </div>
                 @endif
             @endauth
 
             @guest
-                <div class="glass-panel rounded-none p-6 sm:rounded-[2rem]">
+                <div class="glass-panel p-6">
                     <p class="text-sm text-white/70">
                         Connecte-toi pour creer un sujet ou repondre.
                         <a href="{{ route('login') }}" class="font-semibold text-white underline underline-offset-4">Se connecter</a>
@@ -188,7 +188,7 @@
 
             <div class="space-y-4">
                 @if ($activeFilters)
-                    <div class="glass-panel-strong rounded-none p-5 sm:rounded-[1.2rem] sm:p-5">
+                    <div class="glass-panel-strong p-5">
                         <div class="flex flex-wrap gap-2">
                             @foreach ($activeFilters as $filter)
                                 <span class="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-white/70">
@@ -199,7 +199,7 @@
                     </div>
                 @endif
 
-                <div class="glass-panel x-shell-divider rounded-none p-5 sm:rounded-[1.2rem] sm:p-6">
+                <div class="glass-panel x-shell-divider p-5 sm:p-6">
                     <div class="mb-4">
                         <p class="section-kicker">Filtres</p>
                         <h3 class="mt-2 text-xl font-semibold text-white">Affiner le flux</h3>
@@ -271,9 +271,9 @@
             </div>
             </div>
 
-            <div class="grid gap-0 xl:grid-cols-[minmax(0,1fr)_21rem] xl:gap-6">
-                <div class="space-y-0">
-                    <section class="glass-panel x-shell-divider rounded-none p-5 sm:p-6">
+            <div class="grid gap-6 xl:grid-cols-[minmax(0,1fr)_21rem]">
+                <div class="space-y-6">
+                    <section class="glass-panel x-shell-divider p-5 sm:p-6">
                         <div class="flex items-start gap-4">
                             <span class="mt-1 flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/8 text-sm font-semibold uppercase text-white/80">
                                 @auth
@@ -309,15 +309,15 @@
                     </section>
 
                     @if ($pinnedTopics->isNotEmpty())
-                        <section class="space-y-3">
+                        <section class="space-y-4">
                             <div class="flex items-center justify-between gap-3">
-                                <div class="px-5 pt-5 sm:px-6">
+                                <div class="px-1 pt-1">
                                     <p class="section-kicker">Mis en avant</p>
                                     <h3 class="mt-2 text-2xl font-semibold text-white">Sujets a la une</h3>
                                 </div>
                             </div>
                             @foreach ($pinnedTopics as $topic)
-                                <article class="glass-panel x-shell-divider rounded-none border-l-0 border-r-0 border-t-0 p-5 sm:px-6">
+                                <article class="glass-panel x-shell-divider rounded-[1.9rem] p-5 sm:px-6">
                                     <div class="flex gap-4">
                                         <span class="mt-1 flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-amber-500/10 text-sm font-semibold uppercase text-amber-300">
                                             {{ strtoupper(substr($topic->user->name, 0, 1)) }}
@@ -343,8 +343,8 @@
                         </section>
                     @endif
 
-                    <section class="space-y-3">
-                        <div class="flex items-center justify-between gap-3 px-5 pt-5 sm:px-6">
+                    <section class="space-y-4">
+                        <div class="flex items-center justify-between gap-3 px-1 pt-1">
                             <div>
                                 <p class="section-kicker">Flux</p>
                                 <h3 class="mt-2 text-2xl font-semibold text-white">Ce que les membres racontent</h3>
@@ -360,7 +360,7 @@
                         </div>
 
                         @forelse ($topics as $topic)
-                            <article class="glass-panel-strong x-shell-divider rounded-none border-l-0 border-r-0 border-t-0 p-5 transition duration-200 hover:bg-white/[0.02] sm:px-6">
+                            <article class="glass-panel-strong x-shell-divider rounded-[1.95rem] p-5 transition duration-200 hover:bg-white/[0.02] sm:px-6">
                                 <div class="flex gap-4">
                                     <span class="mt-1 flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/8 text-sm font-semibold uppercase text-white/85">
                                         {{ strtoupper(substr($topic->user->name, 0, 1)) }}
@@ -406,7 +406,7 @@
                                 </div>
                             </article>
                         @empty
-                            <div class="glass-panel x-shell-divider rounded-none border-dashed p-12 text-center">
+                            <div class="glass-panel x-shell-divider rounded-[1.95rem] border-dashed p-12 text-center">
                                 <p class="section-kicker">Aucun contenu</p>
                                 <h3 class="mt-3 text-3xl font-semibold text-white">Le flux attend ses premiers messages</h3>
                                 <p class="mt-3 text-base text-white/60">L'actualite peut donner des idees, mais ce sont surtout les sujets des membres qui feront vivre le forum.</p>
@@ -504,7 +504,7 @@
                 </aside>
             </div>
 
-            <div class="glass-panel rounded-none px-4 py-4 sm:rounded-[1.2rem] sm:px-6">
+            <div class="glass-panel px-4 py-4 sm:px-6">
                 {{ $topics->links() }}
             </div>
         </div>
