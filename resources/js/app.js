@@ -4,9 +4,17 @@ import Alpine from 'alpinejs';
 
 window.Alpine = Alpine;
 
-Alpine.data('forumSearch', ({ initialQuery = '', action = '', suggestionsUrl = '' } = {}) => ({
+Alpine.data('forumSearch', ({
+    initialQuery = '',
+    action = '',
+    suggestionsUrl = '',
+    mockSections = null,
+    historyKey = 'forum-search-history',
+} = {}) => ({
     action,
     suggestionsUrl,
+    mockSections,
+    historyKey,
     open: false,
     loading: false,
     query: initialQuery,
@@ -14,9 +22,11 @@ Alpine.data('forumSearch', ({ initialQuery = '', action = '', suggestionsUrl = '
     activeIndex: -1,
     debounceTimer: null,
     requestId: 0,
-    historyKey: 'forum-search-history',
+    baseId: null,
 
     init() {
+        this.baseId = `x-search-${Math.random().toString(36).slice(2, 9)}`;
+
         if (this.query.trim() !== '') {
             this.fetchSuggestions();
         }
@@ -30,6 +40,18 @@ Alpine.data('forumSearch', ({ initialQuery = '', action = '', suggestionsUrl = '
         }
     },
 
+    get listboxId() {
+        return `${this.baseId}-listbox`;
+    },
+
+    optionId(index) {
+        return `${this.baseId}-option-${index}`;
+    },
+
+    get activeDescendant() {
+        return this.activeIndex >= 0 ? this.optionId(this.activeIndex) : null;
+    },
+
     get visibleSections() {
         if (this.query.trim() === '') {
             const historyItems = this.history.map((entry) => ({
@@ -40,15 +62,16 @@ Alpine.data('forumSearch', ({ initialQuery = '', action = '', suggestionsUrl = '
                 url: `${this.action}?search=${encodeURIComponent(entry)}`,
             }));
 
-            const helperItems = [
-                { type: 'query', title: 'user:moh', subtitle: 'Chercher un membre', query: 'user:moh' },
-                { type: 'query', title: '#actualite', subtitle: 'Chercher un hashtag', query: '#actualite' },
-                { type: 'query', title: 'category:sport', subtitle: 'Filtrer une categorie', query: 'category:sport' },
-            ];
-
             return [
                 ...(historyItems.length ? [{ label: 'Recent', items: historyItems }] : []),
-                { label: 'Raccourcis', items: helperItems },
+                {
+                    label: 'Pour essayer',
+                    items: [
+                        { type: 'query', title: 'user:moh', subtitle: 'Chercher un membre', query: 'user:moh' },
+                        { type: 'query', title: '#actualite', subtitle: 'Chercher un hashtag', query: '#actualite' },
+                        { type: 'query', title: 'category:sport', subtitle: 'Filtrer une categorie', query: 'category:sport' },
+                    ],
+                },
             ];
         }
 
@@ -72,7 +95,7 @@ Alpine.data('forumSearch', ({ initialQuery = '', action = '', suggestionsUrl = '
     onFocus() {
         this.open = true;
 
-        if (this.query.trim() !== '' && this.sections.length === 0) {
+        if (this.query.trim() === '' || this.sections.length === 0) {
             this.fetchSuggestions();
         }
     },
@@ -90,6 +113,11 @@ Alpine.data('forumSearch', ({ initialQuery = '', action = '', suggestionsUrl = '
         this.loading = true;
 
         try {
+            if (!this.suggestionsUrl) {
+                this.sections = this.buildMockSections(trimmedQuery);
+                return;
+            }
+
             const response = await fetch(`${this.suggestionsUrl}?query=${encodeURIComponent(trimmedQuery)}`, {
                 headers: {
                     Accept: 'application/json',
@@ -109,13 +137,60 @@ Alpine.data('forumSearch', ({ initialQuery = '', action = '', suggestionsUrl = '
             this.sections = Array.isArray(payload.sections) ? payload.sections : [];
         } catch {
             if (currentRequestId === this.requestId) {
-                this.sections = [];
+                this.sections = this.buildMockSections(trimmedQuery);
             }
         } finally {
             if (currentRequestId === this.requestId) {
                 this.loading = false;
             }
         }
+    },
+
+    buildMockSections(query) {
+        if (typeof this.mockSections === 'function') {
+            return this.mockSections(query);
+        }
+
+        if (Array.isArray(this.mockSections) && this.mockSections.length > 0) {
+            return this.mockSections;
+        }
+
+        return [
+            {
+                label: 'Recherche',
+                items: [
+                    {
+                        type: 'search',
+                        title: query,
+                        subtitle: 'Lancer la recherche dans le forum',
+                        query,
+                    },
+                ],
+            },
+            {
+                label: 'Suggestions',
+                items: [
+                    {
+                        type: 'query',
+                        title: `user:${query}`,
+                        subtitle: 'Chercher un membre',
+                        query: `user:${query}`,
+                    },
+                    {
+                        type: 'query',
+                        title: `#${query}`,
+                        subtitle: 'Explorer un hashtag',
+                        query: `#${query}`,
+                    },
+                    {
+                        type: 'query',
+                        title: `${query} avis`,
+                        subtitle: 'Suggestion de recherche',
+                        query: `${query} avis`,
+                    },
+                ],
+            },
+        ];
     },
 
     close() {
@@ -131,29 +206,36 @@ Alpine.data('forumSearch', ({ initialQuery = '', action = '', suggestionsUrl = '
         this.$nextTick(() => this.$refs.input?.focus());
     },
 
-    onKeydown(event) {
+    moveActive(delta) {
         const items = this.flatItems;
 
+        if (items.length === 0) {
+            return;
+        }
+
+        this.activeIndex = (this.activeIndex + delta + items.length) % items.length;
+
+        this.$nextTick(() => {
+            document.getElementById(this.optionId(this.activeIndex))?.scrollIntoView({
+                block: 'nearest',
+            });
+        });
+    },
+
+    onKeydown(event) {
         if (!this.open && ['ArrowDown', 'ArrowUp'].includes(event.key)) {
             this.open = true;
-            return;
         }
 
         if (event.key === 'ArrowDown') {
             event.preventDefault();
-            if (items.length === 0) {
-                return;
-            }
-            this.activeIndex = (this.activeIndex + 1 + items.length) % items.length;
+            this.moveActive(1);
             return;
         }
 
         if (event.key === 'ArrowUp') {
             event.preventDefault();
-            if (items.length === 0) {
-                return;
-            }
-            this.activeIndex = (this.activeIndex - 1 + items.length) % items.length;
+            this.moveActive(-1);
             return;
         }
 
@@ -164,7 +246,7 @@ Alpine.data('forumSearch', ({ initialQuery = '', action = '', suggestionsUrl = '
 
         if (event.key === 'Enter' && this.open && this.activeIndex >= 0) {
             event.preventDefault();
-            this.selectItem(items[this.activeIndex]);
+            this.selectItem(this.flatItems[this.activeIndex]);
         }
     },
 
@@ -175,6 +257,7 @@ Alpine.data('forumSearch', ({ initialQuery = '', action = '', suggestionsUrl = '
             this.storeHistory(trimmedQuery);
         }
 
+        this.close();
         this.$refs.form?.submit();
     },
 
@@ -195,6 +278,7 @@ Alpine.data('forumSearch', ({ initialQuery = '', action = '', suggestionsUrl = '
             if (item.title) {
                 this.storeHistory(item.title);
             }
+
             window.location.href = item.url;
         }
     },
