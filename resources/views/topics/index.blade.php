@@ -68,8 +68,16 @@
             @endphp
 
             <div class="space-y-4">
-                <div class="glass-panel-strong rounded-[1.9rem] p-5 sm:p-6">
-                    <form method="GET" action="{{ route('topics.index') }}" class="flex flex-col gap-4 lg:flex-row lg:items-center">
+                <div
+                    x-data="forumSearch({
+                        initialQuery: @js((string) request('search')),
+                        action: @js(route('topics.index')),
+                        suggestionsUrl: @js(route('search.suggestions')),
+                    })"
+                    @click.outside="close()"
+                    class="glass-panel-strong rounded-[1.9rem] p-5 sm:p-6"
+                >
+                    <form x-ref="form" method="GET" action="{{ route('topics.index') }}" class="flex flex-col gap-4">
                         @if (request()->filled('category'))
                             <input type="hidden" name="category" value="{{ request('category') }}">
                         @endif
@@ -87,18 +95,83 @@
                             <label for="search-bar" class="mb-2 block text-sm font-semibold uppercase tracking-[0.16em] text-stone-600">
                                 Rechercher un sujet
                             </label>
-                            <input
-                                id="search-bar"
-                                type="text"
-                                name="search"
-                                value="{{ request('search') }}"
-                                placeholder="Ex : inflation, cinema, Ukraine, voyage, relation..."
-                                class="block w-full rounded-full border-[rgba(71,85,135,0.16)] bg-white px-5 py-4 text-base shadow-sm focus:border-[var(--brand)] focus:ring-[var(--brand)]"
-                            >
+                            <div class="x-search-shell">
+                                <div class="x-search-field">
+                                    <svg class="x-search-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                        <path fill="currentColor" d="M10.5 4a6.5 6.5 0 1 0 4.03 11.6l4.44 4.43 1.06-1.06-4.43-4.44A6.5 6.5 0 0 0 10.5 4Zm0 1.5a5 5 0 1 1 0 10 5 5 0 0 1 0-10Z"/>
+                                    </svg>
+                                    <input
+                                        x-ref="input"
+                                        x-model="query"
+                                        @input="onInput()"
+                                        @focus="onFocus()"
+                                        @keydown="onKeydown($event)"
+                                        id="search-bar"
+                                        type="text"
+                                        name="search"
+                                        placeholder="Rechercher..."
+                                        aria-label="Rechercher"
+                                        aria-autocomplete="list"
+                                        :aria-expanded="open"
+                                        aria-controls="forum-search-dropdown"
+                                        autocomplete="off"
+                                        class="x-search-input"
+                                    >
+                                    <button
+                                        x-cloak
+                                        x-show="query.length > 0"
+                                        type="button"
+                                        @click="clear()"
+                                        class="x-search-clear"
+                                        aria-label="Effacer la recherche"
+                                    >
+                                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                                            <path fill="currentColor" d="M6.7 5.64 12 10.94l5.3-5.3 1.06 1.06-5.3 5.3 5.3 5.3-1.06 1.06-5.3-5.3-5.3 5.3-1.06-1.06 5.3-5.3-5.3-5.3 1.06-1.06Z"/>
+                                        </svg>
+                                    </button>
+                                </div>
+
+                                <div
+                                    x-cloak
+                                    x-show="open"
+                                    x-transition.opacity.duration.200ms
+                                    id="forum-search-dropdown"
+                                    class="x-search-dropdown"
+                                    role="listbox"
+                                >
+                                    <template x-if="loading">
+                                        <div class="x-search-status">Recherche en cours...</div>
+                                    </template>
+
+                                    <template x-if="!loading && visibleSections.length === 0">
+                                        <div class="x-search-status">Aucune suggestion pour le moment.</div>
+                                    </template>
+
+                                    <template x-for="(section, sectionIndex) in visibleSections" :key="section.label + sectionIndex">
+                                        <div class="x-search-section">
+                                            <p class="x-search-section-title" x-text="section.label"></p>
+                                            <div class="x-search-list">
+                                                <template x-for="(item, itemIndex) in section.items" :key="`${section.label}-${item.type}-${item.title}-${itemIndex}`">
+                                                    <button
+                                                        type="button"
+                                                        class="x-search-item"
+                                                        :class="{ 'is-active': activeIndex === flatItems.findIndex((entry) => entry === item) }"
+                                                        @mouseenter="activeIndex = flatItems.findIndex((entry) => entry === item)"
+                                                        @click="selectItem(item)"
+                                                    >
+                                                        <span class="x-search-item-title" x-text="item.title"></span>
+                                                        <span class="x-search-item-subtitle" x-text="item.subtitle || ''"></span>
+                                                    </button>
+                                                </template>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="flex items-center gap-3">
-                            <x-primary-button class="justify-center rounded-full px-5 py-4 text-sm">
+                        <div class="flex flex-wrap items-center gap-3">
+                            <x-primary-button type="button" @click="submitSearch()" class="justify-center rounded-full px-5 py-4 text-sm">
                                 Rechercher
                             </x-primary-button>
                             @if (request()->filled('search') || request()->filled('category') || request()->filled('tag') || request()->filled('order') || request()->filled('recommended'))
