@@ -1,0 +1,12 @@
+[program:forum-app-worker]
+process_name=%(program_name)s_%(process_num)02d
+command=php /var/www/forum-app/artisan queue:work --sleep=3 --tries=3 --max-time=3600
+autostart=true
+autorestart=true
+stopasgroup=true
+killasgroup=true
+user=www-data
+numprocs=1
+redirect_stderr=true
+stdout_logfile=/var/www/forum-app/storage/logs/worker.log
+stopwaitsecs=3600

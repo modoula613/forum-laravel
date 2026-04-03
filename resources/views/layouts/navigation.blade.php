@@ -1,175 +1,13 @@
-<nav x-data="{ open: false }" class="relative z-[70] px-4 pt-4 sm:px-6 lg:px-8">
-    <!-- Primary Navigation Menu -->
-    <div class="glass-panel mx-auto max-w-7xl rounded-[2rem] px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
-            <div class="flex items-center">
-                <!-- Logo -->
-                <div class="shrink-0 flex items-center">
-                    <a href="{{ route('topics.index') }}" class="inline-flex items-center gap-3 text-lg font-semibold tracking-tight text-gray-900">
-                        <span class="brand-dot"></span>
-                        {{ config('app.name', 'Sphere') }}
-                    </a>
-                </div>
+<nav x-data="{ open: false }" class="relative z-[70]">
+    <div class="mx-auto max-w-7xl lg:max-w-none">
+        <div class="mb-4 flex items-center justify-between rounded-[1.6rem] border border-[rgba(255,255,255,0.75)] bg-white/90 px-4 py-3 shadow-[0_18px_40px_rgba(15,23,42,0.06)] backdrop-blur-xl lg:hidden">
+            <a href="{{ route('home') }}" class="inline-flex items-center gap-3 text-lg font-bold tracking-tight text-gray-950">
+                <span class="brand-dot"></span>
+                {{ config('app.name', 'Sphere') }}
+            </a>
 
-                <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('topics.index')" :active="request()->routeIs('topics.*')">
-                        Acceuil
-                    </x-nav-link>
-                    <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.index')">
-                        Membres
-                    </x-nav-link>
-                    <x-nav-link :href="route('categories.index')" :active="request()->routeIs('categories.*')">
-                        Categories
-                    </x-nav-link>
-                    <x-nav-link :href="route('tags.index')" :active="request()->routeIs('tags.*')">
-                        Tags
-                    </x-nav-link>
-                    <x-nav-link :href="route('badges.index')" :active="request()->routeIs('badges.*') || request()->routeIs('users.badges')">
-                        Badges
-                    </x-nav-link>
-                    <x-nav-link :href="route('stats.index')" :active="request()->routeIs('stats.index')">
-                        Statistiques
-                    </x-nav-link>
-                    <x-nav-link :href="route('leaderboard')" :active="request()->routeIs('leaderboard')">
-                        Classement
-                    </x-nav-link>
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        Tableau de bord
-                    </x-nav-link>
-                </div>
-            </div>
-
-            <!-- Settings Dropdown -->
-            <div class="hidden sm:flex sm:items-center sm:ms-6">
-                @auth
-                    <x-dropdown align="right" width="48">
-                        <x-slot name="trigger">
-                            <button class="inline-flex items-center gap-3 rounded-full border border-[rgba(90,60,40,0.12)] bg-white/60 px-4 py-2 text-sm font-medium leading-4 text-stone-700 transition duration-150 ease-in-out hover:bg-white focus:outline-none">
-                                <span class="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--brand)] text-xs font-semibold uppercase text-white shadow-[0_10px_24px_rgba(79,70,229,0.28)]">
-                                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-                                </span>
-                                <div>{{ Auth::user()->name }}</div>
-                                @if (auth()->user()->unreadNotifications->count() > 0)
-                                    <span class="rounded-full bg-rose-500 px-2 py-0.5 text-[0.65rem] font-semibold text-white">
-                                        {{ auth()->user()->unreadNotifications->count() }}
-                                    </span>
-                                @endif
-                                @if (auth()->user()->unreadMessages()->count() > 0)
-                                    <span class="rounded-full bg-sky-500 px-2 py-0.5 text-[0.65rem] font-semibold text-white">
-                                        {{ auth()->user()->unreadMessages()->count() }}
-                                    </span>
-                                @endif
-
-                                <div class="ms-1">
-                                    <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                    </svg>
-                                </div>
-                            </button>
-                        </x-slot>
-
-                        <x-slot name="content">
-                            <x-dropdown-link :href="route('notifications.index')">
-                                Notifications
-                                @if (auth()->user()->unreadNotifications->count() > 0)
-                                    <span class="ms-2 rounded-full bg-rose-100 px-2 py-0.5 text-xs font-semibold text-rose-600">
-                                        {{ auth()->user()->unreadNotifications->count() }}
-                                    </span>
-                                @endif
-                            </x-dropdown-link>
-
-                            <x-dropdown-link :href="route('favorites.index')">
-                                Mes favoris
-                            </x-dropdown-link>
-
-                            <x-dropdown-link :href="route('tags.followed')">
-                                Mes tags suivis
-                            </x-dropdown-link>
-
-                            <x-dropdown-link :href="route('topics.feed')">
-                                Mon flux
-                            </x-dropdown-link>
-
-                            <x-dropdown-link :href="route('activity.index')">
-                                Activite recente
-                            </x-dropdown-link>
-
-                            <x-dropdown-link :href="route('messages.index')">
-                                Messages
-                                @if (auth()->user()->unreadMessages()->count() > 0)
-                                    <span class="ms-2 rounded-full bg-sky-100 px-2 py-0.5 text-xs font-semibold text-sky-600">
-                                        {{ auth()->user()->unreadMessages()->count() }}
-                                    </span>
-                                @endif
-                            </x-dropdown-link>
-
-                            <x-dropdown-link :href="route('replies.bookmarks')">
-                                Reponses sauvegardees
-                            </x-dropdown-link>
-
-                            <x-dropdown-link :href="route('profile.edit')">
-                                Profil
-                            </x-dropdown-link>
-                            @if (auth()->user()->role === 'admin')
-                                <x-dropdown-link :href="route('admin.index')">
-                                    Admin
-                                </x-dropdown-link>
-                                <x-dropdown-link :href="route('admin.users.index')">
-                                    Administration
-                                </x-dropdown-link>
-                                <x-dropdown-link :href="route('admin.topics.index')">
-                                    Sujets admin
-                                </x-dropdown-link>
-                                <x-dropdown-link :href="route('admin.replies.index')">
-                                    Reponses admin
-                                </x-dropdown-link>
-                                <x-dropdown-link :href="route('admin.tags.index')">
-                                    Tags admin
-                                </x-dropdown-link>
-                                <x-dropdown-link :href="route('admin.categories.index')">
-                                    Categories admin
-                                </x-dropdown-link>
-                                <x-dropdown-link :href="route('admin.badges.index')">
-                                    Badges admin
-                                </x-dropdown-link>
-                                <x-dropdown-link :href="route('admin.announcements.index')">
-                                    Annonces
-                                </x-dropdown-link>
-                                <x-dropdown-link :href="route('admin.reports.index')">
-                                    Signalements
-                                </x-dropdown-link>
-                                <x-dropdown-link :href="route('admin.logs.index')">
-                                    Logs admin
-                                </x-dropdown-link>
-                            @endif
-
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-
-                                <x-dropdown-link :href="route('logout')"
-                                        onclick="event.preventDefault();
-                                                    this.closest('form').submit();">
-                                    Deconnexion
-                                </x-dropdown-link>
-                            </form>
-                        </x-slot>
-                    </x-dropdown>
-                @else
-                    <div class="flex items-center gap-4 text-sm">
-                        <a href="{{ route('login') }}" class="font-medium text-stone-600 transition hover:text-stone-900">
-                            Connexion
-                        </a>
-                        <a href="{{ route('register') }}" class="rounded-full bg-[var(--brand)] px-4 py-2 font-medium text-white shadow-[0_12px_24px_rgba(79,70,229,0.2)] transition hover:bg-[var(--brand-deep)]">
-                            Inscription
-                        </a>
-                    </div>
-                @endauth
-            </div>
-
-            <!-- Hamburger -->
-            <div class="-me-2 flex items-center sm:hidden">
-                <button @click="open = ! open" class="inline-flex items-center justify-center rounded-full p-2 text-stone-500 transition duration-150 ease-in-out hover:bg-white/70 hover:text-stone-800 focus:outline-none">
+            <div class="-me-2 flex items-center">
+                <button @click="open = ! open" class="inline-flex items-center justify-center rounded-full p-2 text-stone-500 transition hover:bg-slate-100 hover:text-stone-800 focus:outline-none">
                     <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                         <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                         <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -177,136 +15,176 @@
                 </button>
             </div>
         </div>
+
+        <div class="hidden lg:block">
+            <div class="rounded-[2rem] border border-[rgba(255,255,255,0.78)] bg-white/88 p-4 shadow-[0_22px_55px_rgba(15,23,42,0.06)] backdrop-blur-xl">
+                <a href="{{ route('home') }}" class="mb-4 inline-flex items-center gap-3 px-3 py-2 text-xl font-bold tracking-tight text-gray-950">
+                    <span class="brand-dot"></span>
+                    {{ config('app.name', 'Sphere') }}
+                </a>
+
+                <div class="space-y-2">
+                    <x-nav-link :href="route('home')" :active="request()->routeIs('home') || request()->routeIs('topics.*')">
+                        Forum
+                    </x-nav-link>
+                    <x-nav-link :href="route('categories.index')" :active="request()->routeIs('categories.*')">
+                        Categories
+                    </x-nav-link>
+                    <x-nav-link :href="route('news.index')" :active="request()->routeIs('news.*')">
+                        Actualites
+                    </x-nav-link>
+                    @auth
+                        @if (auth()->user()->role === 'admin')
+                            <x-nav-link :href="route('admin.index')" :active="request()->routeIs('admin.*')">
+                                Espace admin
+                            </x-nav-link>
+                        @endif
+                    @endauth
+                </div>
+
+                @auth
+                    <div class="mt-5 rounded-[1.5rem] border border-[rgba(71,85,135,0.12)] bg-[linear-gradient(180deg,rgba(248,250,252,0.95),rgba(241,245,249,0.9))] p-4">
+                        <div class="flex items-center gap-3">
+                            <span class="flex h-11 w-11 items-center justify-center rounded-full bg-[var(--brand)] text-sm font-semibold uppercase text-white shadow-[0_10px_24px_rgba(29,155,240,0.2)]">
+                                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                            </span>
+                            <div class="min-w-0">
+                                <p class="truncate font-semibold text-stone-900">{{ Auth::user()->name }}</p>
+                                <p class="truncate text-sm text-stone-500">{{ Auth::user()->email }}</p>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 grid grid-cols-2 gap-2 text-sm">
+                            <a href="{{ route('dashboard') }}" class="rounded-2xl bg-white px-4 py-3 font-semibold text-stone-800 transition hover:bg-slate-50">
+                                Mon espace
+                            </a>
+                            <a href="{{ route('profile.edit') }}" class="rounded-2xl bg-white px-4 py-3 font-semibold text-stone-800 transition hover:bg-slate-50">
+                                Profil
+                            </a>
+                            <a href="{{ route('notifications.index') }}" class="rounded-2xl bg-white px-4 py-3 font-semibold text-stone-800 transition hover:bg-slate-50">
+                                Notifications
+                                @if (auth()->user()->unreadNotifications->count() > 0)
+                                    <span class="ml-1 text-rose-600">({{ auth()->user()->unreadNotifications->count() }})</span>
+                                @endif
+                            </a>
+                            <a href="{{ route('messages.index') }}" class="rounded-2xl bg-white px-4 py-3 font-semibold text-stone-800 transition hover:bg-slate-50">
+                                Messages
+                                @if (auth()->user()->unreadMessages()->count() > 0)
+                                    <span class="ml-1 text-sky-600">({{ auth()->user()->unreadMessages()->count() }})</span>
+                                @endif
+                            </a>
+                        </div>
+
+                        @if (auth()->user()->role === 'admin')
+                            <div class="mt-4 border-t border-[rgba(71,85,135,0.12)] pt-4">
+                                <p class="px-1 text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-stone-400">Administration</p>
+                                <div class="mt-3 space-y-2">
+                                    <a href="{{ route('admin.reports.index') }}" class="block rounded-2xl bg-white px-4 py-3 text-sm font-semibold text-stone-800 transition hover:bg-slate-50">
+                                        Signalements
+                                    </a>
+                                    <a href="{{ route('admin.users.index') }}" class="block rounded-2xl bg-white px-4 py-3 text-sm font-semibold text-stone-800 transition hover:bg-slate-50">
+                                        Utilisateurs
+                                    </a>
+                                </div>
+                            </div>
+                        @endif
+
+                        <form method="POST" action="{{ route('logout') }}" class="mt-4">
+                            @csrf
+                            <button
+                                type="submit"
+                                class="block w-full rounded-2xl bg-rose-600 px-4 py-3 text-left text-sm font-semibold text-white transition hover:bg-rose-500 focus:outline-none"
+                            >
+                                Deconnexion
+                            </button>
+                        </form>
+                    </div>
+                @else
+                    <div class="mt-5 rounded-[1.5rem] border border-[rgba(71,85,135,0.12)] bg-[linear-gradient(180deg,rgba(248,250,252,0.95),rgba(241,245,249,0.9))] p-4">
+                        <p class="text-sm leading-6 text-stone-600">Rejoins le flux pour publier, suivre des sujets et recevoir tes notifications.</p>
+                        <div class="mt-4 space-y-2">
+                            <a href="{{ route('login') }}" class="block rounded-2xl bg-[var(--brand)] px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-[var(--brand-deep)]">
+                                Connexion
+                            </a>
+                            <a href="{{ route('register') }}" class="block rounded-2xl bg-white px-4 py-3 text-center text-sm font-semibold text-stone-800 transition hover:bg-slate-50">
+                                Inscription
+                            </a>
+                        </div>
+                    </div>
+                @endauth
+            </div>
+        </div>
     </div>
 
-    <!-- Responsive Navigation Menu -->
-    <div :class="{'block': open, 'hidden': ! open}" class="hidden border-t soft-divider sm:hidden">
-        <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('topics.index')" :active="request()->routeIs('topics.*')">
-                Forum
-            </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('users.index')" :active="request()->routeIs('users.index')">
-                Membres
-            </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('categories.index')" :active="request()->routeIs('categories.*')">
-                Categories
-            </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('tags.index')" :active="request()->routeIs('tags.*')">
-                Tags
-            </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('badges.index')" :active="request()->routeIs('badges.*') || request()->routeIs('users.badges')">
-                Badges
-            </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('stats.index')" :active="request()->routeIs('stats.index')">
-                Statistiques
-            </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('leaderboard')" :active="request()->routeIs('leaderboard')">
-                Classement
-            </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                Tableau de bord
-            </x-responsive-nav-link>
-        </div>
-
-        <!-- Responsive Settings Options -->
-        <div class="pt-4 pb-1 border-t soft-divider">
-            @auth
-                <div class="px-4">
-                    <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
-                    <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
-                </div>
-
-                <div class="mt-3 space-y-1">
-                    <x-responsive-nav-link :href="route('notifications.index')">
-                        Notifications
-                        @if (auth()->user()->unreadNotifications->count() > 0)
-                            ({{ auth()->user()->unreadNotifications->count() }})
-                        @endif
-                    </x-responsive-nav-link>
-
-                    <x-responsive-nav-link :href="route('favorites.index')">
-                        Mes favoris
-                    </x-responsive-nav-link>
-
-                    <x-responsive-nav-link :href="route('tags.followed')">
-                        Mes tags suivis
-                    </x-responsive-nav-link>
-
-                    <x-responsive-nav-link :href="route('topics.feed')">
-                        Mon flux
-                    </x-responsive-nav-link>
-
-                    <x-responsive-nav-link :href="route('activity.index')">
-                        Activite recente
-                    </x-responsive-nav-link>
-
-                    <x-responsive-nav-link :href="route('messages.index')">
-                        Messages
-                        @if (auth()->user()->unreadMessages()->count() > 0)
-                            ({{ auth()->user()->unreadMessages()->count() }})
-                        @endif
-                    </x-responsive-nav-link>
-
-                    <x-responsive-nav-link :href="route('replies.bookmarks')">
-                        Reponses sauvegardees
-                    </x-responsive-nav-link>
-
-                    <x-responsive-nav-link :href="route('profile.edit')">
-                        Profil
-                    </x-responsive-nav-link>
+    <div :class="{'block': open, 'hidden': ! open}" class="hidden lg:hidden">
+        <div class="rounded-[1.75rem] border border-[rgba(255,255,255,0.78)] bg-white/92 p-3 shadow-[0_20px_45px_rgba(15,23,42,0.08)] backdrop-blur-xl">
+            <div class="space-y-1">
+                <x-responsive-nav-link :href="route('home')" :active="request()->routeIs('home') || request()->routeIs('topics.*')">
+                    Forum
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('categories.index')" :active="request()->routeIs('categories.*')">
+                    Categories
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('news.index')" :active="request()->routeIs('news.*')">
+                    Actualites
+                </x-responsive-nav-link>
+                @auth
                     @if (auth()->user()->role === 'admin')
-                        <x-responsive-nav-link :href="route('admin.index')">
-                            Admin
-                        </x-responsive-nav-link>
-                        <x-responsive-nav-link :href="route('admin.users.index')">
-                            Administration
-                        </x-responsive-nav-link>
-                        <x-responsive-nav-link :href="route('admin.topics.index')">
-                            Sujets admin
-                        </x-responsive-nav-link>
-                        <x-responsive-nav-link :href="route('admin.replies.index')">
-                            Reponses admin
-                        </x-responsive-nav-link>
-                        <x-responsive-nav-link :href="route('admin.tags.index')">
-                            Tags admin
-                        </x-responsive-nav-link>
-                        <x-responsive-nav-link :href="route('admin.categories.index')">
-                            Categories admin
-                        </x-responsive-nav-link>
-                        <x-responsive-nav-link :href="route('admin.badges.index')">
-                            Badges admin
-                        </x-responsive-nav-link>
-                        <x-responsive-nav-link :href="route('admin.announcements.index')">
-                            Annonces
-                        </x-responsive-nav-link>
-                        <x-responsive-nav-link :href="route('admin.reports.index')">
-                            Signalements
-                        </x-responsive-nav-link>
-                        <x-responsive-nav-link :href="route('admin.logs.index')">
-                            Logs admin
+                        <x-responsive-nav-link :href="route('admin.index')" :active="request()->routeIs('admin.*')">
+                            Espace admin
                         </x-responsive-nav-link>
                     @endif
+                @endauth
+            </div>
 
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
+            <div class="mt-4 border-t soft-divider pt-4">
+                @auth
+                    <div class="px-3">
+                        <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
+                        <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
+                    </div>
 
-                        <x-responsive-nav-link :href="route('logout')"
-                                onclick="event.preventDefault();
-                                            this.closest('form').submit();">
-                            Deconnexion
+                    <div class="mt-3 space-y-1">
+                        <x-responsive-nav-link :href="route('dashboard')">
+                            Mon espace
                         </x-responsive-nav-link>
-                    </form>
-                </div>
-            @else
-                <div class="space-y-1">
-                    <x-responsive-nav-link :href="route('login')">
-                        Connexion
-                    </x-responsive-nav-link>
-                    <x-responsive-nav-link :href="route('register')">
-                        Inscription
-                    </x-responsive-nav-link>
-                </div>
-            @endauth
+                        <x-responsive-nav-link :href="route('notifications.index')">
+                            Notifications
+                            @if (auth()->user()->unreadNotifications->count() > 0)
+                                ({{ auth()->user()->unreadNotifications->count() }})
+                            @endif
+                        </x-responsive-nav-link>
+                        <x-responsive-nav-link :href="route('messages.index')">
+                            Messages
+                            @if (auth()->user()->unreadMessages()->count() > 0)
+                                ({{ auth()->user()->unreadMessages()->count() }})
+                            @endif
+                        </x-responsive-nav-link>
+                        <x-responsive-nav-link :href="route('profile.edit')">
+                            Profil
+                        </x-responsive-nav-link>
+
+                        <form method="POST" action="{{ route('logout') }}" class="px-3 pt-2">
+                            @csrf
+                            <button
+                                type="submit"
+                                class="block w-full rounded-2xl bg-rose-600 px-4 py-3 text-left text-base font-semibold text-white transition hover:bg-rose-500 focus:outline-none"
+                            >
+                                Deconnexion
+                            </button>
+                        </form>
+                    </div>
+                @else
+                    <div class="space-y-1">
+                        <x-responsive-nav-link :href="route('login')">
+                            Connexion
+                        </x-responsive-nav-link>
+                        <x-responsive-nav-link :href="route('register')">
+                            Inscription
+                        </x-responsive-nav-link>
+                    </div>
+                @endauth
+            </div>
         </div>
     </div>
 </nav>

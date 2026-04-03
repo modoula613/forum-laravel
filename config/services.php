@@ -35,4 +35,12 @@ return [
         ],
     ],
 
+    'gnews' => [
+        'key' => env('GNEWS_API_KEY'),
+        'endpoint' => env('GNEWS_ENDPOINT', 'https://gnews.io/api/v4'),
+        'lang' => env('GNEWS_LANG', 'fr'),
+        'country' => env('GNEWS_COUNTRY', 'fr'),
+        'max' => env('GNEWS_MAX', 25),
+    ],
+
 ];

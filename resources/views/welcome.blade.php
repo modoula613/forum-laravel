@@ -13,7 +13,7 @@
         <div class="page-shell">
             <div class="mx-auto flex min-h-screen max-w-7xl flex-col px-6 py-6 lg:px-8">
             <header class="glass-panel flex items-center justify-between rounded-[2rem] px-6 py-5">
-                <a href="{{ route('topics.index') }}" class="inline-flex items-center gap-3 text-xl font-semibold tracking-tight">
+                <a href="{{ route('home') }}" class="inline-flex items-center gap-3 text-xl font-semibold tracking-tight">
                     <span class="brand-dot"></span>
                     {{ config('app.name', 'Sphere') }}
                 </a>
@@ -36,7 +36,7 @@
                 </div>
             </header>
 
-            <main class="grid flex-1 items-center gap-10 py-14 lg:grid-cols-[1.1fr_0.9fr] lg:py-20">
+            <main class="grid flex-1 items-start gap-10 py-14 lg:grid-cols-[1.05fr_0.95fr] lg:py-20">
                 <section class="relative">
                     <div class="glass-panel-strong max-w-4xl rounded-[2.5rem] p-8 sm:p-10 lg:p-12">
                         @if ($announcements->isNotEmpty())
@@ -70,20 +70,9 @@
                             @endguest
                         </div>
 
-                        <div class="mt-10 grid gap-4 sm:grid-cols-3">
-                            <div class="surface-outline rounded-[1.75rem] bg-white/65 p-5">
-                                <p class="text-sm font-medium text-stone-500">Creation rapide</p>
-                                <p class="mt-2 text-xl font-semibold text-stone-900">Un sujet, quelques lignes, et la discussion part.</p>
-                            </div>
-                            <div class="surface-outline rounded-[1.75rem] bg-white/65 p-5">
-                                <p class="text-sm font-medium text-stone-500">Lecture fluide</p>
-                                <p class="mt-2 text-xl font-semibold text-stone-900">Des cartes claires, une hierarchie nette, rien de parasite.</p>
-                            </div>
-                            <div class="rounded-[1.75rem] bg-stone-900 p-5 text-white shadow-[0_18px_40px_rgba(32,26,23,0.22)]">
-                                <p class="text-sm font-medium text-stone-300">Acces membre</p>
-                                <p class="mt-2 text-xl font-semibold">Publie, reponds et gere tes sujets depuis un seul espace.</p>
-                            </div>
-                        </div>
+                        <p class="mt-8 text-sm text-stone-500">
+                            {{ $topicsCount }} sujets · {{ $repliesCount }} reponses · {{ $usersCount }} membres
+                        </p>
                     </div>
                 </section>
 
@@ -91,8 +80,8 @@
                     <div class="glass-panel rounded-[2rem] p-6 sm:p-8">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="section-kicker">Categories phares</p>
-                                <h2 class="mt-3 text-3xl font-semibold text-stone-950">Les univers les plus actifs</h2>
+                                <p class="section-kicker">Entrer dans le forum</p>
+                                <h2 class="mt-3 text-3xl font-semibold text-stone-950">Choisir un espace</h2>
                             </div>
                             <a href="{{ route('categories.index') }}" class="rounded-full bg-white/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-stone-700 transition hover:bg-white">
                                 Voir tout
@@ -105,10 +94,12 @@
                                         <div>
                                             <p class="text-xl font-semibold text-stone-950">{{ $category->name }}</p>
                                             <p class="mt-2 text-sm text-stone-500">{{ $category->topics_count }} sujet(s)</p>
+                                            @if ($category->latestTopic)
+                                                <p class="mt-2 text-sm leading-7 text-stone-600">
+                                                    Dernier sujet: <span class="font-semibold text-stone-700">{{ \Illuminate\Support\Str::limit($category->latestTopic->title, 54) }}</span>
+                                                </p>
+                                            @endif
                                         </div>
-                                        <span class="rounded-full bg-[rgba(20,184,166,0.12)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--accent)]">
-                                            Actif
-                                        </span>
                                     </div>
                                 </a>
                             @empty
@@ -122,30 +113,71 @@
                     <div class="glass-panel rounded-[2rem] p-6 sm:p-8">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="section-kicker">Ambiance</p>
-                                <h2 class="mt-3 text-3xl font-semibold text-stone-950">Un forum plus editorial</h2>
+                                <p class="section-kicker">Forum</p>
+                                <h2 class="mt-3 text-3xl font-semibold text-stone-950">Discussions recentes</h2>
                             </div>
-                            <div class="rounded-full bg-[rgba(184,92,56,0.12)] px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--brand-deep)]">
-                                Nouvelle interface
-                            </div>
+                            <a href="{{ route('topics.index') }}" class="rounded-full bg-white/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-stone-700 transition hover:bg-white">
+                                Voir le forum
+                            </a>
                         </div>
-                        <p class="muted-copy mt-4 leading-7">
-                            Palette chaude, surfaces translucides et typographie plus marquee pour faire ressortir les sujets sans tomber dans un style trop froid ou generique.
-                        </p>
+                        <div class="mt-5 space-y-3">
+                            @forelse ($recentTopics as $topic)
+                                <a href="{{ route('topics.show', $topic) }}" class="block rounded-[1.5rem] bg-white/70 px-5 py-4 transition hover:-translate-y-0.5 hover:bg-white">
+                                    <div class="flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-[0.18em] text-stone-500">
+                                        @if ($topic->category)
+                                            <span class="rounded-full bg-[rgba(20,184,166,0.12)] px-3 py-1 text-[var(--accent)]">
+                                                {{ $topic->category->name }}
+                                            </span>
+                                        @endif
+                                        <span>{{ $topic->created_at->format('d/m/Y H:i') }}</span>
+                                    </div>
+                                    <p class="mt-3 text-lg font-semibold text-stone-950">{{ $topic->title }}</p>
+                                    <p class="mt-2 text-sm text-stone-500">{{ $topic->user->name }}</p>
+                                </a>
+                            @empty
+                                <div class="rounded-[1.5rem] bg-white/70 px-5 py-4 text-sm text-stone-500">
+                                    Les nouveaux sujets apparaitront ici.
+                                </div>
+                            @endforelse
+                        </div>
                     </div>
 
-                    <div class="grid gap-5 sm:grid-cols-2">
-                        <div class="glass-panel rounded-[2rem] p-6">
-                            <p class="text-sm font-medium text-stone-500">Publication</p>
-                            <p class="mt-3 text-2xl font-semibold text-stone-950">Des appels a l'action visibles.</p>
-                            <p class="muted-copy mt-3 text-sm leading-7">Creer un sujet ou repondre reste evident sur desktop comme sur mobile.</p>
+                    <div class="glass-panel rounded-[2rem] p-6 sm:p-8">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="section-kicker">Actualites</p>
+                                <h2 class="mt-3 text-3xl font-semibold text-stone-950">A la une</h2>
+                            </div>
+                            <a href="{{ route('news.index') }}" class="rounded-full bg-white/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-stone-700 transition hover:bg-white">
+                                Voir tout
+                            </a>
                         </div>
-                        <div class="glass-panel rounded-[2rem] p-6">
-                            <p class="text-sm font-medium text-stone-500">Navigation</p>
-                            <p class="mt-3 text-2xl font-semibold text-stone-950">Une structure plus compacte.</p>
-                            <p class="muted-copy mt-3 text-sm leading-7">Le haut de page encadre mieux le contenu et garde un repere visuel stable.</p>
+                        <div class="mt-5 space-y-3">
+                            @forelse ($latestNews as $article)
+                                <a href="{{ route('news.index', ['category' => $article->category?->slug]) }}" class="block rounded-[1.5rem] bg-white/70 px-5 py-4 transition hover:-translate-y-0.5 hover:bg-white">
+                                        <div class="flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-[0.18em] text-stone-500">
+                                            @if ($article->category)
+                                                <span class="rounded-full bg-[rgba(154,90,46,0.12)] px-3 py-1 text-[var(--accent)]">
+                                                    {{ $article->category->name }}
+                                                </span>
+                                            @endif
+                                            @if ($article->source_name)
+                                                <span>{{ $article->source_name }}</span>
+                                            @endif
+                                        </div>
+                                        <p class="mt-3 text-lg font-semibold text-stone-950">{{ $article->title }}</p>
+                                        @if ($article->excerpt)
+                                            <p class="mt-2 text-sm text-stone-500">{{ \Illuminate\Support\Str::limit($article->excerpt, 110) }}</p>
+                                        @endif
+                                </a>
+                            @empty
+                                <div class="rounded-[1.5rem] bg-white/70 px-5 py-4 text-sm text-stone-500">
+                                    Les actualites importeront ici des qu’une synchronisation sera lancee.
+                                </div>
+                            @endforelse
                         </div>
                     </div>
+
                 </section>
             </main>
             </div>

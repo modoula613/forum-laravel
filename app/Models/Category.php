@@ -40,4 +40,14 @@ class Category extends Model
     {
         return $this->hasMany(Topic::class);
     }
+
+    public function newsArticles()
+    {
+        return $this->hasMany(NewsArticle::class);
+    }
+
+    public function latestTopic()
+    {
+        return $this->hasOne(Topic::class)->latestOfMany();
+    }
 }

@@ -16,6 +16,7 @@ use App\Http\Controllers\BadgeController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\MessageController;
+use App\Http\Controllers\NewsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReplyController;
 use App\Http\Controllers\ReplyBookmarkController;
@@ -27,24 +28,37 @@ use App\Http\Controllers\TagController;
 use App\Http\Controllers\TagFollowController;
 use App\Http\Controllers\TopicController;
 use App\Http\Controllers\UserController;
-use App\Models\Announcement;
-use App\Models\Category;
+use App\Models\Topic;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    $categories = Category::withCount('topics')
-        ->orderByDesc('topics_count')
-        ->take(3)
-        ->get();
-    $announcements = Announcement::where('is_active', true)
-        ->latest()
-        ->get();
-
-    return view('welcome', compact('categories', 'announcements'));
-});
+Route::get('/', [TopicController::class, 'index'])->name('home');
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    if (request()->user()?->role === 'admin') {
+        return redirect()->route('admin.index');
+    }
+
+    $user = request()->user();
+    $followedTagIds = $user->followedTags->pluck('id');
+
+    $recommendedTopics = $followedTagIds->isNotEmpty()
+        ? Topic::whereHas('tags', fn ($query) => $query->whereIn('tags.id', $followedTagIds))
+            ->where('is_draft', false)
+            ->with(['user', 'tags'])
+            ->latest()
+            ->take(6)
+            ->get()
+        : collect();
+
+    $overview = [
+        'favorites' => $user->favorites()->count(),
+        'followed_tags' => $user->followedTags()->count(),
+        'bookmarks' => $user->bookmarkedReplies()->count(),
+        'unread_notifications' => $user->unreadNotifications()->count(),
+        'unread_messages' => $user->unreadMessages()->count(),
+    ];
+
+    return view('dashboard', compact('recommendedTopics', 'overview'));
 })->middleware(['auth', 'legacy_badge'])->name('dashboard');
 
 Route::get('/topics', [TopicController::class, 'index'])->name('topics.index');
@@ -58,6 +72,7 @@ Route::get('/badges', [BadgeController::class, 'index'])->name('badges.index');
 Route::get('/tags', [TagController::class, 'index'])->name('tags.index');
 Route::get('/tags/{tag}', [TagController::class, 'show'])->name('tags.show');
 Route::get('/announcements', [AnnouncementController::class, 'index'])->name('announcements.index');
+Route::get('/news', [NewsController::class, 'index'])->name('news.index');
 Route::get('/stats', [StatsController::class, 'index'])->name('stats.index');
 Route::get('/leaderboard', [StatsController::class, 'leaderboard'])->name('leaderboard');
 Route::get('/sitemap', [SeoController::class, 'sitemap'])->name('sitemap');

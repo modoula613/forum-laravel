@@ -6,6 +6,8 @@ use App\Models\Reply;
 use App\Models\Tag;
 use App\Models\Topic;
 use App\Models\User;
+use App\Models\NewsArticle;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\View\View;
 
 class StatsController extends Controller
@@ -26,15 +28,18 @@ class StatsController extends Controller
             ->get();
         $topLevels = User::orderByDesc('level')
             ->orderByDesc('experience')
-            ->take(10)
+            ->take(5)
             ->get();
         $topReputation = User::orderByDesc('reputation')
-            ->take(10)
+            ->take(5)
             ->get();
         $popularTags = Tag::withCount('topics')
             ->orderByDesc('topics_count')
             ->take(10)
             ->get();
+        $newsCount = Schema::hasTable('news_articles')
+            ? NewsArticle::count()
+            : 0;
 
         return view('stats.index', compact(
             'topicsCount',
@@ -45,7 +50,8 @@ class StatsController extends Controller
             'topTopics',
             'topLevels',
             'topReputation',
-            'popularTags'
+            'popularTags',
+            'newsCount'
         ));
     }
 

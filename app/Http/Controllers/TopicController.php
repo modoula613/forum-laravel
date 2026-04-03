@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\AdminLog;
 use App\Models\Badge;
 use App\Models\Category;
+use App\Models\NewsArticle;
 use App\Models\Tag;
 use App\Models\Topic;
 use App\Models\TopicEdit;
@@ -14,6 +15,7 @@ use App\Notifications\UserWarnedNotification;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\View\View;
 
 class TopicController extends Controller
@@ -76,7 +78,23 @@ class TopicController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        return view('topics.index', compact('topics', 'pinnedTopics', 'categories', 'tags', 'topicsWithUnreadReplies', 'recommendedTopicIds'));
+        $forumNews = Schema::hasTable('news_articles')
+            ? NewsArticle::with('category')
+                ->when($category, fn ($builder) => $builder->where('category_id', $category))
+                ->latest('published_at')
+                ->take(4)
+                ->get()
+            : collect();
+
+        return view('topics.index', compact(
+            'topics',
+            'pinnedTopics',
+            'categories',
+            'tags',
+            'topicsWithUnreadReplies',
+            'recommendedTopicIds',
+            'forumNews'
+        ));
     }
 
     public function create(): View

@@ -27,6 +27,23 @@
 
     <div class="py-10">
         <div class="mx-auto max-w-6xl space-y-6 px-4 sm:px-6 lg:px-8">
+            <section class="grid gap-4 md:grid-cols-3">
+                <article class="glass-panel rounded-[2rem] p-6">
+                    <p class="section-kicker">Tag</p>
+                    <p class="mt-3 text-4xl font-semibold text-stone-950">{{ $topics->total() }}</p>
+                    <p class="mt-2 text-sm text-stone-500">Sujet(s) associe(s) a ce tag.</p>
+                </article>
+                <article class="glass-panel rounded-[2rem] p-6">
+                    <p class="section-kicker">Abonnes</p>
+                    <p class="mt-3 text-4xl font-semibold text-stone-950">{{ $tag->followers_count }}</p>
+                    <p class="mt-2 text-sm text-stone-500">Membres qui suivent ce signal faible.</p>
+                </article>
+                <article class="glass-panel rounded-[2rem] p-6">
+                    <p class="section-kicker">Interet</p>
+                    <p class="mt-3 text-2xl font-semibold text-stone-950">Un bon tag sert a faire remonter les bons sujets au bon moment.</p>
+                </article>
+            </section>
+
             @forelse ($topics as $topic)
                 <article class="glass-panel-strong rounded-[2rem] p-6 sm:p-7">
                     <div class="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
@@ -75,8 +92,31 @@
                 <div class="glass-panel rounded-[2rem] border-dashed p-12 text-center">
                     <p class="section-kicker">Aucun sujet</p>
                     <h3 class="mt-3 text-3xl font-semibold text-stone-950">Aucune discussion pour ce tag</h3>
+                    <p class="muted-copy mt-3 text-base">Le suivre maintenant permettra de voir apparaitre ici les prochains sujets lies.</p>
                 </div>
             @endforelse
+
+            @if ($popularTags->isNotEmpty())
+                <section class="glass-panel rounded-[2rem] p-6">
+                    <div class="flex items-center justify-between gap-4">
+                        <div>
+                            <p class="section-kicker">Continuer</p>
+                            <h3 class="mt-3 text-3xl font-semibold text-stone-950">Autres tags a explorer</h3>
+                        </div>
+                        <a href="{{ route('tags.index') }}" class="rounded-full border border-[rgba(71,85,135,0.16)] bg-white/70 px-4 py-2 text-sm font-semibold text-stone-700 transition hover:bg-white">
+                            Tous les tags
+                        </a>
+                    </div>
+                    <div class="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+                        @foreach ($popularTags as $popularTag)
+                            <a href="{{ route('tags.show', $popularTag) }}" class="rounded-[1.5rem] bg-white/70 px-4 py-4 transition hover:bg-white">
+                                <p class="font-semibold text-stone-900">{{ $popularTag->name }}</p>
+                                <p class="mt-2 text-sm text-stone-500">{{ $popularTag->topics_count }} sujets · {{ $popularTag->followers_count }} abonne(s)</p>
+                            </a>
+                        @endforeach
+                    </div>
+                </section>
+            @endif
 
             <div class="glass-panel rounded-[2rem] px-4 py-4 sm:px-6">
                 {{ $topics->links() }}

@@ -19,9 +19,15 @@ class AdminController extends Controller
         $topicsCount = Topic::count();
         $repliesCount = Reply::count();
         $reportsCount = Report::count();
+        $pendingReportsCount = Report::where('status', 'pending')->count();
+        $resolvedReportsCount = Report::where('status', 'resolved')->count();
+        $ignoredReportsCount = Report::where('status', 'ignored')->count();
         $tagsCount = Tag::count();
         $categoriesCount = Category::count();
         $adminLogsCount = AdminLog::count();
+        $bannedUsersCount = User::where('is_banned', true)->count();
+        $lockedTopicsCount = Topic::where('is_locked', true)->count();
+        $pinnedTopicsCount = Topic::where('is_pinned', true)->count();
         $latestReports = Report::with(['reply', 'topic', 'user', 'reply.user'])
             ->latest()
             ->take(5)
@@ -36,19 +42,30 @@ class AdminController extends Controller
         $latestCategories = Category::latest()
             ->take(5)
             ->get();
+        $latestAdminLogs = AdminLog::with('admin')
+            ->latest()
+            ->take(5)
+            ->get();
 
         return view('admin.index', compact(
             'usersCount',
             'topicsCount',
             'repliesCount',
             'reportsCount',
+            'pendingReportsCount',
+            'resolvedReportsCount',
+            'ignoredReportsCount',
             'tagsCount',
             'categoriesCount',
             'adminLogsCount',
+            'bannedUsersCount',
+            'lockedTopicsCount',
+            'pinnedTopicsCount',
             'latestReports',
             'latestUsers',
             'latestTopics',
-            'latestCategories'
+            'latestCategories',
+            'latestAdminLogs'
         ));
     }
 }

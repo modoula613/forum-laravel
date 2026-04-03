@@ -11,30 +11,32 @@
         <title>{{ config('app.name', 'Sphere') }}</title>
         <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=manrope:400,500,600,700,800|newsreader:400,500,600,700&display=swap" rel="stylesheet" />
-
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="ambient-page antialiased">
+    <body class="ambient-page social-page antialiased">
         <div class="page-shell">
-            @include('layouts.navigation')
+            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div class="app-frame lg:grid lg:grid-cols-[18rem_minmax(0,1fr)] lg:gap-8">
+                    <aside class="app-sidebar lg:sticky lg:top-0 lg:h-screen lg:py-6">
+                        @include('layouts.navigation')
+                    </aside>
 
-            <!-- Page Heading -->
-            @isset($header)
-                <header class="px-4 pt-6 sm:px-6 lg:px-8">
-                    <div class="glass-panel mx-auto max-w-7xl rounded-[2rem] px-6 py-7 sm:px-8">
-                        {{ $header }}
+                    <div class="app-main pb-14 lg:py-6">
+                        @isset($header)
+                            <header class="page-header-shell pt-4 lg:pt-0">
+                                <div class="app-header-card rounded-[2rem] px-6 py-7 sm:px-8">
+                                    {{ $header }}
+                                </div>
+                            </header>
+                        @endisset
+
+                        <main class="page-content mt-6">
+                            {{ $slot }}
+                        </main>
                     </div>
-                </header>
-            @endisset
-
-            <!-- Page Content -->
-            <main class="pb-14">
-                {{ $slot }}
-            </main>
+                </div>
+            </div>
         </div>
     </body>
 </html>

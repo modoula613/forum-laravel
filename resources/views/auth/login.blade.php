@@ -1,10 +1,20 @@
 <x-guest-layout>
-    <div class="mb-8">
-        <p class="section-kicker">Connexion</p>
-        <h1 class="mt-3 text-4xl font-semibold text-stone-950">Heureux de te revoir</h1>
-        <p class="muted-copy mt-3 text-sm leading-7">
-            Connecte-toi pour reprendre les discussions, publier un sujet ou repondre aux derniers messages.
-        </p>
+    <div class="mb-8 flex items-start justify-between gap-4">
+        <div>
+            <p class="section-kicker">Connexion</p>
+            <h1 class="mt-3 text-4xl font-semibold text-stone-950">Heureux de te revoir</h1>
+            <p class="muted-copy mt-3 text-sm leading-7">
+                Connecte-toi pour reprendre les discussions, publier un sujet ou repondre aux derniers messages.
+            </p>
+        </div>
+        <a
+            href="{{ route('topics.index') }}"
+            class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[rgba(71,85,135,0.16)] bg-white/80 text-xl font-semibold leading-none text-stone-500 transition hover:bg-white hover:text-stone-900"
+            aria-label="Quitter la page de connexion"
+            title="Quitter"
+        >
+            ×
+        </a>
     </div>
 
     <!-- Session Status -->

@@ -43,6 +43,10 @@
                         <p class="section-kicker">Tag</p>
                         <h3 class="mt-3 text-2xl font-semibold text-stone-950">{{ $tag->name }}</h3>
                         <p class="mt-3 text-sm text-stone-500">{{ $tag->topics_count }} sujet(s)</p>
+                        <p class="mt-2 text-sm text-stone-500">{{ $tag->followers_count }} abonne(s)</p>
+                        <p class="mt-4 text-sm leading-7 text-stone-600">
+                            Un point d’entree rapide pour retrouver des discussions proches et suivre ce qui revient souvent.
+                        </p>
                     </a>
                 @empty
                     <div class="glass-panel rounded-[2rem] border-dashed p-12 text-center md:col-span-2 xl:col-span-3">
@@ -51,6 +55,27 @@
                     </div>
                 @endforelse
             </div>
+
+            <section class="glass-panel rounded-[2rem] p-6">
+                <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                    <div class="max-w-3xl">
+                        <p class="section-kicker">Suivi</p>
+                        <h3 class="mt-3 text-3xl font-semibold text-stone-950">Les tags servent aussi a personnaliser ton experience</h3>
+                        <p class="muted-copy mt-3 text-base leading-7">
+                            En suivant un tag, tu fais remonter les sujets correspondants dans ton flux et tu reçois des notifications quand une nouvelle discussion apparait.
+                        </p>
+                    </div>
+                    @auth
+                        <a href="{{ route('tags.followed') }}" class="rounded-full bg-[var(--brand)] px-5 py-3 text-sm font-semibold uppercase tracking-[0.18em] text-white shadow-[0_18px_35px_rgba(79,70,229,0.28)] transition hover:-translate-y-0.5 hover:bg-[var(--brand-deep)]">
+                            Voir mes tags suivis
+                        </a>
+                    @else
+                        <a href="{{ route('login') }}" class="rounded-full border border-[rgba(71,85,135,0.16)] bg-white/70 px-5 py-3 text-sm font-semibold uppercase tracking-[0.18em] text-stone-700 transition hover:bg-white">
+                            Se connecter
+                        </a>
+                    @endauth
+                </div>
+            </section>
 
             <div class="glass-panel rounded-[2rem] px-4 py-4 sm:px-6">
                 {{ $tags->links() }}

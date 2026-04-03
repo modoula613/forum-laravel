@@ -29,7 +29,7 @@
                 </div>
             </div>
             @auth
-                <div class="flex items-center gap-3">
+                <div class="flex flex-wrap items-center gap-3 lg:justify-end">
                     <form method="POST" action="{{ route('topics.favorite', $topic) }}">
                         @csrf
                         <button type="submit" class="rounded-full border border-[rgba(71,85,135,0.16)] bg-white/70 px-4 py-2 text-sm font-semibold text-stone-700 transition hover:bg-white">
@@ -108,8 +108,8 @@
                 @endif
             @endauth
 
-            <div class="grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
-                <article class="glass-panel-strong rounded-[2.25rem] p-7 sm:p-8">
+            <div class="grid gap-8 lg:grid-cols-[minmax(0,1fr)_20rem]">
+                <article class="glass-panel-strong rounded-[2rem] p-7 sm:p-8">
                     <div class="mb-6 flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-[0.2em] text-stone-500">
                         <span class="rounded-full bg-[rgba(79,70,229,0.12)] px-3 py-1 text-[var(--brand)]">Discussion ouverte</span>
                         <span>{{ $topic->replies->count() }} message(s)</span>
@@ -125,7 +125,7 @@
                     </div>
                 </article>
 
-                <aside class="glass-panel rounded-[2.25rem] p-6">
+                <aside class="glass-panel rounded-[2rem] p-6">
                     <p class="section-kicker">Vue rapide</p>
                     <div class="mt-4 grid gap-4">
                         <div class="rounded-[1.5rem] bg-white/70 p-5">
@@ -163,160 +163,132 @@
                             </div>
                         </div>
                         <div class="rounded-[1.5rem] bg-white/70 p-5">
-                            <p class="text-sm text-stone-500">Messages</p>
-                            <p class="mt-2 text-2xl font-semibold text-stone-950">{{ $topic->replies->count() }}</p>
-                        </div>
-                        <div class="rounded-[1.5rem] bg-white/70 p-5">
-                            <p class="text-sm text-stone-500">Abonnes</p>
-                            <p class="mt-2 text-2xl font-semibold text-stone-950">{{ $topic->favorites_count }}</p>
-                        </div>
-                        <div class="rounded-[1.5rem] bg-white/70 p-5">
                             <p class="text-sm text-stone-500">Participation auteur</p>
                             <p class="mt-2 text-lg font-semibold text-stone-950">{{ $topic->user->topicsCount() }} sujets</p>
                             <p class="mt-1 text-sm text-stone-600">{{ $topic->user->repliesCount() }} reponses</p>
                         </div>
-                        <div class="rounded-[1.5rem] bg-[linear-gradient(135deg,var(--brand),var(--accent-soft))] p-5 text-white shadow-[0_18px_35px_rgba(79,70,229,0.24)]">
-                            <p class="text-sm text-white/75">Participation</p>
-                            <p class="mt-2 text-lg font-semibold">Ajoute une reponse pour faire avancer la discussion.</p>
+                        <div class="rounded-[1.5rem] bg-white/70 p-5">
+                            <p class="text-sm text-stone-500">Discussion</p>
+                            <p class="mt-2 text-lg font-semibold text-stone-950">{{ $topic->replies->count() }} messages</p>
+                            <p class="mt-1 text-sm text-stone-600">{{ $topic->favorites_count }} abonnes</p>
                         </div>
                     </div>
                 </aside>
             </div>
 
             <section class="space-y-5">
-                <div class="flex items-center justify-between">
+                <div class="flex flex-wrap items-center justify-between gap-3">
                     <h3 class="text-3xl font-semibold text-stone-950">Reponses</h3>
                     <span class="rounded-full bg-white/70 px-4 py-2 text-sm font-medium text-stone-600">{{ $topic->replies->count() }} message(s)</span>
                 </div>
 
                 @forelse ($topic->replies as $reply)
-                    <article class="glass-panel rounded-[2rem] p-5 sm:p-6">
-                        <div class="flex items-center justify-between gap-3">
-                            <div class="flex items-center gap-3">
-                                <span class="flex h-10 w-10 items-center justify-center rounded-full bg-[rgba(79,70,229,0.12)] text-sm font-semibold uppercase text-[var(--brand)]">
-                                    {{ strtoupper(substr($reply->user->name, 0, 1)) }}
-                                </span>
-                                <div>
-                                    <p class="text-sm font-semibold uppercase tracking-[0.16em] text-stone-700">{{ $reply->user->name }}</p>
-                                    <p class="mt-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--brand)]">
-                                        Lvl {{ $reply->user->level }}
-                                    </p>
-                                    <p class="mt-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-stone-500">
-                                        Rep {{ $reply->user->reputation }}
-                                    </p>
-                                    @if ($reply->user->repliesCount() > 10)
-                                        <span class="mt-1 inline-flex rounded-full bg-[rgba(79,70,229,0.12)] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--brand)]">
-                                            Actif
-                                        </span>
-                                    @endif
-                                    @if ($reply->user->badges->isNotEmpty())
-                                        <div class="mt-2 flex flex-wrap gap-2">
-                                            @foreach ($reply->user->badges as $badge)
-                                                <span
-                                                    title="{{ $badge->description }}"
-                                                    class="rounded-full bg-[rgba(79,70,229,0.12)] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--brand)]"
+                    <article class="glass-panel rounded-[1.85rem] p-5 sm:p-6">
+                        <div class="flex gap-4">
+                            <span class="mt-1 flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[rgba(29,155,240,0.12)] text-sm font-semibold uppercase text-[var(--brand)]">
+                                {{ strtoupper(substr($reply->user->name, 0, 1)) }}
+                            </span>
+                            <div class="min-w-0 flex-1">
+                                <div class="flex items-start justify-between gap-3">
+                                    <div>
+                                        <p class="text-sm font-semibold text-stone-900">{{ $reply->user->name }}</p>
+                                        <p class="mt-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--brand)]">
+                                            Lvl {{ $reply->user->level }} · Rep {{ $reply->user->reputation }}
+                                        </p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-xs text-stone-500">{{ $reply->created_at->format('d/m/Y H:i') }}</p>
+                                        @if ($reply->edits_count > 0)
+                                            <span class="mt-2 inline-flex rounded-full bg-amber-100 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-amber-700">
+                                                Modifiee
+                                            </span>
+                                        @endif
+                                        @if ($reply->reports_count > 0)
+                                            <span class="mt-2 inline-flex rounded-full bg-rose-100 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-rose-700">
+                                                Signalee
+                                            </span>
+                                        @endif
+                                    </div>
+                                </div>
+                                <p class="mt-4 whitespace-pre-line text-base leading-8 text-stone-700">{{ $reply->content }}</p>
+                                <div class="mt-5 flex flex-wrap items-center justify-between gap-3">
+                                    @auth
+                                        <div class="flex flex-wrap items-center gap-3">
+                                            <form method="POST" action="{{ route('replies.like', $reply) }}">
+                                                @csrf
+                                                <button
+                                                    type="submit"
+                                                    class="inline-flex items-center gap-2 rounded-full border border-[rgba(29,155,240,0.18)] bg-white/80 px-4 py-2 text-sm font-semibold text-stone-700 transition hover:border-[var(--brand)] hover:text-[var(--brand)]"
                                                 >
-                                                    {{ $badge->name }}
-                                                </span>
-                                            @endforeach
+                                                    <span>{{ $reply->likes->contains('user_id', auth()->id()) ? 'Aime' : 'Like' }}</span>
+                                                    <span>{{ $reply->likes_count }}</span>
+                                                </button>
+                                            </form>
+                                            <form method="POST" action="{{ route('replies.report', $reply) }}">
+                                                @csrf
+                                                <input type="hidden" name="reason" value="Signalement de la reponse">
+                                                <button type="submit" class="rounded-full border border-rose-200 bg-rose-50/90 px-4 py-2 text-sm font-semibold text-rose-700 transition hover:bg-rose-100">
+                                                    Signaler
+                                                </button>
+                                            </form>
+                                            <form method="POST" action="{{ route('replies.bookmark', $reply) }}">
+                                                @csrf
+                                                <button
+                                                    type="submit"
+                                                    class="rounded-full border border-[rgba(71,85,135,0.16)] bg-white/80 px-4 py-2 text-sm font-semibold text-stone-700 transition hover:bg-white"
+                                                >
+                                                    {{ $reply->bookmarkedBy->contains('id', auth()->id()) ? 'Retirer le signet' : 'Sauvegarder' }}
+                                                </button>
+                                            </form>
+                                            @if (auth()->id() === $reply->user_id)
+                                                <a href="{{ route('replies.history', $reply) }}" class="rounded-full border border-[rgba(71,85,135,0.16)] bg-white/80 px-4 py-2 text-sm font-semibold text-stone-700 transition hover:bg-white">
+                                                    Historique
+                                                </a>
+                                                <details class="group">
+                                                    <summary class="cursor-pointer list-none rounded-full border border-[rgba(71,85,135,0.16)] bg-white/80 px-4 py-2 text-sm font-semibold text-stone-700 transition hover:bg-white">
+                                                        Modifier
+                                                    </summary>
+                                                    <form method="POST" action="{{ route('replies.update', $reply) }}" class="mt-4 space-y-3">
+                                                        @csrf
+                                                        @method('PUT')
+                                                        <textarea
+                                                            name="content"
+                                                            rows="4"
+                                                            class="block w-full rounded-[1.25rem] border-[rgba(71,85,135,0.16)] bg-white/80 px-4 py-4 text-sm shadow-sm focus:border-[var(--brand)] focus:ring-[var(--brand)]"
+                                                            required
+                                                        >{{ old('content', $reply->content) }}</textarea>
+                                                        <div class="flex justify-end">
+                                                            <x-primary-button>Enregistrer</x-primary-button>
+                                                        </div>
+                                                    </form>
+                                                </details>
+                                            @endif
+                                            @if (auth()->id() === $reply->user_id || auth()->user()->role === 'admin')
+                                                <form method="POST" action="{{ route('replies.destroy', $reply) }}">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button
+                                                        type="submit"
+                                                        class="rounded-full bg-rose-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-rose-500"
+                                                    >
+                                                        Supprimer
+                                                    </button>
+                                                </form>
+                                            @endif
                                         </div>
-                                    @endif
+                                    @else
+                                        <span class="inline-flex items-center gap-2 rounded-full bg-white/70 px-4 py-2 text-sm font-medium text-stone-500">
+                                            Likes {{ $reply->likes_count }}
+                                        </span>
+                                    @endauth
                                 </div>
                             </div>
-                            <div class="text-right">
-                                <p class="text-xs text-stone-500">{{ $reply->created_at->format('d/m/Y H:i') }}</p>
-                                @if ($reply->edits_count > 0)
-                                    <span class="mt-2 inline-flex rounded-full bg-amber-100 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-amber-700">
-                                        Modifiee
-                                    </span>
-                                @endif
-                                @if ($reply->reports_count > 0)
-                                    <span class="mt-2 inline-flex rounded-full bg-rose-100 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-rose-700">
-                                        Signalee
-                                    </span>
-                                @endif
-                            </div>
                         </div>
-                        <p class="mt-4 text-sm text-stone-500">
-                            {{ $reply->user->topicsCount() }} sujets · {{ $reply->user->repliesCount() }} reponses
-                        </p>
                         @if ($reply->reports_count > 0)
                             <p class="mt-2 text-xs font-semibold uppercase tracking-[0.16em] text-rose-700">
                                 {{ $reply->reports_count }} signalement(s)
                             </p>
                         @endif
-                        <p class="mt-4 whitespace-pre-line text-base leading-8 text-stone-700">{{ $reply->content }}</p>
-                        <div class="mt-5 flex flex-wrap items-center justify-between gap-3">
-                            @auth
-                                <div class="flex flex-wrap items-center gap-3">
-                                    <form method="POST" action="{{ route('replies.like', $reply) }}">
-                                        @csrf
-                                        <button
-                                            type="submit"
-                                            class="inline-flex items-center gap-2 rounded-full border border-[rgba(79,70,229,0.18)] bg-white/80 px-4 py-2 text-sm font-semibold text-stone-700 transition hover:border-[var(--brand)] hover:text-[var(--brand)]"
-                                        >
-                                            <span>{{ $reply->likes->contains('user_id', auth()->id()) ? 'Aime' : 'Like' }}</span>
-                                            <span>{{ $reply->likes_count }}</span>
-                                        </button>
-                                    </form>
-                                    <form method="POST" action="{{ route('replies.report', $reply) }}">
-                                        @csrf
-                                        <input type="hidden" name="reason" value="Signalement de la reponse">
-                                        <button type="submit" class="rounded-full border border-rose-200 bg-rose-50/90 px-4 py-2 text-sm font-semibold text-rose-700 transition hover:bg-rose-100">
-                                            Signaler
-                                        </button>
-                                    </form>
-                                    <form method="POST" action="{{ route('replies.bookmark', $reply) }}">
-                                        @csrf
-                                        <button
-                                            type="submit"
-                                            class="rounded-full border border-[rgba(71,85,135,0.16)] bg-white/80 px-4 py-2 text-sm font-semibold text-stone-700 transition hover:bg-white"
-                                        >
-                                            {{ $reply->bookmarkedBy->contains('id', auth()->id()) ? 'Retirer le signet' : 'Sauvegarder' }}
-                                        </button>
-                                    </form>
-                                    @if (auth()->id() === $reply->user_id)
-                                        <a href="{{ route('replies.history', $reply) }}" class="rounded-full border border-[rgba(71,85,135,0.16)] bg-white/80 px-4 py-2 text-sm font-semibold text-stone-700 transition hover:bg-white">
-                                            Historique
-                                        </a>
-                                        <details class="group">
-                                            <summary class="cursor-pointer list-none rounded-full border border-[rgba(71,85,135,0.16)] bg-white/80 px-4 py-2 text-sm font-semibold text-stone-700 transition hover:bg-white">
-                                                Modifier
-                                            </summary>
-                                            <form method="POST" action="{{ route('replies.update', $reply) }}" class="mt-4 space-y-3">
-                                                @csrf
-                                                @method('PUT')
-                                                <textarea
-                                                    name="content"
-                                                    rows="4"
-                                                    class="block w-full rounded-[1.25rem] border-[rgba(71,85,135,0.16)] bg-white/80 px-4 py-4 text-sm shadow-sm focus:border-[var(--brand)] focus:ring-[var(--brand)]"
-                                                    required
-                                                >{{ old('content', $reply->content) }}</textarea>
-                                                <div class="flex justify-end">
-                                                    <x-primary-button>Enregistrer</x-primary-button>
-                                                </div>
-                                            </form>
-                                        </details>
-                                    @endif
-                                    @if (auth()->id() === $reply->user_id || auth()->user()->role === 'admin')
-                                        <form method="POST" action="{{ route('replies.destroy', $reply) }}">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button
-                                                type="submit"
-                                                class="rounded-full bg-rose-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-rose-500"
-                                            >
-                                                Supprimer
-                                            </button>
-                                        </form>
-                                    @endif
-                                </div>
-                            @else
-                                <span class="inline-flex items-center gap-2 rounded-full bg-white/70 px-4 py-2 text-sm font-medium text-stone-500">
-                                    Likes {{ $reply->likes_count }}
-                                </span>
-                            @endauth
-                        </div>
                     </article>
                 @empty
                     <div class="glass-panel rounded-[2rem] border-dashed p-8 text-center text-sm text-stone-500">

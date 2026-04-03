@@ -57,9 +57,59 @@
                 </div>
             @endguest
 
-            <div class="glass-panel rounded-[2rem] p-5 sm:p-6">
-                <form method="GET" action="{{ route('topics.index') }}" class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-                    <div class="grid gap-4 sm:grid-cols-[1fr_220px] lg:w-full xl:grid-cols-[220px_1fr_220px_220px]">
+            <div class="space-y-4">
+                <div class="glass-panel-strong rounded-[1.9rem] p-5 sm:p-6">
+                    <form method="GET" action="{{ route('topics.index') }}" class="flex flex-col gap-4 lg:flex-row lg:items-center">
+                        @if (request()->filled('category'))
+                            <input type="hidden" name="category" value="{{ request('category') }}">
+                        @endif
+                        @if (request()->filled('tag'))
+                            <input type="hidden" name="tag" value="{{ request('tag') }}">
+                        @endif
+                        @if (request()->filled('order'))
+                            <input type="hidden" name="order" value="{{ request('order') }}">
+                        @endif
+                        @if (request()->filled('recommended'))
+                            <input type="hidden" name="recommended" value="{{ request('recommended') }}">
+                        @endif
+
+                        <div class="min-w-0 flex-1">
+                            <label for="search-bar" class="mb-2 block text-sm font-semibold uppercase tracking-[0.16em] text-stone-600">
+                                Rechercher un sujet
+                            </label>
+                            <input
+                                id="search-bar"
+                                type="text"
+                                name="search"
+                                value="{{ request('search') }}"
+                                placeholder="Ex : inflation, cinema, Ukraine, voyage, relation..."
+                                class="block w-full rounded-full border-[rgba(71,85,135,0.16)] bg-white px-5 py-4 text-base shadow-sm focus:border-[var(--brand)] focus:ring-[var(--brand)]"
+                            >
+                        </div>
+
+                        <div class="flex items-center gap-3">
+                            <x-primary-button class="justify-center rounded-full px-5 py-4 text-sm">
+                                Rechercher
+                            </x-primary-button>
+                            @if (request()->filled('search') || request()->filled('category') || request()->filled('tag') || request()->filled('order') || request()->filled('recommended'))
+                                <a href="{{ route('topics.index') }}" class="rounded-full border border-[rgba(71,85,135,0.16)] bg-white/70 px-4 py-3 text-sm font-semibold text-stone-700 transition hover:bg-white">
+                                    Reinitialiser
+                                </a>
+                            @endif
+                        </div>
+                    </form>
+                </div>
+
+                <div class="glass-panel rounded-[1.75rem] p-5 sm:p-6">
+                    <div class="mb-4">
+                        <p class="section-kicker">Filtres</p>
+                        <h3 class="mt-2 text-xl font-semibold text-stone-950">Affiner le flux</h3>
+                    </div>
+
+                    <form method="GET" action="{{ route('topics.index') }}" class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+                        <input type="hidden" name="search" value="{{ request('search') }}">
+
+                        <div class="grid gap-4 sm:grid-cols-2 lg:w-full xl:grid-cols-3">
                         <div>
                             <label for="category" class="mb-2 block text-sm font-semibold uppercase tracking-[0.16em] text-stone-600">
                                 Categorie
@@ -95,19 +145,6 @@
                             </select>
                         </div>
                         <div>
-                            <label for="search" class="mb-2 block text-sm font-semibold uppercase tracking-[0.16em] text-stone-600">
-                                Recherche
-                            </label>
-                            <input
-                                id="search"
-                                type="text"
-                                name="search"
-                                value="{{ request('search') }}"
-                                placeholder="Rechercher un sujet..."
-                                class="block w-full rounded-[1.25rem] border-[rgba(71,85,135,0.16)] bg-white/80 px-4 py-3 shadow-sm focus:border-[var(--brand)] focus:ring-[var(--brand)]"
-                            >
-                        </div>
-                        <div>
                             <label for="order" class="mb-2 block text-sm font-semibold uppercase tracking-[0.16em] text-stone-600">
                                 Trier par
                             </label>
@@ -127,37 +164,78 @@
                                 Voir les sujets recommandes
                             </a>
                         @endauth
-                        @if (request()->filled('search') || request()->filled('order') || request()->filled('recommended'))
-                            <a href="{{ route('topics.index') }}" class="rounded-full border border-[rgba(71,85,135,0.16)] bg-white/70 px-4 py-3 text-sm font-semibold text-stone-700 transition hover:bg-white">
-                                Reinitialiser
-                            </a>
-                        @endif
                         <x-primary-button class="justify-center">
                             Filtrer
                         </x-primary-button>
                     </div>
                 </form>
             </div>
+            </div>
 
-            <div class="grid gap-6">
-                @if ($pinnedTopics->isNotEmpty())
-                    <section class="space-y-4">
-                        <div class="flex items-center justify-between gap-4">
-                            <div>
-                                <p class="section-kicker">Epingle</p>
-                                <h3 class="mt-2 text-2xl font-semibold text-stone-950">Sujets a la une</h3>
+            <div class="grid gap-6 xl:grid-cols-[minmax(0,1fr)_22rem]">
+                <div class="space-y-4">
+                    @if ($pinnedTopics->isNotEmpty())
+                        <section class="space-y-3">
+                            <div class="flex items-center justify-between gap-3">
+                                <div>
+                                    <p class="section-kicker">Mis en avant</p>
+                                    <h3 class="mt-2 text-2xl font-semibold text-stone-950">Sujets a la une</h3>
+                                </div>
                             </div>
-                            <span class="rounded-full bg-amber-100 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-amber-700">
-                                {{ $pinnedTopics->count() }} sujet(s)
-                            </span>
+                            @foreach ($pinnedTopics as $topic)
+                                <article class="glass-panel rounded-[1.6rem] border-amber-200/70 bg-[linear-gradient(180deg,rgba(255,251,235,0.96),rgba(255,255,255,0.94))] p-5">
+                                    <div class="flex gap-4">
+                                        <span class="mt-1 flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-amber-100 text-sm font-semibold uppercase text-amber-700">
+                                            {{ strtoupper(substr($topic->user->name, 0, 1)) }}
+                                        </span>
+                                        <div class="min-w-0 flex-1">
+                                            <div class="flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-[0.18em] text-stone-500">
+                                                <span class="rounded-full bg-amber-100 px-3 py-1 text-amber-700">Epingle</span>
+                                                <span>{{ $topic->user->name }}</span>
+                                                <span>{{ $topic->created_at->format('d/m/Y H:i') }}</span>
+                                            </div>
+                                            <h4 class="mt-3 text-xl font-semibold text-stone-950">
+                                                <a href="{{ route('topics.show', $topic) }}" class="transition hover:text-[var(--brand-deep)]">
+                                                    {{ $topic->title }}
+                                                </a>
+                                            </h4>
+                                            <p class="mt-2 text-sm leading-7 text-stone-600">
+                                                {{ \Illuminate\Support\Str::limit($topic->content, 120) }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </article>
+                            @endforeach
+                        </section>
+                    @endif
+
+                    <section class="space-y-3">
+                        <div class="flex items-center justify-between gap-3">
+                            <div>
+                                <p class="section-kicker">Flux</p>
+                                <h3 class="mt-2 text-2xl font-semibold text-stone-950">Ce que les membres racontent</h3>
+                            </div>
+                            @auth
+                                <a href="{{ route('topics.create') }}" class="hidden rounded-full border border-[rgba(71,85,135,0.16)] bg-white/80 px-4 py-2 text-sm font-semibold text-stone-800 transition hover:bg-white sm:inline-flex">
+                                    Ecrire
+                                </a>
+                            @endauth
                         </div>
-                        @foreach ($pinnedTopics as $topic)
-                            <article class="glass-panel rounded-[2rem] border-amber-200/70 bg-[linear-gradient(180deg,rgba(255,251,235,0.96),rgba(255,255,255,0.9))] p-6 shadow-[0_18px_40px_rgba(245,158,11,0.12)] transition duration-200 hover:-translate-y-1 sm:p-7">
-                                <div class="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-                                    <div class="space-y-4">
+
+                        @forelse ($topics as $topic)
+                            <article class="glass-panel-strong rounded-[1.85rem] p-6 transition duration-200 hover:-translate-y-0.5 sm:p-7">
+                                <div class="flex gap-4">
+                                    <span class="mt-1 flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[rgba(29,155,240,0.12)] text-sm font-semibold uppercase text-[var(--brand)]">
+                                        {{ strtoupper(substr($topic->user->name, 0, 1)) }}
+                                    </span>
+                                    <div class="min-w-0 flex-1 space-y-3">
                                         <div class="flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-[0.18em] text-stone-500">
-                                            <span class="rounded-full bg-amber-100 px-3 py-1 text-amber-700">Epingle</span>
-                                            <span class="rounded-full bg-[rgba(79,70,229,0.12)] px-3 py-1 text-[var(--brand)]">Sujet</span>
+                                            <span class="text-stone-900">{{ $topic->user->name }}</span>
+                                            @if ($topic->category)
+                                                <a href="{{ route('categories.show', $topic->category) }}" class="rounded-full bg-slate-100 px-3 py-1 text-stone-600 transition hover:bg-slate-200">
+                                                    {{ $topic->category->name }}
+                                                </a>
+                                            @endif
                                             @auth
                                                 @if (in_array($topic->id, $topicsWithUnreadReplies, true))
                                                     <span class="rounded-full bg-rose-100 px-3 py-1 text-rose-600">Nouvelle reponse</span>
@@ -168,161 +246,99 @@
                                                     <span class="rounded-full bg-amber-100 px-3 py-1 text-amber-700">Recommande</span>
                                                 @endif
                                             @endauth
-                                            @if ($topic->category)
-                                                <a href="{{ route('categories.show', $topic->category) }}" class="rounded-full bg-[rgba(20,184,166,0.12)] px-3 py-1 text-[var(--accent)] transition hover:bg-[rgba(20,184,166,0.2)]">
-                                                    {{ $topic->category->name }}
-                                                </a>
-                                            @endif
-                                            <span>{{ $topic->created_at->format('d/m/Y H:i') }}</span>
+                                            <span>{{ $topic->created_at->diffForHumans() }}</span>
                                         </div>
-                                        <div>
-                                            <h3 class="text-3xl font-semibold text-stone-950">
-                                                <a href="{{ route('topics.show', $topic) }}" class="transition hover:text-[var(--brand-deep)]">
-                                                    {{ $topic->title }}
-                                                </a>
-                                            </h3>
-                                            <div class="mt-3 flex items-center gap-3">
-                                                <span class="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--brand)] text-sm font-semibold uppercase text-white shadow-[0_12px_24px_rgba(79,70,229,0.24)]">
-                                                    {{ strtoupper(substr($topic->user->name, 0, 1)) }}
-                                                </span>
-                                                <div>
-                                                    <p class="text-sm text-stone-500">
-                                                        Par <span class="font-semibold text-stone-700">{{ $topic->user->name }}</span>
-                                                    </p>
-                                                    <p class="mt-1 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--brand)]">
-                                                        Lvl {{ $topic->user->level }}
-                                                    </p>
-                                                    <p class="mt-1 text-xs font-semibold uppercase tracking-[0.16em] text-stone-500">
-                                                        Rep {{ $topic->user->reputation }}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <h4 class="text-[1.55rem] font-semibold leading-tight text-stone-950">
+                                            <a href="{{ route('topics.show', $topic) }}" class="transition hover:text-[var(--brand-deep)]">
+                                                {{ $topic->title }}
+                                            </a>
+                                        </h4>
                                         <p class="muted-copy max-w-3xl text-base leading-8">
-                                            {{ \Illuminate\Support\Str::limit($topic->content, 180) }}
+                                            {{ \Illuminate\Support\Str::limit($topic->content, 220) }}
                                         </p>
-                                        @if ($topic->tags->isNotEmpty())
-                                            <div class="flex flex-wrap gap-2">
-                                                @foreach ($topic->tags as $tag)
-                                                    <a href="{{ route('tags.show', $tag) }}" class="rounded-full bg-[rgba(79,70,229,0.1)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--brand)] transition hover:bg-[rgba(79,70,229,0.16)]">
-                                                        {{ $tag->name }}
-                                                    </a>
-                                                @endforeach
-                                            </div>
-                                        @endif
-                                    </div>
-                                    <div class="shrink-0 space-y-3">
-                                        <div class="rounded-[1.5rem] bg-[linear-gradient(135deg,var(--brand),var(--accent-soft))] px-5 py-4 text-center text-white shadow-[0_18px_35px_rgba(79,70,229,0.24)]">
-                                            <p class="text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-white/75">Reponses</p>
-                                            <p class="mt-2 text-3xl font-semibold">{{ $topic->replies_count }}</p>
+                                        <div class="flex flex-wrap items-center gap-4 text-sm text-stone-500">
+                                            <span>{{ $topic->replies_count }} reponse(s)</span>
+                                            <span>{{ $topic->favorites_count }} favori(s)</span>
+                                            <a href="{{ route('topics.show', $topic) }}" class="font-semibold text-[var(--brand-deep)] transition hover:text-[var(--brand)]">
+                                                Voir la discussion
+                                            </a>
                                         </div>
-                                        <div class="rounded-full bg-white/80 px-4 py-2 text-center text-xs font-semibold uppercase tracking-[0.18em] text-stone-700">
-                                            {{ $topic->favorites_count }} abonnes
-                                        </div>
-                                        <a href="{{ route('topics.show', $topic) }}" class="block rounded-full border border-[rgba(71,85,135,0.16)] bg-white/70 px-4 py-2 text-center text-sm font-semibold text-stone-800 transition hover:bg-white">
-                                            Ouvrir
-                                        </a>
                                     </div>
                                 </div>
                             </article>
-                        @endforeach
-                    </section>
-                @endif
-
-                @forelse ($topics as $topic)
-                    <article class="glass-panel-strong rounded-[2rem] p-6 transition duration-200 hover:-translate-y-1 hover:shadow-[0_26px_60px_rgba(57,72,120,0.16)] sm:p-7">
-                        <div class="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-                            <div class="space-y-4">
-                                <div class="flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-[0.18em] text-stone-500">
-                                    @if ($topic->is_pinned)
-                                        <span class="rounded-full bg-amber-100 px-3 py-1 text-amber-700">Epingle</span>
-                                    @endif
-                                    <span class="rounded-full bg-[rgba(79,70,229,0.12)] px-3 py-1 text-[var(--brand)]">Sujet</span>
-                                    @auth
-                                        @if (in_array($topic->id, $topicsWithUnreadReplies, true))
-                                            <span class="rounded-full bg-rose-100 px-3 py-1 text-rose-600">Nouvelle reponse</span>
-                                        @endif
-                                    @endauth
-                                    @auth
-                                        @if (in_array($topic->id, $recommendedTopicIds ?? [], true))
-                                            <span class="rounded-full bg-amber-100 px-3 py-1 text-amber-700">Recommande</span>
-                                        @endif
-                                    @endauth
-                                    @if ($topic->category)
-                                        <a href="{{ route('categories.show', $topic->category) }}" class="rounded-full bg-[rgba(20,184,166,0.12)] px-3 py-1 text-[var(--accent)] transition hover:bg-[rgba(20,184,166,0.2)]">
-                                            {{ $topic->category->name }}
-                                        </a>
-                                    @endif
-                                    <span>{{ $topic->created_at->format('d/m/Y H:i') }}</span>
-                                </div>
-                                <div>
-                                    <h3 class="text-3xl font-semibold text-stone-950">
-                                        <a href="{{ route('topics.show', $topic) }}" class="transition hover:text-[var(--brand-deep)]">
-                                            {{ $topic->title }}
-                                        </a>
-                                    </h3>
-                                    <div class="mt-3 flex items-center gap-3">
-                                        <span class="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--brand)] text-sm font-semibold uppercase text-white shadow-[0_12px_24px_rgba(79,70,229,0.24)]">
-                                            {{ strtoupper(substr($topic->user->name, 0, 1)) }}
-                                        </span>
-                                        <div>
-                                            <p class="text-sm text-stone-500">
-                                                Par <span class="font-semibold text-stone-700">{{ $topic->user->name }}</span>
-                                            </p>
-                                            <p class="mt-1 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--brand)]">
-                                                Lvl {{ $topic->user->level }}
-                                            </p>
-                                            <p class="mt-1 text-xs font-semibold uppercase tracking-[0.16em] text-stone-500">
-                                                Rep {{ $topic->user->reputation }}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <p class="muted-copy max-w-3xl text-base leading-8">
-                                    {{ \Illuminate\Support\Str::limit($topic->content, 180) }}
-                                </p>
-                                @if ($topic->tags->isNotEmpty())
-                                    <div class="flex flex-wrap gap-2">
-                                        @foreach ($topic->tags as $tag)
-                                            <a href="{{ route('tags.show', $tag) }}" class="rounded-full bg-[rgba(79,70,229,0.1)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--brand)] transition hover:bg-[rgba(79,70,229,0.16)]">
-                                                {{ $tag->name }}
-                                            </a>
-                                        @endforeach
-                                    </div>
-                                @endif
+                        @empty
+                            <div class="glass-panel rounded-[2.25rem] border-dashed p-12 text-center">
+                                <p class="section-kicker">Aucun contenu</p>
+                                <h3 class="mt-3 text-3xl font-semibold text-stone-950">Le flux attend ses premiers messages</h3>
+                                <p class="muted-copy mt-3 text-base">L’actualite peut donner des idees, mais ce sont surtout les sujets des membres qui feront vivre le forum.</p>
+                                @auth
+                                    <a
+                                        href="{{ route('topics.create') }}"
+                                        class="mt-6 inline-flex items-center rounded-full bg-[var(--brand)] px-5 py-3 text-sm font-semibold uppercase tracking-[0.18em] text-white shadow-[0_18px_35px_rgba(79,70,229,0.28)] transition hover:-translate-y-0.5 hover:bg-[var(--brand-deep)]"
+                                    >
+                                        Creer le premier sujet
+                                    </a>
+                                @endauth
                             </div>
-                            <div class="shrink-0 space-y-3">
-                                <div class="rounded-[1.5rem] bg-[linear-gradient(135deg,var(--brand),var(--accent-soft))] px-5 py-4 text-center text-white shadow-[0_18px_35px_rgba(79,70,229,0.24)]">
-                                    <p class="text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-white/75">Reponses</p>
-                                    <p class="mt-2 text-3xl font-semibold">{{ $topic->replies_count }}</p>
+                        @endforelse
+                    </section>
+                </div>
+
+                <aside class="space-y-4">
+                    @if ($forumNews->isNotEmpty())
+                        <section class="glass-panel rounded-[1.8rem] p-5">
+                            <div class="flex items-center justify-between gap-3">
+                                <div>
+                                    <p class="section-kicker">Actu</p>
+                                    <h3 class="mt-2 text-xl font-semibold text-stone-950">A commenter</h3>
                                 </div>
-                                <div class="rounded-full bg-white/80 px-4 py-2 text-center text-xs font-semibold uppercase tracking-[0.18em] text-stone-700">
-                                    {{ $topic->favorites_count }} abonnes
-                                </div>
-                                <div class="rounded-full bg-[rgba(20,184,166,0.12)] px-4 py-2 text-center text-xs font-semibold uppercase tracking-[0.18em] text-[var(--accent)]">
-                                    {{ $topic->replies_count > 0 ? 'Actif' : 'Nouveau' }}
-                                </div>
-                                <a href="{{ route('topics.show', $topic) }}" class="block rounded-full border border-[rgba(71,85,135,0.16)] bg-white/70 px-4 py-2 text-center text-sm font-semibold text-stone-800 transition hover:bg-white">
-                                    Ouvrir
+                                <a href="{{ route('news.index', array_filter(['category' => request('category') ? $categories->firstWhere('id', request('category'))?->slug : null])) }}" class="text-sm font-semibold text-stone-800 transition hover:text-[var(--brand-deep)]">
+                                    Voir tout
                                 </a>
                             </div>
-                        </div>
-                    </article>
-                @empty
-                    <div class="glass-panel rounded-[2.25rem] border-dashed p-12 text-center">
-                        <p class="section-kicker">Aucun contenu</p>
-                        <h3 class="mt-3 text-3xl font-semibold text-stone-950">Aucun sujet pour le moment</h3>
-                        <p class="muted-copy mt-3 text-base">Le premier message peut poser la direction du forum.</p>
-                        @auth
-                            <a
-                                href="{{ route('topics.create') }}"
-                                class="mt-6 inline-flex items-center rounded-full bg-[var(--brand)] px-5 py-3 text-sm font-semibold uppercase tracking-[0.18em] text-white shadow-[0_18px_35px_rgba(79,70,229,0.28)] transition hover:-translate-y-0.5 hover:bg-[var(--brand-deep)]"
-                            >
-                                Creer le premier sujet
-                            </a>
-                        @endauth
-                    </div>
-                @endforelse
+                            <p class="mt-3 text-sm leading-6 text-stone-600">
+                                Les actualites restent un point de depart. Le vrai coeur du forum, c’est la discussion qui nait derriere.
+                            </p>
+
+                            <div class="mt-5 space-y-3">
+                                @foreach ($forumNews as $article)
+                                    <a
+                                        href="{{ $article->source_url }}"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        class="group block rounded-[1.35rem] border border-[rgba(34,92,143,0.08)] bg-white/82 p-4 transition duration-200 hover:-translate-y-0.5 hover:bg-white"
+                                    >
+                                        @if ($article->image_url)
+                                            <div class="overflow-hidden rounded-[1rem] border border-slate-100 bg-slate-50">
+                                                <img
+                                                    src="{{ $article->image_url }}"
+                                                    alt="{{ $article->title }}"
+                                                    class="block h-auto w-full"
+                                                >
+                                            </div>
+                                        @endif
+                                        <div class="mt-3 flex flex-wrap items-center gap-2 text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-stone-500">
+                                            @if ($article->category)
+                                                <span class="rounded-full bg-slate-100 px-2.5 py-1 text-stone-700">{{ $article->category->name }}</span>
+                                            @endif
+                                            @if ($article->source_name)
+                                                <span>{{ $article->source_name }}</span>
+                                            @endif
+                                        </div>
+                                        <p class="mt-3 text-sm font-semibold leading-6 text-stone-900 transition group-hover:text-[var(--brand-deep)]">
+                                            {{ \Illuminate\Support\Str::limit($article->title, 105) }}
+                                        </p>
+                                        @if ($article->excerpt)
+                                            <p class="mt-2 text-sm leading-6 text-stone-600">
+                                                {{ \Illuminate\Support\Str::limit($article->excerpt, 110) }}
+                                            </p>
+                                        @endif
+                                    </a>
+                                @endforeach
+                            </div>
+                        </section>
+                    @endif
+                </aside>
             </div>
 
             <div class="glass-panel rounded-[2rem] px-4 py-4 sm:px-6">

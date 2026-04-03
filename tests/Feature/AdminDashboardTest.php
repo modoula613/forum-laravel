@@ -31,7 +31,7 @@ test('admin can view the admin dashboard', function () {
         ->actingAs($admin)
         ->get(route('admin.index'))
         ->assertOk()
-        ->assertSee('Tableau de bord admin')
+        ->assertSee('Poste de pilotage')
         ->assertSee('Signalement test')
         ->assertSee('Nadia')
         ->assertSee('Sujet recent');
@@ -44,4 +44,15 @@ test('non admin users cannot view the admin dashboard', function () {
         ->actingAs($user)
         ->get(route('admin.index'))
         ->assertForbidden();
+});
+
+test('admin users are redirected to the admin dashboard from the generic dashboard', function () {
+    $admin = User::factory()->create([
+        'role' => 'admin',
+    ]);
+
+    $this
+        ->actingAs($admin)
+        ->get(route('dashboard'))
+        ->assertRedirect(route('admin.index'));
 });

@@ -38,6 +38,10 @@ class AdminUserController extends Controller
 
     public function ban(User $user): RedirectResponse
     {
+        if ($user->is(auth()->user())) {
+            return back()->with('error', 'Vous ne pouvez pas vous bannir vous-meme.');
+        }
+
         $user->update([
             'is_banned' => true,
             'banned_until' => null,

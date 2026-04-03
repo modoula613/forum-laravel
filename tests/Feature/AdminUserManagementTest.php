@@ -54,6 +54,21 @@ test('admin can ban and unban a user', function () {
     expect($user->fresh()->is_banned)->toBeFalse();
 });
 
+test('admin cannot ban themselves', function () {
+    $admin = User::factory()->create([
+        'role' => 'admin',
+        'is_banned' => false,
+    ]);
+
+    $this
+        ->actingAs($admin)
+        ->patch(route('admin.users.ban', $admin))
+        ->assertRedirect()
+        ->assertSessionHas('error', 'Vous ne pouvez pas vous bannir vous-meme.');
+
+    expect($admin->fresh()->is_banned)->toBeFalse();
+});
+
 test('non admin users cannot access admin user management', function () {
     $user = User::factory()->create();
 

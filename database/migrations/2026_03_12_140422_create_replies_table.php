@@ -13,7 +13,9 @@ return new class extends Migration
     {
         Schema::create('replies', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('topic_id')->constrained()->onDelete('cascade');
+            // `topics` shares the same timestamp prefix, so we avoid a hard FK here
+            // to keep fresh installs deterministic across databases.
+            $table->unsignedBigInteger('topic_id')->index();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->text('content');
             $table->timestamps();

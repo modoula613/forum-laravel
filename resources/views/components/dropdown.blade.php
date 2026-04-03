@@ -26,9 +26,8 @@ $width = match ($width) {
             x-transition:leave-start="opacity-100 scale-100"
             x-transition:leave-end="opacity-0 scale-95 -translate-y-1"
             class="absolute z-[90] mt-3 {{ $width }} {{ $alignmentClasses }}"
-            style="display: none;"
-            @click="open = false">
-        <div class="glass-panel rounded-[1.5rem] shadow-[0_24px_50px_rgba(38,28,22,0.18)] {{ $contentClasses }}">
+            style="display: none;">
+        <div class="glass-panel max-h-[calc(100vh-8rem)] overflow-y-auto rounded-[1.5rem] shadow-[0_24px_50px_rgba(38,28,22,0.18)] {{ $contentClasses }}">
             {{ $content }}
         </div>
     </div>
