@@ -87,7 +87,11 @@
                                 {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
                             </span>
                             <div class="min-w-0 flex-1">
-                                <p class="truncate font-semibold app-profile-name">{{ Auth::user()->name }}</p>
+                                <p class="truncate font-semibold app-profile-name">
+                                    <x-user-link :user="Auth::user()">
+                                        {{ Auth::user()->name }}
+                                    </x-user-link>
+                                </p>
                                 <p class="truncate text-sm app-profile-handle">{{ '@'.\Illuminate\Support\Str::slug(Auth::user()->name, '') }}</p>
                             </div>
                         </div>
@@ -136,7 +140,11 @@
             <div class="mt-4 border-t app-mobile-divider pt-4">
                 @auth
                     <div class="px-3">
-                        <div class="font-medium text-base app-profile-name">{{ Auth::user()->name }}</div>
+                        <div class="font-medium text-base app-profile-name">
+                            <x-user-link :user="Auth::user()">
+                                {{ Auth::user()->name }}
+                            </x-user-link>
+                        </div>
                         <div class="font-medium text-sm app-profile-handle">{{ Auth::user()->email }}</div>
                     </div>
 

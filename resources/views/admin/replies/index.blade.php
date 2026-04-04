@@ -46,7 +46,12 @@
                     <article class="glass-panel rounded-[2rem] p-5 sm:p-6">
                         <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                             <div class="max-w-3xl">
-                                <p class="text-sm text-stone-500">{{ $reply->user->name }} · {{ $reply->topic->title }} · {{ $reply->created_at->format('d/m/Y H:i') }}</p>
+                                <p class="text-sm text-stone-500">
+                                    <x-user-link :user="$reply->user">
+                                        {{ $reply->user->name }}
+                                    </x-user-link>
+                                    · {{ $reply->topic->title }} · {{ $reply->created_at->format('d/m/Y H:i') }}
+                                </p>
                                 <p class="mt-4 whitespace-pre-line text-base leading-8 text-stone-700">{{ $reply->content }}</p>
                             </div>
                             <div class="flex flex-col items-end gap-3">

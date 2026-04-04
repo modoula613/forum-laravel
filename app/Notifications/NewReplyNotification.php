@@ -31,6 +31,8 @@ class NewReplyNotification extends Notification
             'topic_id' => $this->topic->id,
             'topic_title' => $this->topic->title,
             'reply_user' => $this->replyUser->name,
+            'reply_user_id' => $this->replyUser->id,
+            'reply_user_url' => route('users.show', $this->replyUser),
             'url' => route('topics.show', $this->topic),
         ];
     }

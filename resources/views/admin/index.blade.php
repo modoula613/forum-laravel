@@ -57,7 +57,11 @@
                 <div class="mt-5 grid gap-4 lg:grid-cols-2">
                     @forelse ($latestReports as $report)
                         <div class="rounded-[1.5rem] bg-white/70 px-5 py-4 text-sm text-stone-700">
-                            <p class="font-semibold text-stone-900">{{ $report->user?->name ?? 'Membre' }}</p>
+                            <p class="font-semibold text-stone-900">
+                                <x-user-link :user="$report->user">
+                                    {{ $report->user?->name ?? 'Membre' }}
+                                </x-user-link>
+                            </p>
                             <p class="mt-2">{{ $report->reason }}</p>
                             @if ($report->reply?->content)
                                 <p class="mt-2 text-stone-500">{{ \Illuminate\Support\Str::limit($report->reply->content, 100) }}</p>
@@ -98,7 +102,12 @@
                                 <a href="{{ route('topics.show', $topic) }}" class="font-semibold text-stone-900 transition hover:text-[var(--brand-deep)]">
                                     {{ $topic->title }}
                                 </a>
-                                <p class="mt-1 text-sm text-stone-500">{{ $topic->user->name }} · {{ $topic->created_at->format('d/m/Y H:i') }}</p>
+                                <p class="mt-1 text-sm text-stone-500">
+                                    <x-user-link :user="$topic->user">
+                                        {{ $topic->user->name }}
+                                    </x-user-link>
+                                    · {{ $topic->created_at->format('d/m/Y H:i') }}
+                                </p>
                             </div>
                         @empty
                             <p class="text-sm text-stone-500">Aucun sujet recent.</p>

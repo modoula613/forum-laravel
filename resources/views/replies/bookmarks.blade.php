@@ -82,7 +82,10 @@
                                 </a>
                             </h3>
                             <p class="text-sm text-stone-500">
-                                Par <span class="font-semibold text-stone-700">{{ $reply->user->name }}</span>
+                                Par
+                                <x-user-link :user="$reply->user" class="font-semibold text-stone-700">
+                                    {{ $reply->user->name }}
+                                </x-user-link>
                             </p>
                             <p class="muted-copy text-base leading-8">
                                 {{ $reply->content }}

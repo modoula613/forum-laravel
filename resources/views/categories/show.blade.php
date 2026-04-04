@@ -111,7 +111,9 @@
                                         <span class="rounded-full bg-[rgba(20,184,166,0.12)] px-3 py-1 text-[var(--accent)]">{{ $category->name }}</span>
                                     </div>
                                     <div class="text-sm text-stone-500">
-                                        <span class="font-semibold text-stone-900">{{ $topic->user->name }}</span>
+                                        <x-user-link :user="$topic->user" class="font-semibold text-stone-900">
+                                            {{ $topic->user->name }}
+                                        </x-user-link>
                                     </div>
                                     <h3 class="text-2xl font-semibold text-stone-950">
                                         <a href="{{ route('topics.show', $topic) }}" class="transition hover:text-[var(--brand-deep)]">

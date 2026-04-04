@@ -3,7 +3,12 @@
         <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div class="max-w-3xl">
                 <p class="section-kicker">Conversation</p>
-                <h2 class="mt-3 text-4xl font-semibold text-stone-950">Discussion avec {{ $user->name }}</h2>
+                <h2 class="mt-3 text-4xl font-semibold text-stone-950">
+                    Discussion avec
+                    <x-user-link :user="$user">
+                        {{ $user->name }}
+                    </x-user-link>
+                </h2>
                 <p class="muted-copy mt-3 text-base leading-7">
                     Echange prive entre membres. Les messages les plus anciens apparaissent en premier.
                 </p>
@@ -52,7 +57,13 @@
                         <div class="flex items-center justify-between gap-4">
                             <div>
                                 <p class="text-sm font-semibold uppercase tracking-[0.16em] text-stone-600">
-                                    {{ $message->sender_id === auth()->id() ? 'Vous' : $message->sender->name }}
+                                    @if ($message->sender_id === auth()->id())
+                                        Vous
+                                    @else
+                                        <x-user-link :user="$message->sender">
+                                            {{ $message->sender->name }}
+                                        </x-user-link>
+                                    @endif
                                 </p>
                                 <p class="mt-1 text-xs font-medium uppercase tracking-[0.16em] text-stone-500">
                                     {{ $message->sender_id === auth()->id() ? 'Message envoye' : 'Message recu' }}

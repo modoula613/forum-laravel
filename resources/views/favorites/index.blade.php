@@ -27,7 +27,10 @@
                                 </a>
                             </h3>
                             <p class="text-sm text-stone-500">
-                                Par <span class="font-semibold text-stone-700">{{ $topic->user->name }}</span>
+                                Par
+                                <x-user-link :user="$topic->user" class="font-semibold text-stone-700">
+                                    {{ $topic->user->name }}
+                                </x-user-link>
                             </p>
                             @if ($topic->tags->isNotEmpty())
                                 <div class="flex flex-wrap gap-2">

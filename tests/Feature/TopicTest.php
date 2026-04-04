@@ -112,6 +112,23 @@ test('topics index can search by title', function () {
         ->assertDontSee('Vue Composer');
 });
 
+test('topics index links author names to their public profiles', function () {
+    $user = User::factory()->create([
+        'name' => 'Camille',
+    ]);
+
+    $user->topics()->create([
+        'title' => 'Sujet avec auteur',
+        'content' => 'Contenu',
+    ]);
+
+    $this
+        ->get(route('topics.index'))
+        ->assertOk()
+        ->assertSee(route('users.show', $user), false)
+        ->assertSee('Camille');
+});
+
 test('topics index can sort by popularity', function () {
     $user = User::factory()->create();
 

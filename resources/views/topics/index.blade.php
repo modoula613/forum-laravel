@@ -385,7 +385,9 @@
                                         <div class="min-w-0 flex-1">
                                             <div class="flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-[0.18em] text-white/45">
                                                 <span class="rounded-full bg-amber-500/10 px-3 py-1 text-amber-300">Epingle</span>
-                                                <span>{{ $topic->user->name }}</span>
+                                                <x-user-link :user="$topic->user">
+                                                    {{ $topic->user->name }}
+                                                </x-user-link>
                                                 <span>{{ $topic->created_at->format('d/m/Y H:i') }}</span>
                                             </div>
                                             <h4 class="mt-3 text-xl font-semibold text-white">
@@ -427,7 +429,9 @@
                                     </span>
                                     <div class="min-w-0 flex-1 space-y-3">
                                         <div class="flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-[0.18em] text-white/45">
-                                            <span class="text-white">{{ $topic->user->name }}</span>
+                                            <x-user-link :user="$topic->user" class="text-white">
+                                                {{ $topic->user->name }}
+                                            </x-user-link>
                                             @if ($topic->category)
                                                 <a href="{{ route('categories.show', $topic->category) }}" class="rounded-full bg-white/6 px-3 py-1 text-white/65 transition hover:bg-white/10">
                                                     {{ $topic->category->name }}

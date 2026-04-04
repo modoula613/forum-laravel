@@ -18,7 +18,12 @@
                     @forelse ($topics as $topic)
                         <a href="{{ route('topics.show', $topic) }}" class="block rounded-[1.5rem] bg-white/70 p-4 transition hover:bg-white">
                             <p class="font-semibold text-stone-900">{{ $topic->title }}</p>
-                            <p class="mt-2 text-sm text-stone-500">{{ $topic->user->name }} · {{ $topic->created_at->format('d/m/Y H:i') }}</p>
+                            <p class="mt-2 text-sm text-stone-500">
+                                <x-user-link :user="$topic->user">
+                                    {{ $topic->user->name }}
+                                </x-user-link>
+                                · {{ $topic->created_at->format('d/m/Y H:i') }}
+                            </p>
                         </a>
                     @empty
                         <p class="text-sm text-stone-500">Aucun sujet recent.</p>
@@ -33,7 +38,12 @@
                     @forelse ($replies as $reply)
                         <a href="{{ route('topics.show', $reply->topic) }}" class="block rounded-[1.5rem] bg-white/70 p-4 transition hover:bg-white">
                             <p class="font-semibold text-stone-900">{{ $reply->topic->title }}</p>
-                            <p class="mt-2 text-sm text-stone-500">{{ $reply->user->name }} · {{ $reply->created_at->format('d/m/Y H:i') }}</p>
+                            <p class="mt-2 text-sm text-stone-500">
+                                <x-user-link :user="$reply->user">
+                                    {{ $reply->user->name }}
+                                </x-user-link>
+                                · {{ $reply->created_at->format('d/m/Y H:i') }}
+                            </p>
                             <p class="mt-2 text-sm text-stone-600">{{ \Illuminate\Support\Str::limit($reply->content, 90) }}</p>
                         </a>
                     @empty

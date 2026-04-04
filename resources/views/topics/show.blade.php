@@ -5,7 +5,13 @@
                 <p class="section-kicker">Sujet en cours</p>
                 <h2 class="mt-3 text-4xl font-semibold text-stone-950">{{ $topic->title }}</h2>
                 <div class="mt-3 flex flex-wrap items-center gap-3 text-sm text-stone-500">
-                    <span>Par <span class="font-semibold text-stone-700">{{ $topic->user->name }}</span> le {{ $topic->created_at->format('d/m/Y H:i') }}</span>
+                    <span>
+                        Par
+                        <x-user-link :user="$topic->user" class="font-semibold text-stone-700">
+                            {{ $topic->user->name }}
+                        </x-user-link>
+                        le {{ $topic->created_at->format('d/m/Y H:i') }}
+                    </span>
                     @if ($topic->edits_count > 0)
                         <span class="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-amber-700">
                             Modifie
@@ -135,7 +141,11 @@
                                     {{ strtoupper(substr($topic->user->name, 0, 1)) }}
                                 </span>
                                 <div>
-                                    <p class="text-2xl font-semibold text-stone-950">{{ $topic->user->name }}</p>
+                                    <p class="text-2xl font-semibold text-stone-950">
+                                        <x-user-link :user="$topic->user">
+                                            {{ $topic->user->name }}
+                                        </x-user-link>
+                                    </p>
                                     <p class="mt-1 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--brand)]">
                                         Lvl {{ $topic->user->level }} · {{ $topic->user->experience }} / {{ $topic->user->level * 100 }} XP
                                     </p>
@@ -191,7 +201,11 @@
                             <div class="min-w-0 flex-1">
                                 <div class="flex items-start justify-between gap-3">
                                     <div>
-                                        <p class="text-sm font-semibold text-stone-900">{{ $reply->user->name }}</p>
+                                        <p class="text-sm font-semibold text-stone-900">
+                                            <x-user-link :user="$reply->user">
+                                                {{ $reply->user->name }}
+                                            </x-user-link>
+                                        </p>
                                         <p class="mt-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--brand)]">
                                             Lvl {{ $reply->user->level }} · Rep {{ $reply->user->reputation }}
                                         </p>

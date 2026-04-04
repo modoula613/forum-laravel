@@ -132,7 +132,11 @@
                                         <span>{{ $topic->created_at->format('d/m/Y H:i') }}</span>
                                     </div>
                                     <p class="mt-3 text-lg font-semibold text-stone-950">{{ $topic->title }}</p>
-                                    <p class="mt-2 text-sm text-stone-500">{{ $topic->user->name }}</p>
+                                    <p class="mt-2 text-sm text-stone-500">
+                                        <x-user-link :user="$topic->user">
+                                            {{ $topic->user->name }}
+                                        </x-user-link>
+                                    </p>
                                 </a>
                             @empty
                                 <div class="rounded-[1.5rem] bg-white/70 px-5 py-4 text-sm text-stone-500">

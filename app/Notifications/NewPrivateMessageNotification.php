@@ -28,6 +28,7 @@ class NewPrivateMessageNotification extends Notification
             'message' => "{$this->sender->name} vous a envoye un message prive.",
             'sender_name' => $this->sender->name,
             'sender_id' => $this->sender->id,
+            'sender_url' => route('users.show', $this->sender),
             'url' => route('messages.conversation', $this->sender),
         ];
     }

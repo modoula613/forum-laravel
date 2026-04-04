@@ -27,7 +27,10 @@
                                     <a href="{{ route('topics.show', $category->latestTopic) }}" class="font-semibold text-stone-700 transition hover:text-[var(--brand-deep)]">
                                         {{ $category->latestTopic->title }}
                                     </a>
-                                    · {{ $category->latestTopic->user->name }}
+                                    ·
+                                    <x-user-link :user="$category->latestTopic->user" class="font-semibold text-stone-700">
+                                        {{ $category->latestTopic->user->name }}
+                                    </x-user-link>
                                 </p>
                             @endif
                         </div>

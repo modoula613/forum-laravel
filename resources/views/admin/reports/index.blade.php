@@ -25,7 +25,12 @@
                                 <span class="rounded-full bg-rose-100 px-3 py-1 text-rose-600">
                                     {{ $report->topic_id ? 'Sujet' : 'Reponse' }}
                                 </span>
-                                <span>Signale par {{ $report->user->name }}</span>
+                                <span>
+                                    Signale par
+                                    <x-user-link :user="$report->user">
+                                        {{ $report->user->name }}
+                                    </x-user-link>
+                                </span>
                                 <span class="rounded-full px-3 py-1 {{ $report->status === 'resolved' ? 'bg-emerald-100 text-emerald-700' : ($report->status === 'ignored' ? 'bg-stone-200 text-stone-700' : 'bg-amber-100 text-amber-700') }}">
                                     {{ $report->status === 'resolved' ? 'Traite' : ($report->status === 'ignored' ? 'Ignore' : 'En attente') }}
                                 </span>
@@ -47,11 +52,15 @@
                                 <div class="flex flex-wrap items-center gap-4 text-sm text-stone-600">
                                     <span>
                                         Auteur de la reponse :
-                                        <span class="font-semibold text-stone-900">{{ $report->reply->user->name }}</span>
+                                        <x-user-link :user="$report->reply->user" class="font-semibold text-stone-900">
+                                            {{ $report->reply->user->name }}
+                                        </x-user-link>
                                     </span>
                                     <span>
                                         Utilisateur qui signale :
-                                        <span class="font-semibold text-stone-900">{{ $report->user->name }}</span>
+                                        <x-user-link :user="$report->user" class="font-semibold text-stone-900">
+                                            {{ $report->user->name }}
+                                        </x-user-link>
                                     </span>
                                 </div>
                             @endif

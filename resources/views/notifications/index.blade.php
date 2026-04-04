@@ -23,9 +23,15 @@
                             </p>
                             @if (($notification->data['type'] ?? null) === 'new_reply')
                                 <div class="mt-4 flex flex-wrap items-center gap-3 text-sm text-stone-600">
-                                    <span class="rounded-full bg-[rgba(79,70,229,0.12)] px-3 py-1 font-semibold text-[var(--brand)]">
-                                        {{ $notification->data['reply_user'] ?? 'Un membre' }}
-                                    </span>
+                                    @if (! empty($notification->data['reply_user_url']))
+                                        <a href="{{ $notification->data['reply_user_url'] }}" class="rounded-full bg-[rgba(79,70,229,0.12)] px-3 py-1 font-semibold text-[var(--brand)] transition hover:bg-[rgba(79,70,229,0.18)]">
+                                            {{ $notification->data['reply_user'] ?? 'Un membre' }}
+                                        </a>
+                                    @else
+                                        <span class="rounded-full bg-[rgba(79,70,229,0.12)] px-3 py-1 font-semibold text-[var(--brand)]">
+                                            {{ $notification->data['reply_user'] ?? 'Un membre' }}
+                                        </span>
+                                    @endif
                                     <span>sur</span>
                                     <span class="font-semibold text-stone-900">{{ $notification->data['topic_title'] ?? 'Sujet' }}</span>
                                 </div>
@@ -36,9 +42,20 @@
                                 @endif
                             @elseif (($notification->data['type'] ?? null) === 'new_private_message')
                                 <div class="mt-4 flex flex-wrap items-center gap-3 text-sm text-stone-600">
-                                    <span class="rounded-full bg-[rgba(139,92,246,0.12)] px-3 py-1 font-semibold text-[var(--brand)]">
-                                        {{ $notification->data['sender_name'] ?? 'Un membre' }}
-                                    </span>
+                                    @php
+                                        $senderProfileUrl = ! empty($notification->data['sender_url'])
+                                            ? $notification->data['sender_url']
+                                            : (! empty($notification->data['sender_id']) ? route('users.show', $notification->data['sender_id']) : null);
+                                    @endphp
+                                    @if ($senderProfileUrl)
+                                        <a href="{{ $senderProfileUrl }}" class="rounded-full bg-[rgba(139,92,246,0.12)] px-3 py-1 font-semibold text-[var(--brand)] transition hover:bg-[rgba(139,92,246,0.18)]">
+                                            {{ $notification->data['sender_name'] ?? 'Un membre' }}
+                                        </a>
+                                    @else
+                                        <span class="rounded-full bg-[rgba(139,92,246,0.12)] px-3 py-1 font-semibold text-[var(--brand)]">
+                                            {{ $notification->data['sender_name'] ?? 'Un membre' }}
+                                        </span>
+                                    @endif
                                     <span>a demarre une conversation privee avec vous.</span>
                                 </div>
                                 @if (! empty($notification->data['url']))

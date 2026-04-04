@@ -91,7 +91,10 @@
                                 </a>
                             </h4>
                             <p class="mt-2 text-sm text-stone-500">
-                                Par <span class="font-semibold text-stone-700">{{ $topic->user->name }}</span>
+                                Par
+                                <x-user-link :user="$topic->user" class="font-semibold text-stone-700">
+                                    {{ $topic->user->name }}
+                                </x-user-link>
                             </p>
                             <div class="mt-4">
                                 <a href="{{ route('topics.show', $topic) }}" class="text-sm font-semibold text-[var(--brand-deep)] transition hover:text-[var(--brand)]">

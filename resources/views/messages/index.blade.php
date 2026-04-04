@@ -22,7 +22,11 @@
                     <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                         <div>
                             <p class="text-sm font-semibold uppercase tracking-[0.16em] text-stone-500">Utilisateur concerne</p>
-                            <h3 class="mt-2 text-2xl font-semibold text-stone-950">{{ $conversation->user->name }}</h3>
+                            <h3 class="mt-2 text-2xl font-semibold text-stone-950">
+                                <x-user-link :user="$conversation->user">
+                                    {{ $conversation->user->name }}
+                                </x-user-link>
+                            </h3>
                             <p class="mt-4 whitespace-pre-line text-base leading-8 text-stone-700">{{ $conversation->last_message->content }}</p>
                         </div>
                         <div class="text-right text-sm text-stone-500">

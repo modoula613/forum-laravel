@@ -52,7 +52,11 @@
                                     {{ strtoupper(substr($user->name, 0, 1)) }}
                                 </span>
                                 <div>
-                                    <h3 class="text-xl font-semibold text-stone-950">{{ $user->name }}</h3>
+                                    <h3 class="text-xl font-semibold text-stone-950">
+                                        <x-user-link :user="$user">
+                                            {{ $user->name }}
+                                        </x-user-link>
+                                    </h3>
                                     <p class="mt-1 text-sm text-stone-500">{{ $user->email }}</p>
                                     <p class="mt-1 text-sm text-stone-500">Inscrit le {{ $user->created_at->format('d/m/Y') }}</p>
                                 </div>

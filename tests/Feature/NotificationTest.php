@@ -101,7 +101,24 @@ test('notifications page shows new reply notifications', function () {
         ->assertOk()
         ->assertSee('Nouvelle reponse sur un sujet suivi')
         ->assertSee('Camille')
-        ->assertSee('Sujet notifie');
+        ->assertSee('Sujet notifie')
+        ->assertSee(route('users.show', $replier), false);
+});
+
+test('notifications page links private message sender to their profile', function () {
+    $receiver = User::factory()->create();
+    $sender = User::factory()->create([
+        'name' => 'Nora',
+    ]);
+
+    $receiver->notify(new \App\Notifications\NewPrivateMessageNotification($sender));
+
+    $this
+        ->actingAs($receiver)
+        ->get(route('notifications.index'))
+        ->assertOk()
+        ->assertSee('Nora')
+        ->assertSee(route('users.show', $sender), false);
 });
 
 test('replying to a followed topic notifies followers', function () {

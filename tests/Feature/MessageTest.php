@@ -83,7 +83,9 @@ test('authenticated users can view a conversation with another user', function (
         ->actingAs($currentUser)
         ->get(route('messages.conversation', $otherUser))
         ->assertOk()
-        ->assertSee('Discussion avec Camille')
+        ->assertSee('Discussion avec')
+        ->assertSee('Camille')
+        ->assertSee(route('users.show', $otherUser), false)
         ->assertSee('Premier message')
         ->assertSee('Reponse en retour');
 

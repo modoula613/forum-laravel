@@ -55,7 +55,10 @@
                                     {{ $topic->title }}
                                 </a>
                                 <p class="mt-2 text-sm text-stone-500">
-                                    {{ $topic->user->name }} · {{ $topic->created_at->format('d/m/Y H:i') }} · {{ $topic->replies_count }} reponses
+                                    <x-user-link :user="$topic->user">
+                                        {{ $topic->user->name }}
+                                    </x-user-link>
+                                    · {{ $topic->created_at->format('d/m/Y H:i') }} · {{ $topic->replies_count }} reponses
                                 </p>
                                 <div class="mt-3 flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-[0.16em]">
                                     @if ($topic->is_locked)
