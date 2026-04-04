@@ -43,13 +43,29 @@
                     </svg>
                 </button>
             </div>
+            @auth
+                @if (! auth()->user()->is_blocked)
+                    <a
+                        href="{{ route('topics.create') }}"
+                        class="app-compose-fab"
+                        aria-label="Poster un sujet"
+                        title="Poster un sujet"
+                    >
+                        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <path d="M6.5 17.5c4.7-.9 8.4-4.6 9.3-9.3l.7-3.3a.7.7 0 0 1 .83-.54l2.2.44a.7.7 0 0 1 .55.83l-.67 3.34c-.95 4.76-4.67 8.48-9.43 9.43l-3.34.67a.7.7 0 0 1-.83-.55l-.44-2.2a.7.7 0 0 1 .54-.83l3.32-.66Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="m13.4 6.6 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span class="sr-only">Poster un sujet</span>
+                    </a>
+                @endif
+            @endauth
             <div class="mx-auto max-w-[1380px] px-0 sm:px-4 lg:px-6">
                 <div class="app-frame lg:grid lg:grid-cols-[17rem_minmax(0,1fr)] lg:gap-8">
                     <aside class="app-sidebar lg:sticky lg:top-0 lg:h-screen lg:py-3">
                         @include('layouts.navigation')
                     </aside>
 
-                    <div class="app-main pb-14 lg:py-3">
+                    <div class="app-main pb-24 lg:py-3">
                         @isset($header)
                             <header class="page-header-shell x-shell-divider pt-0">
                                 <div class="app-header-card px-5 py-5 sm:px-6">

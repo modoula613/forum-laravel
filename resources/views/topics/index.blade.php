@@ -352,9 +352,13 @@
                                     </div>
                                     @auth
                                         @if (! auth()->user()->is_blocked)
-                                            <a href="{{ route('topics.create') }}" class="rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-black transition hover:bg-white/90">
-                                                Poster
-                                            </a>
+                                            <div class="app-inline-compose-hint">
+                                                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                                    <path d="M6.5 17.5c4.7-.9 8.4-4.6 9.3-9.3l.7-3.3a.7.7 0 0 1 .83-.54l2.2.44a.7.7 0 0 1 .55.83l-.67 3.34c-.95 4.76-4.67 8.48-9.43 9.43l-3.34.67a.7.7 0 0 1-.83-.55l-.44-2.2a.7.7 0 0 1 .54-.83l3.32-.66Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                                                    <path d="m13.4 6.6 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                                                </svg>
+                                                <span>Utilise la plume en bas pour poster</span>
+                                            </div>
                                         @endif
                                     @else
                                         <a href="{{ route('login') }}" class="rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-black transition hover:bg-white/90">
@@ -410,11 +414,6 @@
                                     Des sujets simples, des prises de position, des questions directes. Le forum vit d'abord par les messages des membres.
                                 </p>
                             </div>
-                            @auth
-                                <a href="{{ route('topics.create') }}" class="hidden rounded-full border border-white/10 px-4 py-2 text-sm font-semibold text-white/72 transition hover:bg-white/8 hover:text-white sm:inline-flex">
-                                    Ecrire
-                                </a>
-                            @endauth
                         </div>
 
                         @forelse ($topics as $topic)
@@ -469,12 +468,13 @@
                                 <h3 class="mt-3 text-3xl font-semibold text-white">Le flux attend ses premiers messages</h3>
                                 <p class="mt-3 text-base text-white/60">L'actualite peut donner des idees, mais ce sont surtout les sujets des membres qui feront vivre le forum.</p>
                                 @auth
-                                    <a
-                                        href="{{ route('topics.create') }}"
-                                        class="mt-6 inline-flex items-center rounded-full bg-white px-5 py-3 text-sm font-semibold uppercase tracking-[0.18em] text-black transition hover:bg-white/90"
-                                    >
-                                        Creer le premier sujet
-                                    </a>
+                                    <div class="app-inline-compose-hint mx-auto mt-6">
+                                        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                            <path d="M6.5 17.5c4.7-.9 8.4-4.6 9.3-9.3l.7-3.3a.7.7 0 0 1 .83-.54l2.2.44a.7.7 0 0 1 .55.83l-.67 3.34c-.95 4.76-4.67 8.48-9.43 9.43l-3.34.67a.7.7 0 0 1-.83-.55l-.44-2.2a.7.7 0 0 1 .54-.83l3.32-.66Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="m13.4 6.6 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                        <span>La petite plume en bas ouvre la creation</span>
+                                    </div>
                                 @endauth
                             </div>
                         @endforelse

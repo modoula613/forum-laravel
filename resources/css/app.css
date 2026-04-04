@@ -842,6 +842,58 @@
         filter: brightness(0.96);
     }
 
+    .app-compose-fab {
+        position: fixed;
+        right: max(1rem, env(safe-area-inset-right));
+        bottom: calc(1rem + env(safe-area-inset-bottom));
+        z-index: 94;
+        display: inline-flex;
+        width: 3.9rem;
+        height: 3.9rem;
+        align-items: center;
+        justify-content: center;
+        border-radius: 999px;
+        border: 1px solid color-mix(in srgb, var(--brand) 22%, var(--line) 78%);
+        background:
+            radial-gradient(circle at top left, color-mix(in srgb, white 28%, transparent) 0%, transparent 38%),
+            linear-gradient(160deg, color-mix(in srgb, var(--brand) 88%, white 12%), color-mix(in srgb, var(--brand-deep) 92%, black 8%));
+        color: white;
+        box-shadow: 0 20px 36px rgba(91, 33, 182, 0.24);
+        transition: transform 180ms ease, box-shadow 180ms ease, filter 180ms ease;
+    }
+
+    .app-compose-fab:hover {
+        transform: translateY(-2px) scale(1.01);
+        filter: saturate(1.05);
+        box-shadow: 0 24px 42px rgba(91, 33, 182, 0.28);
+    }
+
+    .app-compose-fab:focus-visible {
+        outline: none;
+        box-shadow:
+            0 0 0 4px color-mix(in srgb, var(--brand) 18%, transparent),
+            0 24px 42px rgba(91, 33, 182, 0.28);
+    }
+
+    .app-inline-compose-hint {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        border-radius: 999px;
+        border: 1px solid color-mix(in srgb, var(--brand) 24%, var(--line) 76%);
+        background: color-mix(in srgb, var(--brand) 10%, transparent);
+        padding: 0.7rem 1rem;
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: color-mix(in srgb, var(--brand) 68%, white 32%);
+    }
+
+    html[data-theme='light'] .app-inline-compose-hint {
+        color: color-mix(in srgb, var(--brand-deep) 76%, black 24%);
+    }
+
     .app-mobile-bar,
     .app-mobile-dropdown {
         background: var(--mobile-bar);
@@ -871,6 +923,10 @@
 
     html[data-theme='dark'] .app-theme-fab {
         box-shadow: 0 14px 28px rgba(0, 0, 0, 0.34);
+    }
+
+    html[data-theme='dark'] .app-compose-fab {
+        box-shadow: 0 22px 40px rgba(0, 0, 0, 0.44);
     }
 
     .social-page .prose,

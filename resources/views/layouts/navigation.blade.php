@@ -67,17 +67,11 @@
                         @endauth
                     </div>
 
-                    @auth
-                        @if (! auth()->user()->is_blocked)
-                            <a href="{{ route('topics.create') }}" class="app-cta-button mt-6 inline-flex w-full items-center justify-center rounded-full px-5 py-3 text-base font-semibold transition">
-                                Poster
-                            </a>
-                        @endif
-                    @else
+                    @guest
                         <a href="{{ route('register') }}" class="app-cta-button mt-6 inline-flex w-full items-center justify-center rounded-full px-5 py-3 text-base font-semibold transition">
                             Rejoindre
                         </a>
-                    @endauth
+                    @endguest
                 </div>
 
                 @auth

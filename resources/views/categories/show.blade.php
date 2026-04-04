@@ -14,9 +14,9 @@
                 </div>
                 @auth
                     @if (! auth()->user()->is_blocked)
-                        <a href="{{ route('topics.create') }}" class="rounded-full bg-[var(--brand)] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[var(--brand-deep)]">
-                            Creer un sujet ici
-                        </a>
+                        <div class="rounded-full border border-[rgba(139,92,246,0.18)] bg-[rgba(139,92,246,0.08)] px-4 py-2 text-sm font-semibold text-[var(--brand-deep)]">
+                            Utilise la plume en bas pour poster
+                        </div>
                     @endif
                 @endauth
                 <a href="{{ route('categories.index') }}" class="rounded-full border border-[rgba(71,85,135,0.16)] bg-white/70 px-4 py-2 text-sm font-semibold text-stone-700 transition hover:bg-white">
