@@ -48,9 +48,7 @@
                     <article class="glass-panel rounded-[2rem] p-5 sm:p-6">
                         <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                             <div class="flex items-center gap-4">
-                                <span class="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--brand)] text-sm font-semibold uppercase text-white shadow-[0_10px_24px_rgba(79,70,229,0.22)]">
-                                    {{ strtoupper(substr($user->name, 0, 1)) }}
-                                </span>
+                                <x-user-avatar :user="$user" class="h-12 w-12 bg-[var(--brand)] text-sm font-semibold uppercase text-white shadow-[0_10px_24px_rgba(79,70,229,0.22)]" />
                                 <div>
                                     <h3 class="text-xl font-semibold text-stone-950">
                                         <x-user-link :user="$user">

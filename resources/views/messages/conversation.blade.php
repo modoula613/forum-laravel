@@ -55,7 +55,9 @@
                 @forelse ($messages as $message)
                     <article class="glass-panel rounded-[2rem] p-5 {{ $message->sender_id === auth()->id() ? 'border-[rgba(79,70,229,0.18)]' : '' }}">
                         <div class="flex items-center justify-between gap-4">
-                            <div>
+                            <div class="flex items-center gap-3">
+                                <x-user-avatar :user="$message->sender" class="h-11 w-11 shrink-0 bg-[var(--brand)] text-sm font-semibold uppercase text-white shadow-[0_10px_24px_rgba(79,70,229,0.22)]" />
+                                <div>
                                 <p class="text-sm font-semibold uppercase tracking-[0.16em] text-stone-600">
                                     @if ($message->sender_id === auth()->id())
                                         Vous
@@ -68,6 +70,7 @@
                                 <p class="mt-1 text-xs font-medium uppercase tracking-[0.16em] text-stone-500">
                                     {{ $message->sender_id === auth()->id() ? 'Message envoye' : 'Message recu' }}
                                 </p>
+                                </div>
                             </div>
                             <div class="text-right">
                                 <p class="text-xs text-stone-500">{{ $message->created_at->format('d/m/Y H:i') }}</p>

@@ -102,9 +102,7 @@
                     @forelse ($topics as $topic)
                         <article class="rounded-[1.75rem] border border-[rgba(71,85,135,0.1)] bg-white/74 p-5 transition duration-200 hover:-translate-y-0.5 hover:bg-white">
                             <div class="flex gap-4">
-                                <span class="mt-1 flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[rgba(139,92,246,0.12)] text-sm font-semibold uppercase text-[var(--brand)]">
-                                    {{ strtoupper(substr($topic->user->name, 0, 1)) }}
-                                </span>
+                                <x-user-avatar :user="$topic->user" class="mt-1 h-11 w-11 shrink-0 bg-[rgba(139,92,246,0.12)] text-sm font-semibold uppercase text-[var(--brand)]" />
                                 <div class="min-w-0 flex-1 space-y-3">
                                     <div class="flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-[0.18em] text-stone-500">
                                         <span>{{ $topic->created_at->format('d/m/Y H:i') }}</span>

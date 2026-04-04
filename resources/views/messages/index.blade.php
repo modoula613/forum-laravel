@@ -20,7 +20,9 @@
             @forelse ($conversations as $conversation)
                 <article class="glass-panel rounded-[2rem] p-6">
                     <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-                        <div>
+                        <div class="flex items-start gap-4">
+                            <x-user-avatar :user="$conversation->user" class="mt-1 h-12 w-12 shrink-0 bg-[var(--brand)] text-sm font-semibold uppercase text-white shadow-[0_10px_24px_rgba(79,70,229,0.22)]" />
+                            <div>
                             <p class="text-sm font-semibold uppercase tracking-[0.16em] text-stone-500">Utilisateur concerne</p>
                             <h3 class="mt-2 text-2xl font-semibold text-stone-950">
                                 <x-user-link :user="$conversation->user">
@@ -28,6 +30,7 @@
                                 </x-user-link>
                             </h3>
                             <p class="mt-4 whitespace-pre-line text-base leading-8 text-stone-700">{{ $conversation->last_message->content }}</p>
+                            </div>
                         </div>
                         <div class="text-right text-sm text-stone-500">
                             <p>{{ $conversation->last_message->created_at->format('d/m/Y H:i') }}</p>

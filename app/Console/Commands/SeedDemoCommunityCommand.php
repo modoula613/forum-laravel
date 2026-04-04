@@ -71,15 +71,23 @@ class SeedDemoCommunityCommand extends Command
 
             $topicTime = CarbonImmutable::now()->subHours($conversation['hours_ago']);
 
+            $emoji = $conversation['emoji'] ?? null;
+            $title = $emoji ? "{$emoji} {$conversation['title']}" : $conversation['title'];
+            $content = $this->embellishTopicContent($conversation['content'], $emoji);
+            $lookupTitles = collect([$conversation['title'], $title, $conversation['lookup_title'] ?? null])
+                ->filter()
+                ->unique()
+                ->values();
+
             $topic = Topic::query()
                 ->where('user_id', $author->id)
-                ->where('title', $conversation['title'])
+                ->whereIn('title', $lookupTitles)
                 ->first();
 
             if (! $topic) {
                 $topic = new Topic([
-                    'title' => $conversation['title'],
-                    'content' => $conversation['content'],
+                    'title' => $title,
+                    'content' => $content,
                     'category_id' => $category->id,
                     'is_draft' => false,
                     'is_locked' => false,
@@ -90,7 +98,8 @@ class SeedDemoCommunityCommand extends Command
                 $createdTopics++;
             } else {
                 $topic->forceFill([
-                    'content' => $conversation['content'],
+                    'title' => $title,
+                    'content' => $content,
                     'category_id' => $category->id,
                     'is_draft' => false,
                     'is_locked' => false,
@@ -186,6 +195,7 @@ class SeedDemoCommunityCommand extends Command
             [
                 'author' => 'lina@forum-demo.test',
                 'category' => 'actualites-et-debats',
+                'emoji' => '📰',
                 'hours_ago' => 54,
                 'title' => 'Vous laissez encore les notifs info allumees sur votre tel ?',
                 'content' => "Je me rends compte que des que je coupe les alertes info je me sens mieux, mais j'ai aussi peur de rater un sujet important.\n\nVous les laissez actives toute la journee ou vous avez fait le tri depuis longtemps ?",
@@ -198,6 +208,7 @@ class SeedDemoCommunityCommand extends Command
             [
                 'author' => 'julie@forum-demo.test',
                 'category' => 'culture-et-loisirs',
+                'emoji' => '🎫',
                 'hours_ago' => 50,
                 'title' => 'Le prix des places de concert, on en parle ou on a juste accepte ?',
                 'content' => "Je regardais pour un concert ce matin et j'ai l'impression que sortir voir un artiste connu devient un luxe.\n\nVous continuez a y aller quand meme ou vous avez calmement laisse tomber ?",
@@ -210,6 +221,7 @@ class SeedDemoCommunityCommand extends Command
             [
                 'author' => 'karim@forum-demo.test',
                 'category' => 'sport',
+                'emoji' => '⚽',
                 'hours_ago' => 47,
                 'title' => 'Regarder un match sans ouvrir les reseaux, vous y arrivez encore ?',
                 'content' => "Je voulais juste profiter du match tranquille hier et au final je lisais plus les reactions que je regardais l'ecran.\n\nVous arrivez encore a vivre un match sans deuxieme ecran ou c'est fini pour tout le monde ?",
@@ -222,6 +234,7 @@ class SeedDemoCommunityCommand extends Command
             [
                 'author' => 'amina@forum-demo.test',
                 'category' => 'mode-de-vie-et-bien-etre',
+                'emoji' => '🌙',
                 'hours_ago' => 43,
                 'title' => 'Vous arrivez vraiment a couper les ecrans avant de dormir ?',
                 'content' => "Je me dis tous les soirs que je vais poser le tel une heure avant de dormir, et tous les soirs je finis par scroller encore un peu.\n\nVous avez trouve une astuce qui marche vraiment ou c'est juste une lutte quotidienne ?",
@@ -234,6 +247,7 @@ class SeedDemoCommunityCommand extends Command
             [
                 'author' => 'thomas@forum-demo.test',
                 'category' => 'etudes-et-travail',
+                'emoji' => '🧠',
                 'hours_ago' => 39,
                 'title' => 'Les reunions qui auraient pu etre un message, on fait comment ?',
                 'content' => "Je sors encore d'un point de 45 minutes pour deux infos qu'on aurait pu ecrire en trois lignes.\n\nDans vos tafs aussi ca prend autant de place ou j'ai juste pas de chance ?",
@@ -246,6 +260,7 @@ class SeedDemoCommunityCommand extends Command
             [
                 'author' => 'mehdi@forum-demo.test',
                 'category' => 'technologie-et-numerique',
+                'emoji' => '🎧',
                 'hours_ago' => 35,
                 'title' => 'Les vocaux de 3 minutes, pratique ou enfer ?',
                 'content' => "J'ai l'impression qu'on remplace de plus en plus les messages ecrits par des vocaux ultra longs.\n\nVous trouvez ca plus humain ou juste impossible a gerer quand t'es dans les transports ou au boulot ?",
@@ -258,6 +273,7 @@ class SeedDemoCommunityCommand extends Command
             [
                 'author' => 'salma@forum-demo.test',
                 'category' => 'cuisine-et-gourmandise',
+                'emoji' => '🍝',
                 'hours_ago' => 31,
                 'title' => 'Vous cuisinez encore le soir ou la flemme gagne souvent ?',
                 'content' => "J'aime bien cuisiner mais en semaine j'ai souvent la flemme totale en rentrant.\n\nVous avez des repas faciles qui sauvent vos soirs sans finir systematiquement en livraison ?",
@@ -270,6 +286,7 @@ class SeedDemoCommunityCommand extends Command
             [
                 'author' => 'ines@forum-demo.test',
                 'category' => 'voyages-et-decouvertes',
+                'emoji' => '✈️',
                 'hours_ago' => 28,
                 'title' => 'Vous partez plutot en week-end improvise ou tout planifier des mois avant ?',
                 'content' => "J'adore l'idee du depart sur un coup de tete, mais des que je dois reserver logement, train, budget, je redeviens ultra prudente.\n\nVous etes team improvisation ou team tableau Excel ?",
@@ -282,6 +299,7 @@ class SeedDemoCommunityCommand extends Command
             [
                 'author' => 'sarah@forum-demo.test',
                 'category' => 'relations-et-vie-sociale',
+                'emoji' => '💬',
                 'hours_ago' => 24,
                 'title' => 'C est moi ou plus personne ne dit franchement quand quelque chose le derange ?',
                 'content' => "J'ai l'impression qu'on contourne beaucoup les discussions directes, puis tout ressort d'un coup au pire moment.\n\nVous aussi vous voyez ca autour de vous ou c'est juste mon entourage qui fuit le conflit ?",
@@ -294,6 +312,7 @@ class SeedDemoCommunityCommand extends Command
             [
                 'author' => 'nabil@forum-demo.test',
                 'category' => 'questions-et-entraide',
+                'emoji' => '🧩',
                 'hours_ago' => 20,
                 'title' => 'Comment vous faites pour rester concentres plus de 20 minutes ?',
                 'content' => "Je commence une tache, puis je regarde un message, puis une notif, puis autre chose, et au final j'ai avance sur rien.\n\nJe prends toutes vos vraies astuces, meme les plus simples.",
@@ -306,6 +325,7 @@ class SeedDemoCommunityCommand extends Command
             [
                 'author' => 'julie@forum-demo.test',
                 'category' => 'argent-et-projets',
+                'emoji' => '💸',
                 'hours_ago' => 16,
                 'title' => 'Vous avez encore un vrai budget mensuel ou vous faites au feeling ?',
                 'content' => "Pendant longtemps je regardais juste le solde en fin de mois, mais avec tout qui augmente je me dis que ce n'est plus possible.\n\nVous suivez vraiment vos depenses ou vous improvisez encore ?",
@@ -318,6 +338,7 @@ class SeedDemoCommunityCommand extends Command
             [
                 'author' => 'amina@forum-demo.test',
                 'category' => 'hors-sujet',
+                'emoji' => '✨',
                 'hours_ago' => 12,
                 'title' => 'Votre petite habitude bizarre mais efficace du quotidien ?',
                 'content' => "Je fais des listes sur des bouts de papier alors que tout existe sur le tel, mais c'est le seul format qui me calme vraiment.\n\nVous avez un petit truc du genre qui ne parait pas logique mais qui vous aide vraiment ?",
@@ -330,6 +351,7 @@ class SeedDemoCommunityCommand extends Command
             [
                 'author' => 'thomas@forum-demo.test',
                 'category' => 'actualites-et-debats',
+                'emoji' => '🏥',
                 'hours_ago' => 10,
                 'title' => 'Sur le cout reel des soins, vous voudriez savoir combien ca coute ou pas ?',
                 'content' => "Je suis tombe sur un article qui posait la question et je me demande si ca aiderait vraiment les gens a mieux comprendre le systeme, ou si ca rajouterait surtout de l'angoisse.\n\nVous prefereriez savoir le vrai prix de chaque soin ou vous trouvez que ca compliquerait tout ?",
@@ -342,6 +364,7 @@ class SeedDemoCommunityCommand extends Command
             [
                 'author' => 'lina@forum-demo.test',
                 'category' => 'technologie-et-numerique',
+                'emoji' => '📱',
                 'hours_ago' => 7,
                 'title' => 'Les gens qui changent de telephone tous les ans, vous comprenez ?',
                 'content' => "J'ai garde le mien presque quatre ans et j'ai du mal a voir ce qui justifie de changer tous les ans a part l'envie.\n\nVous trouvez ca normal si on en a les moyens ou juste du marketing bien rode ?",
@@ -354,6 +377,7 @@ class SeedDemoCommunityCommand extends Command
             [
                 'author' => 'karim@forum-demo.test',
                 'category' => 'petites-annonces-et-bons-plans',
+                'emoji' => '🛍️',
                 'hours_ago' => 4,
                 'title' => 'Le meilleur petit achat a moins de 30 euros que vous avez fait cette annee ?',
                 'content' => "Pas un gros achat, juste le truc utile du quotidien que vous ne regrettez pas.\n\nCa peut etre pour la maison, le boulot, le sport ou juste un detail qui change la vie.",
@@ -364,5 +388,18 @@ class SeedDemoCommunityCommand extends Command
                 ],
             ],
         ];
+    }
+
+    protected function embellishTopicContent(string $content, ?string $emoji): string
+    {
+        if (! $emoji) {
+            return $content;
+        }
+
+        if (str_contains($content, "\n\n")) {
+            return preg_replace('/\n\n/', " {$emoji}\n\n", $content, 1) ?? $content;
+        }
+
+        return "{$content} {$emoji}";
     }
 }

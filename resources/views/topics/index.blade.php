@@ -335,13 +335,11 @@
                 <div class="space-y-6">
                     <section class="glass-panel x-shell-divider p-5 sm:p-6">
                         <div class="flex items-start gap-4">
-                            <span class="mt-1 flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/8 text-sm font-semibold uppercase text-white/80">
-                                @auth
-                                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-                                @else
-                                    ?
-                                @endauth
-                            </span>
+                            @auth
+                                <x-user-avatar :user="Auth::user()" class="mt-1 h-11 w-11 shrink-0 bg-white/8 text-sm font-semibold uppercase text-white/80" />
+                            @else
+                                <x-user-avatar class="mt-1 h-11 w-11 shrink-0 bg-white/8 text-sm font-semibold uppercase text-white/80" />
+                            @endauth
                             <div class="min-w-0 flex-1">
                                 <p class="text-2xl font-medium text-white/45">
                                     Que se passe-t-il ?
@@ -379,9 +377,7 @@
                             @foreach ($pinnedTopics as $topic)
                                 <article class="glass-panel x-shell-divider rounded-[1.9rem] p-5 sm:px-6">
                                     <div class="flex gap-4">
-                                        <span class="mt-1 flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-amber-500/10 text-sm font-semibold uppercase text-amber-300">
-                                            {{ strtoupper(substr($topic->user->name, 0, 1)) }}
-                                        </span>
+                                        <x-user-avatar :user="$topic->user" class="mt-1 h-11 w-11 shrink-0 bg-amber-500/10 text-sm font-semibold uppercase text-amber-300" />
                                         <div class="min-w-0 flex-1">
                                             <div class="flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-[0.18em] text-white/45">
                                                 <span class="rounded-full bg-amber-500/10 px-3 py-1 text-amber-300">Epingle</span>
@@ -424,9 +420,7 @@
                         @forelse ($topics as $topic)
                             <article class="glass-panel-strong x-shell-divider rounded-[1.95rem] p-5 transition duration-200 hover:bg-white/[0.02] sm:px-6">
                                 <div class="flex gap-4">
-                                    <span class="mt-1 flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/8 text-sm font-semibold uppercase text-white/85">
-                                        {{ strtoupper(substr($topic->user->name, 0, 1)) }}
-                                    </span>
+                                    <x-user-avatar :user="$topic->user" class="mt-1 h-11 w-11 shrink-0 bg-white/8 text-sm font-semibold uppercase text-white/85" />
                                     <div class="min-w-0 flex-1 space-y-3">
                                         <div class="flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-[0.18em] text-white/45">
                                             <x-user-link :user="$topic->user" class="text-white">

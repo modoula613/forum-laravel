@@ -83,9 +83,7 @@
                 @auth
                     <div class="app-profile-card rounded-[1.6rem] p-2 transition">
                         <div class="flex items-center gap-3">
-                            <span class="app-profile-avatar flex h-11 w-11 items-center justify-center rounded-full text-sm font-semibold uppercase">
-                                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-                            </span>
+                            <x-user-avatar :user="Auth::user()" class="app-profile-avatar h-11 w-11 text-sm font-semibold uppercase" />
                             <div class="min-w-0 flex-1">
                                 <p class="truncate font-semibold app-profile-name">
                                     <x-user-link :user="Auth::user()">

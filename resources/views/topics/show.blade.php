@@ -137,9 +137,7 @@
                         <div class="rounded-[1.5rem] bg-white/70 p-5">
                             <p class="text-sm text-stone-500">Auteur</p>
                             <div class="mt-3 flex items-center gap-3">
-                                <span class="flex h-11 w-11 items-center justify-center rounded-full bg-[var(--brand)] text-sm font-semibold uppercase text-white shadow-[0_10px_24px_rgba(79,70,229,0.22)]">
-                                    {{ strtoupper(substr($topic->user->name, 0, 1)) }}
-                                </span>
+                                <x-user-avatar :user="$topic->user" class="h-11 w-11 bg-[var(--brand)] text-sm font-semibold uppercase text-white shadow-[0_10px_24px_rgba(79,70,229,0.22)]" />
                                 <div>
                                     <p class="text-2xl font-semibold text-stone-950">
                                         <x-user-link :user="$topic->user">
@@ -195,9 +193,7 @@
                 @forelse ($topic->replies as $reply)
                     <article class="glass-panel rounded-[1.85rem] p-5 sm:p-6">
                         <div class="flex gap-4">
-                            <span class="mt-1 flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[rgba(139,92,246,0.12)] text-sm font-semibold uppercase text-[var(--brand)]">
-                                {{ strtoupper(substr($reply->user->name, 0, 1)) }}
-                            </span>
+                            <x-user-avatar :user="$reply->user" class="mt-1 h-11 w-11 shrink-0 bg-[rgba(139,92,246,0.12)] text-sm font-semibold uppercase text-[var(--brand)]" />
                             <div class="min-w-0 flex-1">
                                 <div class="flex items-start justify-between gap-3">
                                     <div>

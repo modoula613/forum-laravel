@@ -18,10 +18,16 @@ class SeedDemoCommunityCommandTest extends TestCase
             ->assertSuccessful();
 
         $demoUsers = User::where('email', 'like', '%@forum-demo.test')->pluck('id');
+        $demoUser = User::where('email', 'lina@forum-demo.test')->first();
 
         $this->assertSame(10, $demoUsers->count());
         $this->assertSame(15, Topic::whereIn('user_id', $demoUsers)->count());
         $this->assertSame(45, Reply::whereIn('user_id', $demoUsers)->count());
+        $this->assertNotNull($demoUser);
+        $this->assertStringStartsWith('data:image/svg+xml', $demoUser->profile_photo_url);
+        $this->assertTrue(
+            Topic::whereIn('user_id', $demoUsers)->where('title', 'like', '%📰%')->exists()
+        );
     }
 
     public function test_demo_community_command_is_idempotent(): void
