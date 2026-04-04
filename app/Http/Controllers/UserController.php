@@ -41,6 +41,9 @@ class UserController extends Controller
         $isFriend = $viewer ? $viewer->isFriendWith($user) : false;
         $hasPendingRequestTo = $viewer ? $viewer->hasPendingFollowRequestTo($user) : false;
         $hasPendingRequestFrom = $viewer ? $viewer->hasPendingFollowRequestFrom($user) : false;
+        $canMessage = $viewer
+            ? $viewer->id !== $user->id && $user->isFollowing($viewer)
+            : false;
         $friendsCount = $user->friendsCount();
 
         return view('users.show', compact(
@@ -50,6 +53,7 @@ class UserController extends Controller
             'isFriend',
             'hasPendingRequestTo',
             'hasPendingRequestFrom',
+            'canMessage',
             'friendsCount'
         ));
     }

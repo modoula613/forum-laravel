@@ -70,9 +70,11 @@
                                 </button>
                             </form>
                         @endif
-                        <a href="{{ route('messages.conversation', $user) }}" class="rounded-full border border-[rgba(71,85,135,0.16)] bg-white/80 px-5 py-3 text-sm font-semibold text-stone-700 transition hover:bg-white">
-                            Message prive
-                        </a>
+                        @if ($canMessage)
+                            <a href="{{ route('messages.conversation', $user) }}" class="rounded-full border border-[rgba(71,85,135,0.16)] bg-white/80 px-5 py-3 text-sm font-semibold text-stone-700 transition hover:bg-white">
+                                Message prive
+                            </a>
+                        @endif
                     </div>
                 @endif
             @endauth
@@ -198,12 +200,18 @@
             </section>
 
             <section class="glass-panel-strong rounded-[2rem] p-6 sm:p-8">
-                <p class="section-kicker">Contacter</p>
-                <h3 class="mt-3 text-3xl font-semibold text-stone-950">Envoyer un message prive</h3>
+                <p class="section-kicker">Messagerie privee</p>
+                <h3 class="mt-3 text-3xl font-semibold text-stone-950">Contacter {{ $user->name }}</h3>
 
                 @if (session('success'))
                     <div class="mt-4 rounded-[1.5rem] border border-emerald-200 bg-emerald-50/90 px-5 py-4 text-sm text-emerald-900">
                         {{ session('success') }}
+                    </div>
+                @endif
+
+                @if (session('error'))
+                    <div class="mt-4 rounded-[1.5rem] border border-rose-200 bg-rose-50/90 px-5 py-4 text-sm text-rose-800">
+                        {{ session('error') }}
                     </div>
                 @endif
 
@@ -249,33 +257,41 @@
                                     </button>
                                 </form>
                             @endif
-                            <a href="{{ route('messages.conversation', $user) }}" class="rounded-full border border-[rgba(71,85,135,0.16)] bg-white/80 px-4 py-3 text-sm font-semibold text-stone-700 transition hover:bg-white">
-                                Ouvrir la conversation
-                            </a>
+                            @if ($canMessage)
+                                <a href="{{ route('messages.conversation', $user) }}" class="rounded-full border border-[rgba(71,85,135,0.16)] bg-white/80 px-4 py-3 text-sm font-semibold text-stone-700 transition hover:bg-white">
+                                    Ouvrir la conversation
+                                </a>
+                            @endif
                         </div>
-                        <form method="POST" action="{{ route('messages.send') }}" class="mt-6 space-y-4">
-                            @csrf
-                            <input type="hidden" name="receiver_id" value="{{ $user->id }}">
-                            <div x-data="emojiComposer({ initialValue: @js(old('content')) })">
-                                <x-input-label for="content" :value="__('Message')" />
-                                <div class="mt-3">
-                                    <x-emoji-toolbar helper="Tu peux rendre le message plus naturel avec un emoji discret." />
+                        @if ($canMessage)
+                            <form method="POST" action="{{ route('messages.send') }}" class="mt-6 space-y-4">
+                                @csrf
+                                <input type="hidden" name="receiver_id" value="{{ $user->id }}">
+                                <div x-data="emojiComposer({ initialValue: @js(old('content')) })">
+                                    <x-input-label for="content" :value="__('Message')" />
+                                    <div class="mt-3">
+                                        <x-emoji-toolbar helper="Tu peux rendre le message plus naturel avec un emoji discret." />
+                                    </div>
+                                    <textarea
+                                        id="content"
+                                        name="content"
+                                        rows="6"
+                                        x-ref="input"
+                                        x-model="value"
+                                        class="mt-1 block w-full rounded-[1.5rem] border-[rgba(71,85,135,0.16)] bg-white/80 px-4 py-4 shadow-sm focus:border-[var(--brand)] focus:ring-[var(--brand)]"
+                                        required
+                                    ></textarea>
+                                    <x-input-error class="mt-2" :messages="$errors->get('content')" />
                                 </div>
-                                <textarea
-                                    id="content"
-                                    name="content"
-                                    rows="6"
-                                    x-ref="input"
-                                    x-model="value"
-                                    class="mt-1 block w-full rounded-[1.5rem] border-[rgba(71,85,135,0.16)] bg-white/80 px-4 py-4 shadow-sm focus:border-[var(--brand)] focus:ring-[var(--brand)]"
-                                    required
-                                ></textarea>
-                                <x-input-error class="mt-2" :messages="$errors->get('content')" />
+                                <div class="flex justify-end">
+                                    <x-primary-button>Envoyer un message</x-primary-button>
+                                </div>
+                            </form>
+                        @else
+                            <div class="mt-6 rounded-[1.5rem] border border-[rgba(71,85,135,0.12)] bg-white/70 p-5 text-sm text-stone-600">
+                                Tu pourras lui envoyer un message prive seulement quand {{ $user->name }} te suivra aussi.
                             </div>
-                            <div class="flex justify-end">
-                                <x-primary-button>Envoyer un message</x-primary-button>
-                            </div>
-                        </form>
+                        @endif
                     @else
                         <div class="mt-6 rounded-[1.5rem] bg-white/70 p-5 text-sm text-stone-600">
                             Tu ne peux pas t'envoyer un message a toi-meme.

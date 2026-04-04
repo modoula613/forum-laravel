@@ -8,6 +8,7 @@ use App\Notifications\NewPrivateMessageNotification;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\View\View;
 
 class MessageController extends Controller
@@ -59,8 +60,12 @@ class MessageController extends Controller
         return view('messages.index', compact('conversations'));
     }
 
-    public function conversation(User $user): View
+    public function conversation(User $user): View|RedirectResponse
     {
+        if ($redirect = $this->ensureMessagingAccess($user)) {
+            return $redirect;
+        }
+
         $search = request('search');
 
         Message::where('receiver_id', auth()->id())
@@ -95,6 +100,10 @@ class MessageController extends Controller
 
         $receiver = User::findOrFail($validated['receiver_id']);
 
+        if ($redirect = $this->ensureMessagingAccess($receiver)) {
+            return $redirect;
+        }
+
         Message::create([
             'sender_id' => auth()->id(),
             'receiver_id' => $validated['receiver_id'],
@@ -110,11 +119,28 @@ class MessageController extends Controller
     {
         abort_unless(
             $message->sender_id === auth()->id() || $message->receiver_id === auth()->id(),
-            403
+            Response::HTTP_FORBIDDEN
         );
 
         $message->delete();
 
         return back()->with('success', 'Message supprime.');
+    }
+
+    protected function ensureMessagingAccess(User $user): ?RedirectResponse
+    {
+        if ((int) $user->id === (int) auth()->id()) {
+            return redirect()
+                ->route('users.show', $user)
+                ->with('error', 'Tu ne peux pas t\'envoyer de message prive a toi-meme.');
+        }
+
+        if (! $user->isFollowing(auth()->user())) {
+            return redirect()
+                ->route('users.show', $user)
+                ->with('error', 'Tu peux envoyer un message prive seulement si ce membre te suit aussi.');
+        }
+
+        return null;
     }
 }

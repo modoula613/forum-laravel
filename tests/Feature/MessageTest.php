@@ -32,6 +32,7 @@ test('authenticated users can send a private message', function () {
 
     $sender = User::factory()->create();
     $receiver = User::factory()->create();
+    $receiver->followingUsers()->attach($sender->id);
 
     $this
         ->actingAs($sender)
@@ -62,6 +63,7 @@ test('authenticated users can view a conversation with another user', function (
     $otherUser = User::factory()->create([
         'name' => 'Camille',
     ]);
+    $otherUser->followingUsers()->attach($currentUser->id);
 
     Message::create([
         'sender_id' => $otherUser->id,
@@ -125,6 +127,7 @@ test('banned users cannot send a private message', function () {
 test('authenticated users can search within a conversation', function () {
     $currentUser = User::factory()->create();
     $otherUser = User::factory()->create();
+    $otherUser->followingUsers()->attach($currentUser->id);
 
     Message::create([
         'sender_id' => $otherUser->id,
@@ -165,4 +168,53 @@ test('authenticated users can delete a message from a conversation', function ()
         ->assertRedirect();
 
     expect(Message::find($message->id))->toBeNull();
+});
+
+test('users cannot send a private message if the other member does not follow them', function () {
+    Notification::fake();
+
+    $sender = User::factory()->create();
+    $receiver = User::factory()->create([
+        'name' => 'Camille',
+    ]);
+
+    $this
+        ->actingAs($sender)
+        ->post(route('messages.send'), [
+            'receiver_id' => $receiver->id,
+            'content' => 'Tu vois ce message ?',
+        ])
+        ->assertRedirect(route('users.show', $receiver))
+        ->assertSessionHas('error', 'Tu peux envoyer un message prive seulement si ce membre te suit aussi.');
+
+    expect(Message::count())->toBe(0);
+    Notification::assertNothingSent();
+});
+
+test('users cannot open a conversation if the other member does not follow them', function () {
+    $currentUser = User::factory()->create();
+    $otherUser = User::factory()->create([
+        'name' => 'Camille',
+    ]);
+
+    $this
+        ->actingAs($currentUser)
+        ->get(route('messages.conversation', $otherUser))
+        ->assertRedirect(route('users.show', $otherUser))
+        ->assertSessionHas('error', 'Tu peux envoyer un message prive seulement si ce membre te suit aussi.');
+});
+
+test('profile hides private message actions when the member does not follow you', function () {
+    $viewer = User::factory()->create();
+    $target = User::factory()->create([
+        'name' => 'Camille',
+    ]);
+
+    $this
+        ->actingAs($viewer)
+        ->get(route('users.show', $target))
+        ->assertOk()
+        ->assertDontSee('Ouvrir la conversation')
+        ->assertDontSee('Envoyer un message')
+        ->assertSee('Tu pourras lui envoyer un message prive seulement quand Camille te suivra aussi.');
 });
