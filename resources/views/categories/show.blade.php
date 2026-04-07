@@ -14,7 +14,8 @@
                 </div>
                 @auth
                     @if (! auth()->user()->is_blocked)
-                        <div class="rounded-full border border-[rgba(139,92,246,0.18)] bg-[rgba(139,92,246,0.08)] px-4 py-2 text-sm font-semibold text-[var(--brand-deep)]">
+                        <div class="inline-flex items-center gap-2 rounded-full border border-[rgba(139,92,246,0.18)] bg-[rgba(139,92,246,0.08)] px-4 py-2 text-sm font-semibold text-[var(--brand-deep)]">
+                            <x-compose-feather-icon class="h-4 w-4" />
                             Utilise la plume en bas pour poster
                         </div>
                     @endif
