@@ -36,6 +36,7 @@ test('search suggestions support user prefix', function () {
 
     $this->getJson(route('search.suggestions', ['query' => 'user:moh']))
         ->assertOk()
+        ->assertJsonPath('sections.0.items.0.url', route('users.index', ['search' => 'moh']))
         ->assertJsonFragment([
             'type' => 'user',
             'title' => 'Moh',

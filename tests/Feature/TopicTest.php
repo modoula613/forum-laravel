@@ -112,6 +112,12 @@ test('topics index can search by title', function () {
         ->assertDontSee('Vue Composer');
 });
 
+test('topics index redirects user search prefix to members search', function () {
+    $this
+        ->get(route('topics.index', ['search' => 'user:camille']))
+        ->assertRedirect(route('users.index', ['search' => 'camille']));
+});
+
 test('topics index links author names to their public profiles', function () {
     $user = User::factory()->create([
         'name' => 'Camille',

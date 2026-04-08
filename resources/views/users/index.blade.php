@@ -5,7 +5,7 @@
                 <p class="section-kicker">Communaute</p>
                 <h2 class="mt-3 text-4xl font-semibold text-stone-950">Les membres de Sphere</h2>
                 <p class="mt-3 text-sm text-stone-500">
-                    Parcours les membres les plus actifs, leur date d'inscription et leur niveau de participation.
+                    Parcours les membres les plus actifs, retrouve-les par nom ou par email, puis gere tes suivis.
                 </p>
             </div>
         </div>
@@ -22,7 +22,7 @@
                             type="text"
                             name="search"
                             value="{{ request('search') }}"
-                            placeholder="Rechercher un utilisateur..."
+                            placeholder="Rechercher un membre par nom ou email..."
                             class="block w-full rounded-[1.5rem] border-[rgba(71,85,135,0.16)] bg-white/80 px-4 py-3 text-sm shadow-sm focus:border-[var(--brand)] focus:ring-[var(--brand)]"
                         >
                     </div>
@@ -96,7 +96,7 @@
                     </article>
                 @empty
                     <div class="glass-panel rounded-[2rem] border-dashed p-8 text-center text-sm text-stone-500">
-                        Aucun utilisateur trouve.
+                        Aucun membre ne correspond a cette recherche.
                     </div>
                 @endforelse
             </section>

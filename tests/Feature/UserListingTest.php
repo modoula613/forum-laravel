@@ -29,6 +29,23 @@ test('users index can search by name', function () {
         ->assertDontSee('Thomas Dupont');
 });
 
+test('users index can search by email', function () {
+    User::factory()->create([
+        'name' => 'Camille Bernard',
+        'email' => 'camille@example.com',
+    ]);
+    User::factory()->create([
+        'name' => 'Thomas Dupont',
+        'email' => 'thomas@example.com',
+    ]);
+
+    $this
+        ->get(route('users.index', ['search' => 'camille@example.com']))
+        ->assertOk()
+        ->assertSee('Camille Bernard')
+        ->assertDontSee('Thomas Dupont');
+});
+
 test('public user profile displays earned badges', function () {
     $user = User::factory()->create([
         'name' => 'Nora Petit',

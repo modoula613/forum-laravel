@@ -39,13 +39,23 @@ class SearchSuggestionController extends Controller
 
         $searchTerm = trim($searchTerm);
 
+        $searchUrl = match ($searchMode) {
+            'users' => route('users.index', array_filter(['search' => $searchTerm])),
+            default => route('topics.index', ['search' => $query]),
+        };
+
+        $searchSubtitle = match ($searchMode) {
+            'users' => 'Lancer la recherche de membres',
+            default => 'Lancer la recherche dans le forum',
+        };
+
         $sections[] = [
             'label' => 'Recherche',
             'items' => [[
                 'type' => 'search',
                 'title' => $query,
-                'subtitle' => 'Lancer la recherche dans le forum',
-                'url' => route('topics.index', ['search' => $query]),
+                'subtitle' => $searchSubtitle,
+                'url' => $searchUrl,
             ]],
         ];
 
@@ -110,7 +120,11 @@ class SearchSuggestionController extends Controller
         if (in_array($searchMode, ['global', 'users'], true)) {
             $users = User::query()
                 ->select(['id', 'name', 'email'])
-                ->where('name', 'like', "%{$searchTerm}%")
+                ->where(function ($builder) use ($searchTerm) {
+                    $builder
+                        ->where('name', 'like', "%{$searchTerm}%")
+                        ->orWhere('email', 'like', "%{$searchTerm}%");
+                })
                 ->orderBy('name')
                 ->take(4)
                 ->get()

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Notifications\NewFollowRequestNotification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
@@ -53,6 +54,7 @@ class UserFollowController extends Controller
         }
 
         $currentUser->sentFollowRequests()->syncWithoutDetaching([$user->id]);
+        $user->notify(new NewFollowRequestNotification($currentUser));
 
         return back()->with('success', 'Demande de suivi envoyee.');
     }

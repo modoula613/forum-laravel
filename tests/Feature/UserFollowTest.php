@@ -1,9 +1,13 @@
 <?php
 
 use App\Models\User;
+use App\Notifications\NewFollowRequestNotification;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 
 test('authenticated users can send a follow request', function () {
+    Notification::fake();
+
     $sender = User::factory()->create();
     $target = User::factory()->create();
 
@@ -18,6 +22,8 @@ test('authenticated users can send a follow request', function () {
     ])->exists())->toBeTrue();
 
     expect($sender->isFollowing($target))->toBeFalse();
+
+    Notification::assertSentTo($target, NewFollowRequestNotification::class);
 });
 
 test('users can accept an incoming follow request', function () {

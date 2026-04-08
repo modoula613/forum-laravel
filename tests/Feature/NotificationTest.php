@@ -3,6 +3,7 @@
 use App\Models\Tag;
 use App\Models\Topic;
 use App\Models\User;
+use App\Notifications\NewFollowRequestNotification;
 use App\Notifications\NewTopicForFollowedTagNotification;
 use App\Notifications\NewReplyNotification;
 use App\Notifications\TopicFollowedNewReplyNotification;
@@ -119,6 +120,23 @@ test('notifications page links private message sender to their profile', functio
         ->assertOk()
         ->assertSee('Nora')
         ->assertSee(route('users.show', $sender), false);
+});
+
+test('notifications page shows follow requests', function () {
+    $receiver = User::factory()->create();
+    $requester = User::factory()->create([
+        'name' => 'Camille',
+    ]);
+
+    $receiver->notify(new NewFollowRequestNotification($requester));
+
+    $this
+        ->actingAs($receiver)
+        ->get(route('notifications.index'))
+        ->assertOk()
+        ->assertSee('Nouvelle demande de suivi')
+        ->assertSee('Camille')
+        ->assertSee(route('users.show', $requester), false);
 });
 
 test('replying to a followed topic notifies followers', function () {

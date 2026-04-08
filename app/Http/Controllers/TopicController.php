@@ -17,17 +17,27 @@ use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class TopicController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View|RedirectResponse
     {
-        $query = trim((string) request('search'));
-        $order = request('order', 'latest');
-        $category = request('category');
-        $tag = request('tag');
-        $followingOnly = request()->boolean('following') || request()->boolean('recommended');
+        $query = trim((string) $request->string('search'));
+
+        if (Str::startsWith(Str::lower($query), 'user:')) {
+            $memberQuery = trim(Str::after($query, ':'));
+
+            return redirect()->route('users.index', array_filter([
+                'search' => $memberQuery,
+            ]));
+        }
+
+        $order = $request->string('order')->toString() ?: 'latest';
+        $category = $request->input('category');
+        $tag = $request->input('tag');
+        $followingOnly = $request->boolean('following') || $request->boolean('recommended');
         $categories = Category::query()
             ->select(['id', 'name', 'slug'])
             ->orderBy('name')

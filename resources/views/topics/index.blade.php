@@ -41,7 +41,7 @@
 
                     <div class="min-w-0 flex-1">
                         <label for="search-bar" class="sr-only">
-                            Rechercher un sujet
+                            Rechercher un sujet ou un membre
                         </label>
                         <div class="x-search-shell" :class="{ 'is-open': open }">
                             <div class="x-search-field">
@@ -57,8 +57,8 @@
                                     id="search-bar"
                                     type="text"
                                     name="search"
-                                    placeholder="Rechercher..."
-                                    aria-label="Rechercher"
+                                    placeholder="Rechercher un sujet ou user:nom"
+                                    aria-label="Rechercher un sujet ou un membre"
                                     role="combobox"
                                     aria-autocomplete="list"
                                     :aria-expanded="open"

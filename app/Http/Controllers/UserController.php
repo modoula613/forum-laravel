@@ -9,7 +9,7 @@ class UserController extends Controller
 {
     public function index(): View
     {
-        $query = request('search');
+        $query = trim((string) request('search'));
         $followingIds = [];
         $pendingOutgoingIds = [];
         $pendingIncomingIds = [];
@@ -21,7 +21,13 @@ class UserController extends Controller
             $pendingIncomingIds = $viewer->receivedFollowRequests()->pluck('users.id')->all();
         }
 
-        $users = User::when($query, fn ($builder) => $builder->where('name', 'like', "%{$query}%"))
+        $users = User::when($query, function ($builder) use ($query) {
+                $builder->where(function ($searchBuilder) use ($query) {
+                    $searchBuilder
+                        ->where('name', 'like', "%{$query}%")
+                        ->orWhere('email', 'like', "%{$query}%");
+                });
+            })
             ->withCount(['topics', 'replies', 'followingUsers', 'followerUsers'])
             ->orderByDesc('replies_count')
             ->paginate(20)

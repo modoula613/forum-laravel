@@ -63,6 +63,24 @@
                                         Ouvrir la conversation
                                     </a>
                                 @endif
+                            @elseif (($notification->data['type'] ?? null) === 'follow_request')
+                                <div class="mt-4 flex flex-wrap items-center gap-3 text-sm text-stone-600">
+                                    @if (! empty($notification->data['requester_url']))
+                                        <a href="{{ $notification->data['requester_url'] }}" class="rounded-full bg-[rgba(139,92,246,0.12)] px-3 py-1 font-semibold text-[var(--brand)] transition hover:bg-[rgba(139,92,246,0.18)]">
+                                            {{ $notification->data['requester_name'] ?? 'Un membre' }}
+                                        </a>
+                                    @else
+                                        <span class="rounded-full bg-[rgba(139,92,246,0.12)] px-3 py-1 font-semibold text-[var(--brand)]">
+                                            {{ $notification->data['requester_name'] ?? 'Un membre' }}
+                                        </span>
+                                    @endif
+                                    <span>attend votre reponse.</span>
+                                </div>
+                                @if (! empty($notification->data['url']))
+                                    <a href="{{ $notification->data['url'] }}" class="mt-4 inline-flex items-center rounded-full bg-[var(--brand)] px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-white transition hover:bg-[var(--brand-deep)]">
+                                        Voir la demande
+                                    </a>
+                                @endif
                             @elseif (($notification->data['type'] ?? null) === 'new_topic_followed_tag')
                                 <div class="mt-4 flex flex-wrap items-center gap-3 text-sm text-stone-600">
                                     <span class="rounded-full bg-amber-100 px-3 py-1 font-semibold text-amber-700">
@@ -99,6 +117,10 @@
                             @if (array_key_exists('warning_count', $notification->data))
                                 <div class="rounded-full bg-[rgba(79,70,229,0.12)] px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--brand)]">
                                     {{ ($notification->data['warning_count'] ?? 0) }} avertissement(s)
+                                </div>
+                            @elseif (($notification->data['type'] ?? null) === 'follow_request')
+                                <div class="rounded-full bg-[rgba(139,92,246,0.12)] px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--brand)]">
+                                    Demande de suivi
                                 </div>
                             @elseif (($notification->data['type'] ?? null) === 'new_private_message')
                                 <div class="rounded-full bg-[rgba(139,92,246,0.12)] px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--brand)]">
