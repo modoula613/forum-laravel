@@ -139,6 +139,28 @@ test('notifications page shows follow requests', function () {
         ->assertSee(route('users.show', $requester), false);
 });
 
+test('notifications page can filter private message notifications', function () {
+    $receiver = User::factory()->create();
+    $requester = User::factory()->create([
+        'name' => 'Camille',
+    ]);
+    $sender = User::factory()->create([
+        'name' => 'Nora',
+    ]);
+
+    $receiver->notify(new NewFollowRequestNotification($requester));
+    $receiver->notify(new \App\Notifications\NewPrivateMessageNotification($sender));
+
+    $this
+        ->actingAs($receiver)
+        ->get(route('notifications.index', ['type' => 'messages']))
+        ->assertOk()
+        ->assertSee('Nouveau message prive')
+        ->assertSee('Nora')
+        ->assertDontSee('Nouvelle demande de suivi')
+        ->assertDontSee('Camille');
+});
+
 test('replying to a followed topic notifies followers', function () {
     Notification::fake();
 

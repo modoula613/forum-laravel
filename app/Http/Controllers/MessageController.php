@@ -9,15 +9,18 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class MessageController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
         $currentUser = auth()->user();
+        $search = trim((string) $request->string('search'));
+        $unreadOnly = $request->boolean('unread');
 
-        $conversationItems = Message::with(['sender', 'receiver'])
+        $allConversationItems = Message::with(['sender', 'receiver'])
             ->where(function ($query) use ($currentUser) {
                 $query->where('sender_id', $currentUser->id)
                     ->orWhere('receiver_id', $currentUser->id);
@@ -47,6 +50,35 @@ class MessageController extends Controller
             ->filter(fn ($conversation) => $conversation->user !== null)
             ->values();
 
+        $conversationSummary = [
+            'total' => $allConversationItems->count(),
+            'unread' => $allConversationItems
+                ->filter(fn ($conversation) => $conversation->unread_count > 0)
+                ->count(),
+        ];
+
+        $normalizedSearch = Str::lower($search);
+
+        $conversationItems = $allConversationItems
+            ->filter(function ($conversation) use ($normalizedSearch, $search, $unreadOnly) {
+                if ($unreadOnly && $conversation->unread_count === 0) {
+                    return false;
+                }
+
+                if ($search === '') {
+                    return true;
+                }
+
+                $userName = Str::lower($conversation->user->name ?? '');
+                $lastMessage = Str::lower($conversation->last_message->content ?? '');
+
+                return Str::contains($userName, $normalizedSearch)
+                    || Str::contains($lastMessage, $normalizedSearch);
+            })
+            ->values();
+
+        $conversationSummary['displayed'] = $conversationItems->count();
+
         $currentPage = LengthAwarePaginator::resolveCurrentPage();
         $perPage = 20;
         $conversations = new LengthAwarePaginator(
@@ -54,10 +86,18 @@ class MessageController extends Controller
             $conversationItems->count(),
             $perPage,
             $currentPage,
-            ['path' => route('messages.index')]
+            [
+                'path' => route('messages.index'),
+                'query' => $request->query(),
+            ]
         );
 
-        return view('messages.index', compact('conversations'));
+        return view('messages.index', compact(
+            'conversations',
+            'conversationSummary',
+            'search',
+            'unreadOnly'
+        ));
     }
 
     public function conversation(User $user): View|RedirectResponse

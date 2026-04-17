@@ -30,16 +30,22 @@
                     </a>
 
                     <div class="space-y-1">
-                        <x-nav-link :href="route('home')" :active="request()->routeIs('home') || request()->routeIs('topics.*')">
+                        <x-nav-link :href="route('home')" :active="request()->routeIs('home') || request()->routeIs('topics.index') || request()->routeIs('topics.show') || request()->routeIs('topics.create') || request()->routeIs('topics.edit') || request()->routeIs('topics.history')">
                             Forum
                         </x-nav-link>
                         <x-nav-link :href="route('categories.index')" :active="request()->routeIs('categories.*')">
                             Categories
                         </x-nav-link>
+                        <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
+                            Membres
+                        </x-nav-link>
                         <x-nav-link :href="route('news.index')" :active="request()->routeIs('news.*')">
                             Actualites
                         </x-nav-link>
                         @auth
+                            <x-nav-link :href="route('topics.feed')" :active="request()->routeIs('topics.feed')">
+                                Mon flux
+                            </x-nav-link>
                             <x-nav-link :href="route('notifications.index')" :active="request()->routeIs('notifications.*')">
                                 Notifications
                                 @if ($unreadNotificationCount > 0)
@@ -54,6 +60,9 @@
                             </x-nav-link>
                             <x-nav-link :href="route('profile.edit')" :active="request()->routeIs('profile.*')">
                                 Profil
+                            </x-nav-link>
+                            <x-nav-link :href="route('topics.drafts')" :active="request()->routeIs('topics.drafts')">
+                                Brouillons
                             </x-nav-link>
                             @if (auth()->user()->role === 'admin')
                                 <x-nav-link :href="route('admin.index')" :active="request()->routeIs('admin.*')">
@@ -92,6 +101,12 @@
                             <a href="{{ route('dashboard') }}" class="app-profile-chip rounded-full border px-3 py-2 text-xs font-semibold uppercase tracking-[0.16em] transition">
                                 Mon espace
                             </a>
+                            <a href="{{ route('topics.feed') }}" class="app-profile-chip rounded-full border px-3 py-2 text-xs font-semibold uppercase tracking-[0.16em] transition">
+                                Mon flux
+                            </a>
+                            <a href="{{ route('topics.drafts') }}" class="app-profile-chip rounded-full border px-3 py-2 text-xs font-semibold uppercase tracking-[0.16em] transition">
+                                Brouillons
+                            </a>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
                                 <button
@@ -111,16 +126,25 @@
     <div :class="{'block': open, 'hidden': ! open}" class="hidden lg:hidden">
         <div class="app-mobile-dropdown border-b p-3 shadow-[0_20px_45px_rgba(0,0,0,0.22)]">
             <div class="space-y-1">
-                <x-responsive-nav-link :href="route('home')" :active="request()->routeIs('home') || request()->routeIs('topics.*')">
+                <x-responsive-nav-link :href="route('home')" :active="request()->routeIs('home') || request()->routeIs('topics.index') || request()->routeIs('topics.show') || request()->routeIs('topics.create') || request()->routeIs('topics.edit') || request()->routeIs('topics.history')">
                     Forum
                 </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('categories.index')" :active="request()->routeIs('categories.*')">
                     Categories
                 </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
+                    Membres
+                </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('news.index')" :active="request()->routeIs('news.*')">
                     Actualites
                 </x-responsive-nav-link>
                 @auth
+                    <x-responsive-nav-link :href="route('topics.feed')" :active="request()->routeIs('topics.feed')">
+                        Mon flux
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('topics.drafts')" :active="request()->routeIs('topics.drafts')">
+                        Brouillons
+                    </x-responsive-nav-link>
                     @if (auth()->user()->role === 'admin')
                         <x-responsive-nav-link :href="route('admin.index')" :active="request()->routeIs('admin.*')">
                             Espace admin

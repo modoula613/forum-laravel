@@ -180,11 +180,32 @@
                             <p class="mt-2 text-lg font-semibold text-stone-950">{{ $topic->replies->count() }} messages</p>
                             <p class="mt-1 text-sm text-stone-600">{{ $topic->favorites_count }} abonnes</p>
                         </div>
+                        <div class="rounded-[1.5rem] bg-white/70 p-5">
+                            <p class="text-sm text-stone-500">Actions utiles</p>
+                            <div class="mt-4 flex flex-wrap gap-2">
+                                <a href="{{ route('topics.index') }}" class="rounded-full border border-[rgba(71,85,135,0.16)] bg-white px-3 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-stone-700 transition hover:bg-stone-50">
+                                    Retour au forum
+                                </a>
+                                <a href="{{ route('users.show', $topic->user) }}" class="rounded-full border border-[rgba(71,85,135,0.16)] bg-white px-3 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-stone-700 transition hover:bg-stone-50">
+                                    Profil auteur
+                                </a>
+                                <a href="#replies" class="rounded-full border border-[rgba(71,85,135,0.16)] bg-white px-3 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-stone-700 transition hover:bg-stone-50">
+                                    Reponses
+                                </a>
+                                @auth
+                                    @if (! $topic->is_locked && ! auth()->user()->is_blocked)
+                                        <a href="#reply-form" class="rounded-full bg-[var(--brand)] px-3 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-white transition hover:bg-[var(--brand-deep)]">
+                                            Repondre
+                                        </a>
+                                    @endif
+                                @endauth
+                            </div>
+                        </div>
                     </div>
                 </aside>
             </div>
 
-            <section class="space-y-5">
+            <section id="replies" class="space-y-5">
                 <div class="flex flex-wrap items-center justify-between gap-3">
                     <h3 class="text-3xl font-semibold text-stone-950">Reponses</h3>
                     <span class="rounded-full bg-white/70 px-4 py-2 text-sm font-medium text-stone-600">{{ $topic->replies->count() }} message(s)</span>
@@ -316,7 +337,7 @@
                         Ce sujet est verrouille et ne peut plus recevoir de reponses.
                     </div>
                 @elseif (! auth()->user()->is_blocked)
-                    <section class="glass-panel-strong rounded-[2.25rem] p-6 sm:p-8">
+                    <section id="reply-form" class="glass-panel-strong rounded-[2.25rem] p-6 sm:p-8">
                         <p class="section-kicker">Participer</p>
                         <h3 class="mt-3 text-3xl font-semibold text-stone-950">Ajouter une reponse</h3>
                         <form method="POST" action="{{ route('replies.store', $topic) }}" class="mt-4 space-y-4" x-data="emojiComposer({ initialValue: @js(old('content')) })">

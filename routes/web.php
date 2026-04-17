@@ -120,9 +120,40 @@ Route::middleware(['auth', 'legacy_badge'])->group(function () {
         ->name('users.follow');
 
     Route::get('/notifications', function () {
-        request()->user()->unreadNotifications->markAsRead();
+        $user = request()->user();
+        $user->unreadNotifications->markAsRead();
 
-        return view('notifications.index');
+        $filterCallbacks = [
+            'all' => fn ($notification) => true,
+            'replies' => fn ($notification) => in_array(data_get($notification->data, 'type'), ['new_reply', 'followed_topic_new_reply'], true),
+            'messages' => fn ($notification) => data_get($notification->data, 'type') === 'new_private_message',
+            'requests' => fn ($notification) => data_get($notification->data, 'type') === 'follow_request',
+            'tags' => fn ($notification) => data_get($notification->data, 'type') === 'new_topic_followed_tag',
+            'moderation' => fn ($notification) => data_get($notification->data, 'type') === 'reply_reported'
+                || array_key_exists('warning_count', $notification->data),
+        ];
+
+        $notificationFilter = request()->string('type')->toString() ?: 'all';
+
+        if (! array_key_exists($notificationFilter, $filterCallbacks)) {
+            $notificationFilter = 'all';
+        }
+
+        $allNotifications = $user->notifications()->latest()->get();
+
+        $notificationCounts = collect($filterCallbacks)->map(
+            fn ($callback) => $allNotifications->filter($callback)->count()
+        );
+
+        $notifications = $allNotifications
+            ->filter($filterCallbacks[$notificationFilter])
+            ->values();
+
+        return view('notifications.index', compact(
+            'notifications',
+            'notificationFilter',
+            'notificationCounts'
+        ));
     })->name('notifications.index');
     Route::get('/favorites', [FavoriteController::class, 'index'])
         ->name('favorites.index');

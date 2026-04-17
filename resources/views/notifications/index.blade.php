@@ -11,7 +11,36 @@
 
     <div class="py-10">
         <div class="mx-auto max-w-5xl space-y-6 px-4 sm:px-6 lg:px-8">
-            @forelse (auth()->user()->notifications as $notification)
+            <section class="glass-panel rounded-[2rem] p-5 sm:p-6">
+                <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                    <div>
+                        <p class="section-kicker">Filtres utiles</p>
+                        <h3 class="mt-2 text-2xl font-semibold text-stone-950">Trier les notifications</h3>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        @php
+                            $filterLinks = [
+                                'all' => 'Toutes',
+                                'replies' => 'Reponses',
+                                'messages' => 'Messages',
+                                'requests' => 'Demandes',
+                                'tags' => 'Tags',
+                                'moderation' => 'Moderation',
+                            ];
+                        @endphp
+                        @foreach ($filterLinks as $filterKey => $filterLabel)
+                            <a
+                                href="{{ $filterKey === 'all' ? route('notifications.index') : route('notifications.index', ['type' => $filterKey]) }}"
+                                class="rounded-full px-4 py-2 text-sm font-semibold transition {{ $notificationFilter === $filterKey ? 'bg-[var(--brand)] text-white shadow-[0_16px_30px_rgba(79,70,229,0.24)]' : 'border border-[rgba(71,85,135,0.16)] bg-white/80 text-stone-700 hover:bg-white' }}"
+                            >
+                                {{ $filterLabel }} ({{ $notificationCounts[$filterKey] ?? 0 }})
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
+            </section>
+
+            @forelse ($notifications as $notification)
                 <article class="glass-panel-strong rounded-[2rem] p-6">
                     <div class="flex flex-wrap items-center justify-between gap-3">
                         <div>
@@ -147,9 +176,13 @@
                 </article>
             @empty
                 <div class="glass-panel rounded-[2.25rem] border-dashed p-12 text-center">
-                    <p class="section-kicker">Aucune notification</p>
-                    <h3 class="mt-3 text-3xl font-semibold text-stone-950">Rien a signaler</h3>
-                    <p class="muted-copy mt-3 text-base">Tes notifications apparaitront ici lorsqu'un evenement concernera ton compte.</p>
+                    <p class="section-kicker">{{ $notificationFilter === 'all' ? 'Aucune notification' : 'Aucun resultat' }}</p>
+                    <h3 class="mt-3 text-3xl font-semibold text-stone-950">
+                        {{ $notificationFilter === 'all' ? 'Rien a signaler' : 'Aucune notification dans cette categorie' }}
+                    </h3>
+                    <p class="muted-copy mt-3 text-base">
+                        {{ $notificationFilter === 'all' ? "Tes notifications apparaitront ici lorsqu'un evenement concernera ton compte." : "Essaie un autre filtre pour retrouver les notifications que tu cherches." }}
+                    </p>
                 </div>
             @endforelse
         </div>

@@ -27,6 +27,41 @@ test('authenticated users can view their inbox', function () {
     expect($receiver->receivedMessages()->first()->is_read)->toBeFalse();
 });
 
+test('authenticated users can filter conversations by member name and unread status', function () {
+    $currentUser = User::factory()->create();
+    $alice = User::factory()->create([
+        'name' => 'Alice',
+    ]);
+    $bob = User::factory()->create([
+        'name' => 'Bob',
+    ]);
+
+    Message::create([
+        'sender_id' => $alice->id,
+        'receiver_id' => $currentUser->id,
+        'content' => 'Projet Laravel en attente',
+        'is_read' => false,
+    ]);
+
+    Message::create([
+        'sender_id' => $bob->id,
+        'receiver_id' => $currentUser->id,
+        'content' => 'Discussion cuisine',
+        'is_read' => true,
+    ]);
+
+    $this
+        ->actingAs($currentUser)
+        ->get(route('messages.index', [
+            'search' => 'Alice',
+            'unread' => 1,
+        ]))
+        ->assertOk()
+        ->assertSee('Alice')
+        ->assertDontSee('Bob')
+        ->assertSee('1 conversation(s) affichee(s)');
+});
+
 test('authenticated users can send a private message', function () {
     Notification::fake();
 
