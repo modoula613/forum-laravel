@@ -435,7 +435,7 @@ test('public topics index hides draft topics', function () {
         ->assertDontSee('Sujet brouillon');
 });
 
-test('authenticated users can view their drafts page', function () {
+test('drafts page redirects back to the forum', function () {
     $user = User::factory()->create();
     $user->topics()->create([
         'title' => 'Mon brouillon',
@@ -446,8 +446,7 @@ test('authenticated users can view their drafts page', function () {
     $this
         ->actingAs($user)
         ->get(route('topics.drafts'))
-        ->assertOk()
-        ->assertSee('Mon brouillon');
+        ->assertRedirect(route('topics.index'));
 });
 
 test('users can publish their own draft', function () {
@@ -548,29 +547,13 @@ test('topic show highlights when a post is a reaction to news', function () {
         ->assertSee($article->source_url, false);
 });
 
-test('authenticated users can view a personalized feed based on followed members', function () {
+test('mon flux route redirects back to the main forum feed', function () {
     $user = User::factory()->create();
-    $followedAuthor = User::factory()->create();
-    $otherAuthor = User::factory()->create();
-
-    $user->followingUsers()->attach($followedAuthor->id);
-
-    $followedTopic = $followedAuthor->topics()->create([
-        'title' => 'Sujet du membre suivi',
-        'content' => 'Contenu suivi',
-    ]);
-
-    $otherAuthor->topics()->create([
-        'title' => 'Sujet hors flux',
-        'content' => 'Contenu hors flux',
-    ]);
 
     $this
         ->actingAs($user)
         ->get(route('topics.feed'))
-        ->assertOk()
-        ->assertSee($followedTopic->title)
-        ->assertDontSee('Sujet hors flux');
+        ->assertRedirect(route('topics.index'));
 });
 
 test('topics index shows follow badge for followed members topics', function () {

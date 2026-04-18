@@ -19,6 +19,7 @@ class MessageController extends Controller
         $currentUser = auth()->user();
         $search = trim((string) $request->string('search'));
         $unreadOnly = $request->boolean('unread');
+        $unreadNotificationCount = $currentUser->unreadNotifications()->count();
 
         $allConversationItems = Message::with(['sender', 'receiver'])
             ->where(function ($query) use ($currentUser) {
@@ -79,6 +80,21 @@ class MessageController extends Controller
 
         $conversationSummary['displayed'] = $conversationItems->count();
 
+        if ($unreadNotificationCount > 0) {
+            $currentUser->unreadNotifications->markAsRead();
+        }
+
+        $notifications = $currentUser->notifications()
+            ->latest()
+            ->take(12)
+            ->get();
+
+        $inboxSummary = [
+            'messages_unread' => $conversationSummary['unread'],
+            'notifications_unread' => $unreadNotificationCount,
+            'notifications_total' => $currentUser->notifications()->count(),
+        ];
+
         $currentPage = LengthAwarePaginator::resolveCurrentPage();
         $perPage = 20;
         $conversations = new LengthAwarePaginator(
@@ -95,6 +111,8 @@ class MessageController extends Controller
         return view('messages.index', compact(
             'conversations',
             'conversationSummary',
+            'notifications',
+            'inboxSummary',
             'search',
             'unreadOnly'
         ));

@@ -153,9 +153,6 @@
                                 <a href="{{ route('topics.index') }}" class="text-sm text-stone-500 hover:text-stone-700">
                                     Annuler
                                 </a>
-                                <x-secondary-button type="submit" name="save_draft" value="1">
-                                    Enregistrer en brouillon
-                                </x-secondary-button>
                                 <x-primary-button>
                                     {{ isset($topic) ? 'Mettre a jour' : 'Publier' }}
                                 </x-primary-button>

@@ -1,15 +1,12 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="space-y-5">
-            <div class="x-feed-tabs">
-                <a href="{{ route('topics.index') }}" class="x-feed-tab {{ $followingOnly ? '' : 'is-active' }}">
-                    Pour toi
-                </a>
-                @auth
-                    <a href="{{ route('topics.index', ['following' => 1]) }}" class="x-feed-tab {{ $followingOnly ? 'is-active' : '' }}">
-                        Abonnements
-                    </a>
-                @endauth
+            <div class="max-w-3xl">
+                <p class="section-kicker">Pour toi</p>
+                <h2 class="mt-3 text-4xl font-semibold text-stone-950">Le forum</h2>
+                <p class="muted-copy mt-3 text-base leading-7">
+                    Un seul flux pour lire les sujets, retrouver les reactions et voir passer les discussions qui comptent.
+                </p>
             </div>
 
             <div
@@ -31,10 +28,6 @@
                     @if (request()->filled('order'))
                         <input type="hidden" name="order" value="{{ request('order') }}">
                     @endif
-                    @if ($followingOnly)
-                        <input type="hidden" name="following" value="1">
-                    @endif
-
                     <div class="min-w-0 flex-1">
                         <label for="search-bar" class="sr-only">
                             Rechercher un sujet ou un membre
@@ -133,7 +126,7 @@
                             >
                                 Filtres
                             </button>
-                            @if (request()->filled('search') || request()->filled('category') || request()->filled('tag') || request()->filled('order') || $followingOnly)
+                            @if (request()->filled('search') || request()->filled('category') || request()->filled('tag') || request()->filled('order'))
                                 <a href="{{ route('topics.index') }}" class="rounded-full border border-white/10 px-4 py-3 text-sm font-semibold text-white/72 transition hover:bg-white/8 hover:text-white">
                                     Reinitialiser
                                 </a>
@@ -175,11 +168,6 @@
                 @if (auth()->user()->is_blocked)
                     <div class="glass-panel border-rose-500/20 bg-rose-500/10 p-6 text-sm font-medium text-rose-200">
                         Votre compte est bloque suite a plusieurs infractions.
-                    </div>
-                @endif
-                @if ($followingOnly)
-                    <div class="forum-notice forum-notice--follow p-6 text-sm font-medium">
-                        Affichage des sujets publies par les membres que vous suivez.
                     </div>
                 @endif
                 @if ($followingOnly && $followedUserIds->isEmpty())
@@ -260,9 +248,6 @@
 
                     <form method="GET" action="{{ route('topics.index') }}" class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
                         <input type="hidden" name="search" value="{{ request('search') }}">
-                        @if ($followingOnly)
-                            <input type="hidden" name="following" value="1">
-                        @endif
 
                         <div class="grid gap-4 sm:grid-cols-2 lg:w-full xl:grid-cols-3">
                         <div>
@@ -312,13 +297,8 @@
                                 <option value="popular" @selected(request('order') === 'popular')>Plus actifs</option>
                             </select>
                         </div>
-                    </div>
+                        </div>
                         <div class="flex items-center gap-3">
-                            @auth
-                                <a href="{{ route('topics.index', ['following' => 1]) }}" class="rounded-full border border-white/10 px-4 py-3 text-sm font-semibold text-white/72 transition hover:bg-white/8 hover:text-white">
-                                    Voir mes suivis
-                                </a>
-                            @endauth
                             <x-primary-button class="justify-center">
                                 Filtrer
                             </x-primary-button>

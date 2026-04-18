@@ -38,12 +38,12 @@
                             <p class="mt-2 text-2xl font-semibold text-stone-950">{{ $overview['following_members'] }}</p>
                         </div>
                         <div class="rounded-[1.4rem] bg-white/80 px-4 py-4">
-                            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-stone-400">Notifications</p>
-                            <p class="mt-2 text-2xl font-semibold text-stone-950">{{ $overview['unread_notifications'] }}</p>
+                            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-stone-400">Marque-pages</p>
+                            <p class="mt-2 text-2xl font-semibold text-stone-950">{{ $overview['bookmarks'] }}</p>
                         </div>
                         <div class="rounded-[1.4rem] bg-white/80 px-4 py-4">
-                            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-stone-400">Messages</p>
-                            <p class="mt-2 text-2xl font-semibold text-stone-950">{{ $overview['unread_messages'] }}</p>
+                            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-stone-400">Boite</p>
+                            <p class="mt-2 text-2xl font-semibold text-stone-950">{{ $overview['unread_notifications'] + $overview['unread_messages'] }}</p>
                         </div>
                     </div>
                 </div>
@@ -60,8 +60,8 @@
                     <a href="{{ route('favorites.index') }}" class="rounded-[1.5rem] bg-white/70 p-5 transition hover:-translate-y-0.5 hover:bg-white">
                         <p class="text-lg font-semibold text-stone-950">Mes favoris</p>
                     </a>
-                    <a href="{{ route('topics.feed') }}" class="rounded-[1.5rem] bg-white/70 p-5 transition hover:-translate-y-0.5 hover:bg-white">
-                        <p class="text-lg font-semibold text-stone-950">Mon flux</p>
+                    <a href="{{ route('messages.index') }}" class="rounded-[1.5rem] bg-white/70 p-5 transition hover:-translate-y-0.5 hover:bg-white">
+                        <p class="text-lg font-semibold text-stone-950">Boite de reception</p>
                     </a>
                     <a href="{{ route('tags.followed') }}" class="rounded-[1.5rem] bg-white/70 p-5 transition hover:-translate-y-0.5 hover:bg-white">
                         <p class="text-lg font-semibold text-stone-950">Mes tags suivis</p>
@@ -73,10 +73,10 @@
                 <div class="flex items-center justify-between gap-4">
                     <div>
                         <p class="section-kicker">Pour toi</p>
-                        <h3 class="mt-3 text-3xl font-semibold text-stone-950">Mon flux</h3>
+                        <h3 class="mt-3 text-3xl font-semibold text-stone-950">Forum</h3>
                     </div>
-                    <a href="{{ route('topics.feed') }}" class="rounded-full border border-[rgba(71,85,135,0.16)] bg-white/70 px-4 py-3 text-sm font-semibold text-stone-700 transition hover:bg-white">
-                        Ouvrir mon flux
+                    <a href="{{ route('topics.index') }}" class="rounded-full border border-[rgba(71,85,135,0.16)] bg-white/70 px-4 py-3 text-sm font-semibold text-stone-700 transition hover:bg-white">
+                        Ouvrir le forum
                     </a>
                 </div>
                 <div class="mt-6 grid gap-4">

@@ -21,10 +21,24 @@ test('authenticated users can view their inbox', function () {
         ->get(route('messages.index'))
         ->assertOk()
         ->assertSee('Boite de reception')
+        ->assertSee('Activite recente')
         ->assertSee('Bonjour depuis la messagerie')
         ->assertSee('1 non lu');
 
     expect($receiver->receivedMessages()->first()->is_read)->toBeFalse();
+});
+
+test('merged inbox also shows account notifications', function () {
+    $user = User::factory()->create();
+
+    $user->notify(new \App\Notifications\UserWarnedNotification(2));
+
+    $this
+        ->actingAs($user)
+        ->get(route('messages.index'))
+        ->assertOk()
+        ->assertSee('Notifications')
+        ->assertSee('2 avertissement');
 });
 
 test('authenticated users can filter conversations by member name and unread status', function () {

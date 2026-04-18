@@ -41,6 +41,7 @@ test('authenticated users can view their notifications page', function () {
 
     $response
         ->assertOk()
+        ->assertSee('Boite de reception')
         ->assertSee('Activite recente')
         ->assertSee('2 avertissement');
 });
@@ -139,7 +140,7 @@ test('notifications page shows follow requests', function () {
         ->assertSee(route('users.show', $requester), false);
 });
 
-test('notifications page can filter private message notifications', function () {
+test('merged inbox shows follow requests and private message notifications together', function () {
     $receiver = User::factory()->create();
     $requester = User::factory()->create([
         'name' => 'Camille',
@@ -153,12 +154,12 @@ test('notifications page can filter private message notifications', function () 
 
     $this
         ->actingAs($receiver)
-        ->get(route('notifications.index', ['type' => 'messages']))
+        ->get(route('notifications.index'))
         ->assertOk()
         ->assertSee('Nouveau message prive')
         ->assertSee('Nora')
-        ->assertDontSee('Nouvelle demande de suivi')
-        ->assertDontSee('Camille');
+        ->assertSee('Nouvelle demande de suivi')
+        ->assertSee('Camille');
 });
 
 test('replying to a followed topic notifies followers', function () {

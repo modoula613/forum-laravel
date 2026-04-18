@@ -2,6 +2,7 @@
     $navUser = auth()->user();
     $unreadNotificationCount = $navUser ? $navUser->unreadNotifications()->count() : 0;
     $unreadMessageCount = $navUser ? $navUser->unreadMessages()->count() : 0;
+    $unreadInboxCount = $unreadNotificationCount + $unreadMessageCount;
 @endphp
 
 <nav x-data="{ open: false }" class="relative z-[70]">
@@ -43,26 +44,14 @@
                             Actualites
                         </x-nav-link>
                         @auth
-                            <x-nav-link :href="route('topics.feed')" :active="request()->routeIs('topics.feed')">
-                                Mon flux
-                            </x-nav-link>
-                            <x-nav-link :href="route('notifications.index')" :active="request()->routeIs('notifications.*')">
-                                Notifications
-                                @if ($unreadNotificationCount > 0)
-                                    <span class="ml-2 rounded-full bg-[var(--brand)] px-2 py-0.5 text-[0.7rem] font-bold text-white">{{ $unreadNotificationCount }}</span>
-                                @endif
-                            </x-nav-link>
-                            <x-nav-link :href="route('messages.index')" :active="request()->routeIs('messages.*')">
-                                Messages
-                                @if ($unreadMessageCount > 0)
-                                    <span class="ml-2 rounded-full bg-white/15 px-2 py-0.5 text-[0.7rem] font-bold text-white">{{ $unreadMessageCount }}</span>
+                            <x-nav-link :href="route('messages.index')" :active="request()->routeIs('messages.*') || request()->routeIs('notifications.*')">
+                                Boite
+                                @if ($unreadInboxCount > 0)
+                                    <span class="ml-2 rounded-full bg-white/15 px-2 py-0.5 text-[0.7rem] font-bold text-white">{{ $unreadInboxCount }}</span>
                                 @endif
                             </x-nav-link>
                             <x-nav-link :href="route('profile.edit')" :active="request()->routeIs('profile.*')">
                                 Profil
-                            </x-nav-link>
-                            <x-nav-link :href="route('topics.drafts')" :active="request()->routeIs('topics.drafts')">
-                                Brouillons
                             </x-nav-link>
                             @if (auth()->user()->role === 'admin')
                                 <x-nav-link :href="route('admin.index')" :active="request()->routeIs('admin.*')">
@@ -101,11 +90,8 @@
                             <a href="{{ route('dashboard') }}" class="app-profile-chip rounded-full border px-3 py-2 text-xs font-semibold uppercase tracking-[0.16em] transition">
                                 Mon espace
                             </a>
-                            <a href="{{ route('topics.feed') }}" class="app-profile-chip rounded-full border px-3 py-2 text-xs font-semibold uppercase tracking-[0.16em] transition">
-                                Mon flux
-                            </a>
-                            <a href="{{ route('topics.drafts') }}" class="app-profile-chip rounded-full border px-3 py-2 text-xs font-semibold uppercase tracking-[0.16em] transition">
-                                Brouillons
+                            <a href="{{ route('messages.index') }}" class="app-profile-chip rounded-full border px-3 py-2 text-xs font-semibold uppercase tracking-[0.16em] transition">
+                                Boite
                             </a>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
@@ -139,12 +125,6 @@
                     Actualites
                 </x-responsive-nav-link>
                 @auth
-                    <x-responsive-nav-link :href="route('topics.feed')" :active="request()->routeIs('topics.feed')">
-                        Mon flux
-                    </x-responsive-nav-link>
-                    <x-responsive-nav-link :href="route('topics.drafts')" :active="request()->routeIs('topics.drafts')">
-                        Brouillons
-                    </x-responsive-nav-link>
                     @if (auth()->user()->role === 'admin')
                         <x-responsive-nav-link :href="route('admin.index')" :active="request()->routeIs('admin.*')">
                             Espace admin
@@ -168,16 +148,10 @@
                         <x-responsive-nav-link :href="route('dashboard')">
                             Mon espace
                         </x-responsive-nav-link>
-                        <x-responsive-nav-link :href="route('notifications.index')">
-                            Notifications
-                            @if ($unreadNotificationCount > 0)
-                                ({{ $unreadNotificationCount }})
-                            @endif
-                        </x-responsive-nav-link>
                         <x-responsive-nav-link :href="route('messages.index')">
-                            Messages
-                            @if ($unreadMessageCount > 0)
-                                ({{ $unreadMessageCount }})
+                            Boite de reception
+                            @if ($unreadInboxCount > 0)
+                                ({{ $unreadInboxCount }})
                             @endif
                         </x-responsive-nav-link>
                         <x-responsive-nav-link :href="route('profile.edit')">

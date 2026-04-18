@@ -320,16 +320,10 @@ class TopicController extends Controller
             ->with('success', 'Sujet mis a jour.');
     }
 
-    public function drafts(): View
+    public function drafts(): RedirectResponse
     {
-        $topics = auth()->user()
-            ->topics()
-            ->where('is_draft', true)
-            ->with(['category', 'tags'])
-            ->latest()
-            ->paginate(10);
-
-        return view('topics.drafts', compact('topics'));
+        return redirect()
+            ->route('topics.index');
     }
 
     public function publish(Topic $topic): RedirectResponse
@@ -357,23 +351,10 @@ class TopicController extends Controller
         return view('topics.history', compact('topic', 'edits'));
     }
 
-    public function feed(): View
+    public function feed(): RedirectResponse
     {
-        $followedUserIds = auth()->user()->followingUsers()->pluck('users.id');
-
-        $topics = Topic::query()
-            ->when(
-                $followedUserIds->isEmpty(),
-                fn ($builder) => $builder->whereRaw('0 = 1'),
-                fn ($builder) => $builder->whereIn('user_id', $followedUserIds)
-            )
-            ->where('is_draft', false)
-            ->with(['user', 'category', 'tags', 'newsArticle:id,title,source_url,source_name,published_at'])
-            ->withCount(['replies', 'favorites'])
-            ->latest()
-            ->paginate(10);
-
-        return view('topics.feed', compact('topics', 'followedUserIds'));
+        return redirect()
+            ->route('topics.index');
     }
 
     public function destroy(Topic $topic): RedirectResponse
