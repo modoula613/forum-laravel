@@ -46,7 +46,10 @@ test('topics index does not show the publishing examples section anymore', funct
         ->get(route('topics.index'))
         ->assertOk()
         ->assertDontSee("Besoin d'une idee pour publier ?", false)
+        ->assertDontSee('Que se passe-t-il ?')
+        ->assertDontSee('Recherche rapide')
         ->assertDontSee('Utiliser cet exemple')
+        ->assertDontSee('Utilise la plume en bas pour poster')
         ->assertDontSee('Quel langage ou framework vous a le plus aide a progresser cette annee ?');
 });
 

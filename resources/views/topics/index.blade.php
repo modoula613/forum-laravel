@@ -46,7 +46,7 @@
                                     id="search-bar"
                                     type="text"
                                     name="search"
-                                    placeholder="Rechercher un sujet ou user:nom"
+                                    placeholder="Rechercher un sujet ou un membre"
                                     aria-label="Rechercher un sujet ou un membre"
                                     role="combobox"
                                     aria-autocomplete="list"
@@ -112,12 +112,7 @@
                         </div>
                     </div>
 
-                    <div class="flex flex-wrap items-center justify-between gap-3">
-                        <div class="flex flex-wrap items-center gap-2 text-[0.72rem] font-semibold uppercase tracking-[0.18em] text-white/40">
-                            <span>Recherche rapide</span>
-                            <span class="rounded-full border border-white/10 px-3 py-1 text-white/62">user:nom</span>
-                            <span class="rounded-full border border-white/10 px-3 py-1 text-white/62">#hashtag</span>
-                        </div>
+                    <div class="flex flex-wrap items-center justify-end gap-3">
                         <div class="flex flex-wrap items-center gap-3">
                             <button
                                 type="button"
@@ -309,40 +304,6 @@
 
             <div class="grid gap-6 xl:grid-cols-[minmax(0,1fr)_21rem]">
                 <div class="space-y-6">
-                    <section class="glass-panel x-shell-divider p-5 sm:p-6">
-                        <div class="flex items-start gap-4">
-                            @auth
-                                <x-user-avatar :user="Auth::user()" class="mt-1 h-11 w-11 shrink-0 bg-white/8 text-sm font-semibold uppercase text-white/80" />
-                            @else
-                                <x-user-avatar class="mt-1 h-11 w-11 shrink-0 bg-white/8 text-sm font-semibold uppercase text-white/80" />
-                            @endauth
-                            <div class="min-w-0 flex-1">
-                                <p class="text-2xl font-medium text-white/45">
-                                    Que se passe-t-il ?
-                                </p>
-                                <div class="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-4">
-                                    <div class="flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--brand)]">
-                                        <span class="rounded-full bg-[var(--brand)]/10 px-3 py-1">Debat</span>
-                                        <span class="rounded-full bg-[var(--brand)]/10 px-3 py-1">Question</span>
-                                        <span class="rounded-full bg-[var(--brand)]/10 px-3 py-1">Reaction</span>
-                                    </div>
-                                    @auth
-                                        @if (! auth()->user()->is_blocked)
-                                            <div class="app-inline-compose-hint">
-                                                <x-compose-feather-icon class="h-4 w-4" />
-                                                <span>Utilise la plume en bas pour poster</span>
-                                            </div>
-                                        @endif
-                                    @else
-                                        <a href="{{ route('login') }}" class="rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-black transition hover:bg-white/90">
-                                            Se connecter
-                                        </a>
-                                    @endauth
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-
                     @if ($pinnedTopics->isNotEmpty())
                         <section class="space-y-4">
                             <div class="flex items-center justify-between gap-3">
@@ -453,12 +414,6 @@
                                 <p class="section-kicker">Aucun contenu</p>
                                 <h3 class="mt-3 text-3xl font-semibold text-white">Le flux attend ses premiers messages</h3>
                                 <p class="mt-3 text-base text-white/60">L'actualite peut donner des idees, mais ce sont surtout les sujets des membres qui feront vivre le forum.</p>
-                                @auth
-                                    <div class="app-inline-compose-hint mx-auto mt-6">
-                                        <x-compose-feather-icon class="h-4 w-4" />
-                                        <span>La petite plume en bas ouvre la creation</span>
-                                    </div>
-                                @endauth
                             </div>
                         @endforelse
                     </section>
