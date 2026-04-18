@@ -81,16 +81,25 @@
                             <a href="{{ $article->source_url }}" target="_blank" rel="noopener noreferrer" class="rounded-full bg-[var(--brand)] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[var(--brand-deep)]">
                                 Lire l'article
                             </a>
-                            @if ($article->category)
-                                <div class="flex flex-wrap items-center gap-3">
+                            <div class="flex flex-wrap items-center gap-3">
+                                @auth
+                                    <a href="{{ route('topics.create', ['news' => $article->id]) }}" class="text-sm font-semibold text-[var(--brand-deep)] transition hover:text-[var(--brand)]">
+                                        Reagir dans le forum
+                                    </a>
+                                @else
+                                    <a href="{{ route('login') }}" class="text-sm font-semibold text-stone-700 transition hover:text-[var(--brand-deep)]">
+                                        Se connecter pour reagir
+                                    </a>
+                                @endauth
+                                @if ($article->category)
                                     <a href="{{ route('categories.show', $article->category) }}" class="text-sm font-semibold text-stone-700 transition hover:text-[var(--brand-deep)]">
                                         Voir la categorie
                                     </a>
                                     <a href="{{ route('topics.index', ['category' => $article->category->id]) }}" class="text-sm font-semibold text-[var(--brand-deep)] transition hover:text-[var(--brand)]">
                                         Voir les discussions
                                     </a>
-                                </div>
-                            @endif
+                                @endif
+                            </div>
                         </div>
                     </article>
                 @empty

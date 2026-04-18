@@ -2,6 +2,7 @@
 
 use App\Models\Category;
 use App\Models\NewsArticle;
+use App\Models\User;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Http;
 
@@ -28,6 +29,50 @@ test('guests can view the news index', function () {
         ->assertSee('Le fil des actualites')
         ->assertSee('Finale europeenne ce soir')
         ->assertSee('Sport');
+});
+
+test('news index invites guests to log in before reacting', function () {
+    $category = Category::create([
+        'name' => 'Sport',
+        'description' => 'Toute l actualite sportive',
+        'slug' => 'sport',
+    ]);
+
+    NewsArticle::create([
+        'category_id' => $category->id,
+        'title' => 'Reaction reservee aux membres',
+        'source_url' => 'https://example.test/news/reaction-reservee',
+        'published_at' => now(),
+    ]);
+
+    $this
+        ->get(route('news.index'))
+        ->assertOk()
+        ->assertSee('Se connecter pour reagir')
+        ->assertDontSee('Reagir dans le forum');
+});
+
+test('authenticated users can react to news from the news index', function () {
+    $user = User::factory()->create();
+    $category = Category::create([
+        'name' => 'Sport',
+        'description' => 'Toute l actualite sportive',
+        'slug' => 'sport',
+    ]);
+
+    $article = NewsArticle::create([
+        'category_id' => $category->id,
+        'title' => 'Le debat du soir',
+        'source_url' => 'https://example.test/news/debat-du-soir',
+        'published_at' => now(),
+    ]);
+
+    $this
+        ->actingAs($user)
+        ->get(route('news.index'))
+        ->assertOk()
+        ->assertSee('Reagir dans le forum')
+        ->assertSee(route('topics.create', ['news' => $article->id]), false);
 });
 
 test('news can be filtered by category slug', function () {

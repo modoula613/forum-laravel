@@ -138,12 +138,17 @@ class TopicController extends Controller
         ));
     }
 
-    public function create(): View
+    public function create(Request $request): View
     {
         $categories = Category::orderBy('name')->get();
         $tags = Tag::orderBy('name')->get();
+        $reactionArticle = null;
 
-        return view('topics.create', compact('categories', 'tags'));
+        if ($request->filled('news')) {
+            $reactionArticle = NewsArticle::with('category')->find($request->integer('news'));
+        }
+
+        return view('topics.create', compact('categories', 'tags', 'reactionArticle'));
     }
 
     public function store(Request $request): RedirectResponse
@@ -241,8 +246,9 @@ class TopicController extends Controller
 
         $categories = Category::orderBy('name')->get();
         $tags = Tag::orderBy('name')->get();
+        $reactionArticle = null;
 
-        return view('topics.create', compact('topic', 'categories', 'tags'));
+        return view('topics.create', compact('topic', 'categories', 'tags', 'reactionArticle'));
     }
 
     public function update(Request $request, Topic $topic): RedirectResponse

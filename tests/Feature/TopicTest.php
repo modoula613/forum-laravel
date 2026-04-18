@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Category;
+use App\Models\NewsArticle;
 use App\Models\Reply;
 use App\Models\Tag;
 use App\Models\Topic;
@@ -18,6 +19,20 @@ test('guests can view the topics index', function () {
     $response
         ->assertOk()
         ->assertSee('Premier sujet');
+});
+
+test('guests do not see the subscriptions feed tab', function () {
+    $user = User::factory()->create();
+    $user->topics()->create([
+        'title' => 'Sujet public',
+        'content' => 'Visible sans connexion',
+    ]);
+
+    $this
+        ->get(route('topics.index'))
+        ->assertOk()
+        ->assertSee('Pour toi')
+        ->assertDontSee('Abonnements');
 });
 
 test('authenticated users can create a topic', function () {
@@ -74,6 +89,35 @@ test('authenticated users can view the create topic page', function () {
         ->get(route('topics.create'));
 
     $response->assertOk();
+});
+
+test('authenticated users can start a reaction topic from a news article', function () {
+    $user = User::factory()->create();
+    $category = Category::create([
+        'name' => 'Actualites et debats',
+        'slug' => 'actualites-et-debats',
+    ]);
+
+    $article = NewsArticle::create([
+        'category_id' => $category->id,
+        'title' => 'Nouvelle annonce produit',
+        'excerpt' => 'Une nouveaute vient d etre devoilee.',
+        'content' => 'Contenu complet',
+        'source_name' => 'Tech Source',
+        'source_url' => 'https://example.test/news/nouvelle-annonce-produit',
+        'published_at' => now(),
+    ]);
+
+    $this
+        ->actingAs($user)
+        ->get(route('topics.create', ['news' => $article->id]))
+        ->assertOk()
+        ->assertSee('Reaction a une actualite')
+        ->assertSee($article->title)
+        ->assertSee('Reaction : '.$article->title)
+        ->assertSee('Ce que j&#039;en pense :', false)
+        ->assertSee((string) $category->id, false)
+        ->assertSee($article->source_url, false);
 });
 
 test('topics index paginates results', function () {

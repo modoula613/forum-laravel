@@ -9,10 +9,6 @@
                     <a href="{{ route('topics.index', ['following' => 1]) }}" class="x-feed-tab {{ $followingOnly ? 'is-active' : '' }}">
                         Abonnements
                     </a>
-                @else
-                    <span class="x-feed-tab opacity-50">
-                        Abonnements
-                    </span>
                 @endauth
             </div>
 
@@ -510,12 +506,7 @@
 
                             <div class="mt-5 space-y-3">
                                 @foreach ($forumNews as $article)
-                                    <a
-                                        href="{{ $article->source_url }}"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        class="group block rounded-[1.35rem] border border-white/8 bg-white/[0.03] p-4 transition duration-200 hover:bg-white/[0.05]"
-                                    >
+                                    <article class="group rounded-[1.35rem] border border-white/8 bg-white/[0.03] p-4 transition duration-200 hover:bg-white/[0.05]">
                                         @if ($article->image_url)
                                             <div class="overflow-hidden rounded-[1rem] border border-white/8 bg-black">
                                                 <img
@@ -548,7 +539,32 @@
                                                 </span>
                                             </div>
                                         @endif
-                                    </a>
+                                        <div class="mt-4 flex flex-wrap items-center gap-3">
+                                            <a
+                                                href="{{ $article->source_url }}"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                class="rounded-full bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-white transition hover:bg-white/15"
+                                            >
+                                                Lire l'article
+                                            </a>
+                                            @auth
+                                                <a
+                                                    href="{{ route('topics.create', ['news' => $article->id]) }}"
+                                                    class="rounded-full bg-[var(--brand)] px-4 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-white transition hover:bg-[var(--brand-deep)]"
+                                                >
+                                                    Reagir
+                                                </a>
+                                            @else
+                                                <a
+                                                    href="{{ route('login') }}"
+                                                    class="rounded-full border border-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-white/70 transition hover:bg-white/8 hover:text-white"
+                                                >
+                                                    Se connecter pour reagir
+                                                </a>
+                                            @endauth
+                                        </div>
+                                    </article>
                                 @endforeach
                             </div>
                         </section>

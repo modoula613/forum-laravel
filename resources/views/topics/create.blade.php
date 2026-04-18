@@ -20,6 +20,50 @@
                             Votre compte est bloque suite a plusieurs infractions.
                         </div>
                     @else
+                        @php
+                            $reactionTitle = isset($topic)
+                                ? ($topic->title ?? '')
+                                : ($reactionArticle ? 'Reaction : '.$reactionArticle->title : '');
+                            $reactionCategoryId = isset($topic)
+                                ? ($topic->category_id ?? '')
+                                : ($reactionArticle?->category_id ?? '');
+                            $reactionContent = isset($topic)
+                                ? ($topic->content ?? '')
+                                : ($reactionArticle
+                                    ? "Article : {$reactionArticle->title}\nSource : {$reactionArticle->source_url}\n\nCe que j'en pense :\n"
+                                    : '');
+                        @endphp
+
+                        @if ($reactionArticle && ! isset($topic))
+                            <div class="mb-6 rounded-[1.5rem] border border-[rgba(79,70,229,0.14)] bg-[rgba(79,70,229,0.06)] px-5 py-5">
+                                <p class="section-kicker">Reaction a une actualite</p>
+                                <h3 class="mt-2 text-xl font-semibold text-stone-950">{{ $reactionArticle->title }}</h3>
+                                <div class="mt-3 flex flex-wrap items-center gap-3 text-sm text-stone-600">
+                                    @if ($reactionArticle->category)
+                                        <span class="rounded-full bg-white/80 px-3 py-1 font-semibold text-[var(--brand)]">
+                                            {{ $reactionArticle->category->name }}
+                                        </span>
+                                    @endif
+                                    @if ($reactionArticle->source_name)
+                                        <span>{{ $reactionArticle->source_name }}</span>
+                                    @endif
+                                    @if ($reactionArticle->published_at)
+                                        <span>{{ $reactionArticle->published_at->format('d/m/Y H:i') }}</span>
+                                    @endif
+                                </div>
+                                <div class="mt-4">
+                                    <a
+                                        href="{{ $reactionArticle->source_url }}"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        class="text-sm font-semibold text-[var(--brand-deep)] transition hover:text-[var(--brand)]"
+                                    >
+                                        Lire l'article source
+                                    </a>
+                                </div>
+                            </div>
+                        @endif
+
                         <form
                             method="POST"
                             action="{{ isset($topic) ? route('topics.update', $topic) : route('topics.store') }}"
@@ -37,7 +81,7 @@
                                     name="title"
                                     type="text"
                                     class="mt-1 block w-full"
-                                    :value="old('title', $topic->title ?? '')"
+                                    :value="old('title', $reactionTitle)"
                                     required
                                     autofocus
                                 />
@@ -53,7 +97,7 @@
                                 >
                                     <option value="">Aucune categorie</option>
                                     @foreach ($categories as $category)
-                                        <option value="{{ $category->id }}" @selected((string) old('category_id', $topic->category_id ?? '') === (string) $category->id)>
+                                        <option value="{{ $category->id }}" @selected((string) old('category_id', $reactionCategoryId) === (string) $category->id)>
                                             {{ $category->name }}
                                         </option>
                                     @endforeach
@@ -83,7 +127,7 @@
                                 <x-input-error class="mt-2" :messages="$errors->get('tags.*')" />
                             </div>
 
-                            <div x-data="emojiComposer({ initialValue: @js(old('content', $topic->content ?? '')) })">
+                            <div x-data="emojiComposer({ initialValue: @js(old('content', $reactionContent)) })">
                                 <x-input-label for="content" :value="__('Contenu')" />
                                 <div class="mt-3">
                                     <x-emoji-toolbar helper="Ajoute un emoji pour donner le ton sans alourdir le sujet." />
@@ -96,7 +140,7 @@
                                     x-model="value"
                                     class="mt-1 block w-full rounded-[1.5rem] border-[rgba(71,85,135,0.16)] bg-white/80 px-4 py-4 shadow-sm focus:border-[var(--brand)] focus:ring-[var(--brand)]"
                                     required
-                                ></textarea>
+                                >{{ old('content', $reactionContent) }}</textarea>
                                 <x-input-error class="mt-2" :messages="$errors->get('content')" />
                             </div>
 
