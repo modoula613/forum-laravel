@@ -35,7 +35,7 @@ test('guests do not see the subscriptions feed tab', function () {
         ->assertDontSee('Abonnements');
 });
 
-test('topics index shows publishing examples in the for you feed', function () {
+test('topics index does not show the publishing examples section anymore', function () {
     $user = User::factory()->create();
     $user->topics()->create([
         'title' => 'Sujet public',
@@ -45,9 +45,9 @@ test('topics index shows publishing examples in the for you feed', function () {
     $this
         ->get(route('topics.index'))
         ->assertOk()
-        ->assertSee("Besoin d'une idee pour publier ?", false)
-        ->assertSee('Se connecter pour publier')
-        ->assertSee('Quel langage ou framework vous a le plus aide a progresser cette annee ?');
+        ->assertDontSee("Besoin d'une idee pour publier ?", false)
+        ->assertDontSee('Utiliser cet exemple')
+        ->assertDontSee('Quel langage ou framework vous a le plus aide a progresser cette annee ?');
 });
 
 test('authenticated users can create a topic', function () {
@@ -168,29 +168,6 @@ test('authenticated users can publish a topic linked to a news article', functio
     expect($topic)
         ->not->toBeNull()
         ->news_article_id->toBe($article->id);
-});
-
-test('authenticated users can start a topic from a feed example', function () {
-    $user = User::factory()->create();
-    $category = Category::create([
-        'name' => 'Developpement',
-        'slug' => 'developpement',
-    ]);
-
-    $title = 'Quel langage vous a le plus aide ?';
-    $content = "Je lance ce sujet pour comparer les retours.\n\nQuel outil vous a le plus aide ?";
-
-    $this
-        ->actingAs($user)
-        ->get(route('topics.create', [
-            'title' => $title,
-            'content' => $content,
-            'category_id' => $category->id,
-        ]))
-        ->assertOk()
-        ->assertSee($title)
-        ->assertSee($content, false)
-        ->assertSee((string) $category->id, false);
 });
 
 test('topics index paginates results', function () {

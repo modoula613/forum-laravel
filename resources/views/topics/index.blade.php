@@ -309,32 +309,6 @@
 
             <div class="grid gap-6 xl:grid-cols-[minmax(0,1fr)_21rem]">
                 <div class="space-y-6">
-                    @php
-                        $exampleTopics = [
-                            [
-                                'eyebrow' => 'Question',
-                                'title' => 'Quel langage ou framework vous a le plus aide a progresser cette annee ?',
-                                'description' => 'Un bon sujet simple pour comparer les retours d’experience et aider les autres a choisir.',
-                                'category_id' => $categories->firstWhere('slug', 'developpement')?->id,
-                                'content' => "Je lance ce sujet pour comparer les retours des membres.\n\nQuel langage, framework ou outil vous a le plus aide cette annee, et pourquoi ?\n\nCe qui m'interesse :\n- ce que vous avez vraiment utilise\n- ce que ca vous a apporte\n- si vous le recommanderiez a quelqu'un qui debute",
-                            ],
-                            [
-                                'eyebrow' => 'Debat',
-                                'title' => 'Vous preferez un projet full Laravel ou une separation frontend / backend ?',
-                                'description' => 'Un exemple de debat technique clair, facile a lancer et interessant a lire dans le flux Pour toi.',
-                                'category_id' => $categories->firstWhere('slug', 'developpement')?->id,
-                                'content' => "Je voudrais avoir vos avis sur l'organisation d'un projet web.\n\nVous preferez :\n- une application full Laravel\n- ou une separation frontend / backend\n\nExpliquez surtout dans quels cas vous changeriez d'approche.",
-                            ],
-                            [
-                                'eyebrow' => 'Reaction',
-                                'title' => 'Quelle actualite tech merite selon vous une vraie discussion ici ?',
-                                'description' => 'Pratique pour lancer une reaction a une actualite et voir rapidement qui partage le meme point de vue.',
-                                'category_id' => $categories->firstWhere('slug', 'actualites-et-debats')?->id,
-                                'content' => "Je propose qu'on partage ici une actualite recente qui merite un vrai debat.\n\nVous pouvez expliquer :\n- de quelle actualite il s'agit\n- pourquoi elle vous semble importante\n- ce que vous attendez comme impacts concrets",
-                            ],
-                        ];
-                    @endphp
-
                     <section class="glass-panel x-shell-divider p-5 sm:p-6">
                         <div class="flex items-start gap-4">
                             @auth
@@ -368,60 +342,6 @@
                             </div>
                         </div>
                     </section>
-
-                    @if (! $followingOnly)
-                        <section class="space-y-4">
-                            <div class="flex items-center justify-between gap-3 px-1 pt-1">
-                                <div>
-                                    <p class="section-kicker">Exemples</p>
-                                    <h3 class="mt-2 text-2xl font-semibold text-white">Besoin d'une idee pour publier ?</h3>
-                                    <p class="mt-2 text-sm text-white/48">
-                                        Quelques exemples simples pour lancer une discussion utile dans le flux Pour toi.
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div class="grid gap-4 lg:grid-cols-3">
-                                @foreach ($exampleTopics as $exampleTopic)
-                                    @php
-                                        $exampleParams = array_filter([
-                                            'title' => $exampleTopic['title'],
-                                            'content' => $exampleTopic['content'],
-                                            'category_id' => $exampleTopic['category_id'],
-                                        ], fn ($value) => filled($value));
-                                    @endphp
-                                    <article class="glass-panel rounded-[1.7rem] p-5 transition duration-200 hover:bg-white/[0.04]">
-                                        <p class="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--brand)]">
-                                            {{ $exampleTopic['eyebrow'] }}
-                                        </p>
-                                        <h4 class="mt-3 text-lg font-semibold leading-7 text-white">
-                                            {{ $exampleTopic['title'] }}
-                                        </h4>
-                                        <p class="mt-3 text-sm leading-6 text-white/58">
-                                            {{ $exampleTopic['description'] }}
-                                        </p>
-                                        <div class="mt-5 flex flex-wrap items-center gap-3">
-                                            @auth
-                                                <a
-                                                    href="{{ route('topics.create', $exampleParams) }}"
-                                                    class="rounded-full bg-[var(--brand)] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[var(--brand-deep)]"
-                                                >
-                                                    Utiliser cet exemple
-                                                </a>
-                                            @else
-                                                <a
-                                                    href="{{ route('login') }}"
-                                                    class="rounded-full border border-white/10 px-4 py-2 text-sm font-semibold text-white/78 transition hover:bg-white/8 hover:text-white"
-                                                >
-                                                    Se connecter pour publier
-                                                </a>
-                                            @endauth
-                                        </div>
-                                    </article>
-                                @endforeach
-                            </div>
-                        </section>
-                    @endif
 
                     @if ($pinnedTopics->isNotEmpty())
                         <section class="space-y-4">

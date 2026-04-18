@@ -110,6 +110,7 @@ class SeedConversationTopicsCommand extends Command
                 'title' => $title,
                 'content' => $content,
                 'category_id' => $article->category_id,
+                'news_article_id' => $article->id,
             ];
         });
     }
@@ -158,6 +159,7 @@ class SeedConversationTopicsCommand extends Command
                     'title' => $topic['title'],
                     'content' => $topic['content'],
                     'category_id' => $categories->firstWhere('slug', $topic['category_slug'])?->id,
+                    'news_article_id' => null,
                 ];
             });
     }
@@ -167,6 +169,12 @@ class SeedConversationTopicsCommand extends Command
         $existing = Topic::where('title', $topicData['title'])->first();
 
         if ($existing) {
+            if (! empty($topicData['news_article_id']) && ! $existing->news_article_id) {
+                $existing->forceFill([
+                    'news_article_id' => $topicData['news_article_id'],
+                ])->saveQuietly();
+            }
+
             return false;
         }
 
@@ -174,6 +182,7 @@ class SeedConversationTopicsCommand extends Command
             'title' => $topicData['title'],
             'content' => $topicData['content'],
             'category_id' => $topicData['category_id'] ?? null,
+            'news_article_id' => $topicData['news_article_id'] ?? null,
             'is_draft' => false,
         ]);
 
