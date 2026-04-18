@@ -1,163 +1,160 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-            <div class="max-w-3xl">
+        <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div class="max-w-2xl">
                 <p class="section-kicker">Conversation</p>
-                <h2 class="mt-3 text-4xl font-semibold text-stone-950">
+                <h2 class="mt-2 text-2xl font-semibold text-stone-950">
                     Discussion avec
                     <x-user-link :user="$user">
                         {{ $user->name }}
                     </x-user-link>
                 </h2>
-                <p class="muted-copy mt-3 text-base leading-7">
-                    Echange prive entre membres. Les messages les plus anciens apparaissent en premier.
-                </p>
             </div>
-            <a href="{{ route('messages.index') }}" class="rounded-full border border-[rgba(71,85,135,0.16)] bg-white/80 px-4 py-2 text-sm font-semibold text-stone-700 transition hover:bg-white">
+            <a href="{{ route('messages.index') }}" class="inline-flex items-center rounded-full border border-[rgba(71,85,135,0.14)] bg-white/80 px-4 py-2.5 text-sm font-semibold text-stone-700 transition hover:bg-white">
                 Retour a la boite
             </a>
         </div>
     </x-slot>
 
-    <div class="py-10">
-        <div class="mx-auto max-w-6xl space-y-6 px-4 sm:px-6 lg:px-8">
+    <div class="py-8">
+        <div class="mx-auto max-w-[1040px] space-y-5 px-4 sm:px-6 lg:px-8">
             @if (session('success'))
                 <div class="glass-panel rounded-[1.5rem] border-emerald-200 bg-emerald-50/90 px-5 py-4 text-sm text-emerald-900">
                     {{ session('success') }}
                 </div>
             @endif
 
-            <section class="overflow-hidden rounded-[2.6rem] border border-[rgba(15,23,42,0.08)] bg-white/96 shadow-[0_28px_80px_rgba(15,23,42,0.08)]">
-                <div class="border-b border-[rgba(15,23,42,0.08)] px-5 py-5 sm:px-6">
-                    <div class="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
-                        <div class="flex items-center gap-4">
-                            <x-user-avatar :user="$user" class="h-14 w-14 shrink-0 bg-[var(--brand)] text-base font-semibold uppercase text-white shadow-[0_10px_24px_rgba(79,70,229,0.22)]" />
-                            <div>
-                                <p class="section-kicker">Messagerie privee</p>
-                                <h3 class="mt-2 text-2xl font-semibold text-stone-950">{{ $user->name }}</h3>
-                                <p class="mt-2 text-sm leading-6 text-stone-500">
-                                    {{ $messages->count() }} message(s) dans cette conversation
-                                </p>
+            <section class="overflow-hidden rounded-[2.4rem] border border-white/10 bg-[#0b0d12] text-white shadow-[0_32px_90px_rgba(2,6,23,0.34)]">
+                <div class="border-b border-white/10 bg-[#0f1218] px-4 py-4 sm:px-6">
+                    <div class="flex flex-col gap-4">
+                        <div class="flex items-center gap-3">
+                            <a href="{{ route('messages.index') }}" class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/75 transition hover:bg-white/10 hover:text-white" aria-label="Retour a la boite">
+                                <svg class="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path fill="currentColor" d="m14.7 6.3 1.4 1.4L11.8 12l4.3 4.3-1.4 1.4L9 12l5.7-5.7Z"/>
+                                </svg>
+                            </a>
+                            <x-user-avatar :user="$user" class="h-12 w-12 shrink-0 bg-[linear-gradient(135deg,#5b61ff,#7c3aed)] text-sm font-semibold uppercase text-white shadow-[0_12px_24px_rgba(91,97,255,0.3)]" />
+                            <div class="min-w-0 flex-1">
+                                <p class="text-sm text-white/38">Discussion avec</p>
+                                <h3 class="truncate text-lg font-semibold text-white">{{ $user->name }}</h3>
+                                <p class="text-xs text-white/32">{{ $messages->count() }} message(s)</p>
                             </div>
-                        </div>
-                        <div class="flex w-full flex-col gap-3 lg:w-auto lg:min-w-[28rem]">
-                            <form method="GET" action="{{ route('messages.conversation', $user) }}" class="flex flex-col gap-3 sm:flex-row">
-                                <div class="flex-1">
-                                    <label for="search" class="sr-only">Rechercher dans la conversation</label>
-                                    <input
-                                        id="search"
-                                        type="text"
-                                        name="search"
-                                        value="{{ request('search') }}"
-                                        placeholder="Rechercher un mot ou une phrase dans cet echange"
-                                        class="block w-full rounded-full border border-[rgba(15,23,42,0.08)] bg-stone-50 px-5 py-3 text-sm text-stone-700 shadow-sm placeholder:text-stone-400 focus:border-[var(--brand)] focus:bg-white focus:ring-[var(--brand)]"
-                                    >
-                                </div>
-                                <div class="flex items-center gap-3">
-                                    @if (request()->filled('search'))
-                                        <a href="{{ route('messages.conversation', $user) }}" class="rounded-full border border-[rgba(15,23,42,0.08)] bg-stone-50 px-4 py-3 text-sm font-semibold text-stone-700 transition hover:bg-stone-100">
-                                            Reinitialiser
-                                        </a>
-                                    @endif
-                                    <x-primary-button class="justify-center rounded-full px-5 py-3">Rechercher</x-primary-button>
-                                </div>
-                            </form>
-                            <div class="flex flex-wrap items-center justify-between gap-3 text-xs font-medium uppercase tracking-[0.16em] text-stone-400">
-                                <span>Discussion avec {{ $user->name }}</span>
-                                <a href="{{ route('messages.index') }}" class="text-[var(--brand)] transition hover:text-[var(--brand-deep)]">
-                                    Retour a la boite
+                            <div class="flex items-center gap-2">
+                                <a href="{{ route('users.show', $user) }}" class="inline-flex rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-white/82 transition hover:bg-white/10 hover:text-white">
+                                    Voir profil
                                 </a>
                             </div>
                         </div>
+
+                        <form method="GET" action="{{ route('messages.conversation', $user) }}" class="flex flex-col gap-3 sm:flex-row sm:items-center">
+                            <div class="relative flex-1">
+                                <label for="search" class="sr-only">Rechercher dans la conversation</label>
+                                <svg class="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/35" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path fill="currentColor" d="M10.5 4a6.5 6.5 0 1 0 4.03 11.6l4.44 4.43 1.06-1.06-4.43-4.44A6.5 6.5 0 0 0 10.5 4Zm0 1.5a5 5 0 1 1 0 10 5 5 0 0 1 0-10Z"/>
+                                </svg>
+                                <input
+                                    id="search"
+                                    type="text"
+                                    name="search"
+                                    value="{{ request('search') }}"
+                                    placeholder="Rechercher dans les messages"
+                                    class="block w-full rounded-full border border-white/10 bg-white/6 py-3 pl-11 pr-4 text-sm text-white placeholder:text-white/35 focus:border-[#5b61ff] focus:bg-white/8 focus:ring-[#5b61ff]"
+                                >
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button type="submit" class="inline-flex rounded-full bg-[#5b61ff] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#6b70ff]">
+                                    Rechercher
+                                </button>
+                                @if (request()->filled('search'))
+                                    <a href="{{ route('messages.conversation', $user) }}" class="text-sm font-semibold text-white/58 transition hover:text-white">
+                                        Reinitialiser
+                                    </a>
+                                @endif
+                            </div>
+                        </form>
                     </div>
                 </div>
 
-                <div class="max-h-[68vh] overflow-y-auto bg-[radial-gradient(circle_at_top,rgba(248,250,252,0.95),rgba(255,255,255,1))] px-4 py-5 sm:px-6">
-                    <div class="mx-auto max-w-4xl space-y-4">
+                <div class="max-h-[70vh] overflow-y-auto bg-[#090b10] px-4 py-5 sm:px-6">
+                    <div class="mx-auto max-w-[760px] space-y-3">
+                        <div class="pb-3 text-center">
+                            <x-user-avatar :user="$user" class="mx-auto h-20 w-20 bg-[linear-gradient(135deg,#5b61ff,#7c3aed)] text-lg font-semibold uppercase text-white shadow-[0_20px_40px_rgba(91,97,255,0.22)]" />
+                            <p class="mt-4 text-xl font-semibold text-white">{{ $user->name }}</p>
+                            <a href="{{ route('users.show', $user) }}" class="mt-3 inline-flex rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-white/82 transition hover:bg-white/10 hover:text-white">
+                                Voir profil
+                            </a>
+                        </div>
+
                         @forelse ($messages as $message)
                             @php
                                 $isCurrentUser = $message->sender_id === auth()->id();
+                                $previousMessage = $loop->index > 0 ? $messages[$loop->index - 1] : null;
+                                $showDateSeparator = $loop->first || optional($previousMessage?->created_at)->toDateString() !== $message->created_at->toDateString();
                             @endphp
+                            @if ($showDateSeparator)
+                                <div class="flex justify-center py-2">
+                                    <span class="rounded-full bg-white/6 px-3 py-1 text-[11px] font-medium text-white/38">
+                                        {{ $message->created_at->format('d M Y, H:i') }}
+                                    </span>
+                                </div>
+                            @endif
                             <article class="flex {{ $isCurrentUser ? 'justify-end' : 'justify-start' }}">
-                                <div class="max-w-[88%] sm:max-w-[72%]">
-                                    @if (! $isCurrentUser)
-                                        <div class="mb-2 flex items-center gap-3">
-                                            <x-user-avatar :user="$message->sender" class="h-10 w-10 shrink-0 bg-[var(--brand)] text-sm font-semibold uppercase text-white shadow-[0_10px_24px_rgba(79,70,229,0.18)]" />
-                                            <div>
-                                                <p class="text-sm font-semibold text-stone-900">
-                                                    <x-user-link :user="$message->sender">
-                                                        {{ $message->sender->name }}
-                                                    </x-user-link>
-                                                </p>
-                                                <p class="text-xs uppercase tracking-[0.16em] text-stone-400">Message recu</p>
-                                            </div>
-                                        </div>
-                                    @else
-                                        <div class="mb-2 flex items-center justify-end gap-3">
-                                            <div class="text-right">
-                                                <p class="text-sm font-semibold text-stone-900">Vous</p>
-                                                <p class="text-xs uppercase tracking-[0.16em] text-stone-400">Message envoye</p>
-                                            </div>
-                                            <x-user-avatar :user="$message->sender" class="h-10 w-10 shrink-0 bg-[var(--brand)] text-sm font-semibold uppercase text-white shadow-[0_10px_24px_rgba(79,70,229,0.18)]" />
-                                        </div>
-                                    @endif
-
-                                    <div class="{{ $isCurrentUser ? 'rounded-[1.8rem_1.8rem_0.55rem_1.8rem] bg-[var(--brand)] text-white' : 'rounded-[1.8rem_1.8rem_1.8rem_0.55rem] bg-stone-100 text-stone-800' }} px-5 py-4 shadow-[0_18px_36px_rgba(15,23,42,0.06)]">
-                                        <p class="whitespace-pre-line text-[0.98rem] leading-7">{{ $message->content }}</p>
+                                <div class="max-w-[82%] sm:max-w-[70%]">
+                                    <div class="{{ $isCurrentUser ? 'ml-auto rounded-[1.6rem_1.6rem_0.45rem_1.6rem] bg-[#5b61ff] text-white' : 'rounded-[1.6rem_1.6rem_1.6rem_0.45rem] bg-[#262a33] text-white' }} px-4 py-3 shadow-[0_18px_36px_rgba(2,6,23,0.22)]">
+                                        <p class="whitespace-pre-line text-[0.95rem] leading-6">{{ $message->content }}</p>
                                     </div>
 
-                                    <div class="mt-2 flex items-center gap-3 text-xs text-stone-400 {{ $isCurrentUser ? 'justify-end' : 'justify-start pl-1' }}">
-                                        <span>{{ $message->created_at->format('d/m/Y H:i') }}</span>
+                                    <div class="mt-1 flex items-center gap-3 text-[11px] text-white/32 {{ $isCurrentUser ? 'justify-end pr-1' : 'justify-start pl-1' }}">
+                                        <span>{{ $message->created_at->format('H:i') }}</span>
                                         <form method="POST" action="{{ route('messages.destroy', $message) }}">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="font-semibold uppercase tracking-[0.16em] text-stone-400 transition hover:text-rose-600">
-                                                Supprimer
+                                            <button type="submit" class="font-medium text-white/32 transition hover:text-rose-400">
+                                                Suppr.
                                             </button>
                                         </form>
                                     </div>
                                 </div>
                             </article>
                         @empty
-                            <div class="mx-auto max-w-xl rounded-[2rem] border border-dashed border-[rgba(15,23,42,0.08)] bg-white px-8 py-14 text-center">
-                                <p class="section-kicker">Aucun message</p>
-                                <h3 class="mt-3 text-3xl font-semibold text-stone-950">La conversation n'a pas encore commence</h3>
-                                <p class="mt-3 text-sm leading-6 text-stone-500">Envoyez le premier message pour lancer l'echange.</p>
+                            <div class="mx-auto max-w-xl rounded-[1.9rem] border border-dashed border-white/10 bg-[#171a22] px-8 py-14 text-center">
+                                <p class="text-xs font-semibold uppercase tracking-[0.2em] text-white/35">Aucun message</p>
+                                <h3 class="mt-3 text-3xl font-semibold text-white">La conversation n'a pas encore commence</h3>
+                                <p class="mt-3 text-sm leading-6 text-white/42">Envoyez le premier message pour lancer l'echange.</p>
                             </div>
                         @endforelse
                     </div>
                 </div>
 
-                <div class="border-t border-[rgba(15,23,42,0.08)] bg-white px-5 py-5 sm:px-6">
-                    <div class="mx-auto max-w-4xl">
-                        <p class="section-kicker">Repondre</p>
-                        <h3 class="mt-3 text-3xl font-semibold text-stone-950">Envoyer un nouveau message</h3>
-                        <p class="mt-3 text-sm leading-6 text-stone-500">
-                            Ecris un message simple et direct. Il apparaitra tout de suite dans la conversation.
-                        </p>
-                        <form method="POST" action="{{ route('messages.send') }}" class="mt-6 space-y-4">
-                            @csrf
-                            <input type="hidden" name="receiver_id" value="{{ $user->id }}">
-                            <div x-data="emojiComposer({ initialValue: @js(old('content')) })" class="rounded-[2rem] border border-[rgba(15,23,42,0.08)] bg-stone-50 p-3">
-                                <div class="mb-3">
-                                    <x-emoji-toolbar helper="Ajoute une reaction ou une nuance rapide a ton message prive." />
-                                </div>
+                <div class="border-t border-white/10 bg-[#0f1218] px-4 py-4 sm:px-6">
+                    <form method="POST" action="{{ route('messages.send') }}" class="mx-auto max-w-[760px]">
+                        @csrf
+                        <input type="hidden" name="receiver_id" value="{{ $user->id }}">
+                        <div class="flex items-end gap-3 rounded-[1.7rem] border border-white/10 bg-[#171a22] px-3 py-3 shadow-[0_16px_32px_rgba(2,6,23,0.18)]">
+                            <label for="content" class="inline-flex h-10 w-10 cursor-text items-center justify-center rounded-full bg-white/6 text-white/62 transition hover:bg-white/10 hover:text-white" aria-label="Ecrire un message">
+                                <svg class="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path fill="currentColor" d="M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20Zm0 1.5a8.5 8.5 0 1 0 0 17 8.5 8.5 0 0 0 0-17Zm-3 5.75a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5Zm6 0a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5Zm1.2 5.22.9.66A6.3 6.3 0 0 1 12 17.8a6.3 6.3 0 0 1-5.1-2.67l.9-.66A5.17 5.17 0 0 0 12 16.3a5.17 5.17 0 0 0 4.2-1.83Z"/>
+                                </svg>
+                            </label>
+                            <div class="flex-1">
+                                <label for="content" class="sr-only">Ecris ton message</label>
                                 <textarea
+                                    id="content"
                                     name="content"
-                                    rows="4"
-                                    x-ref="input"
-                                    x-model="value"
-                                    placeholder="Ecris ton message..."
-                                    class="block w-full rounded-[1.4rem] border border-[rgba(15,23,42,0.08)] bg-white px-4 py-4 text-sm shadow-sm focus:border-[var(--brand)] focus:ring-[var(--brand)]"
+                                    rows="1"
+                                    placeholder="Ecris un message..."
+                                    class="block min-h-[44px] w-full resize-none border-0 bg-transparent px-2 py-2 text-sm text-white placeholder:text-white/35 focus:ring-0"
                                     required
-                                ></textarea>
-                                <x-input-error class="mt-2" :messages="$errors->get('content')" />
+                                >{{ old('content') }}</textarea>
                             </div>
-                            <div class="flex justify-end">
-                                <x-primary-button class="rounded-full px-6 py-3">Envoyer</x-primary-button>
-                            </div>
-                        </form>
-                    </div>
+                            <button type="submit" class="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[#5b61ff] text-white transition hover:bg-[#6b70ff]" aria-label="Envoyer">
+                                <svg class="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path fill="currentColor" d="m3.4 20.4 17.85-7.65c.5-.21.5-.93 0-1.14L3.4 3.96c-.46-.2-.94.2-.84.7l1.58 7.05a.75.75 0 0 0 .58.57l7.13 1.43-7.13 1.43a.75.75 0 0 0-.58.57l-1.58 7.05c-.1.5.38.9.84.7Z"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <x-input-error class="mt-3" :messages="$errors->get('content')" />
+                    </form>
                 </div>
             </section>
         </div>
