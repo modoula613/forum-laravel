@@ -458,6 +458,11 @@
                                         <div class="min-w-0 flex-1">
                                             <div class="flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-[0.18em] text-white/45">
                                                 <span class="rounded-full bg-amber-500/10 px-3 py-1 text-amber-300">Epingle</span>
+                                                @if ($topic->newsArticle)
+                                                    <span class="rounded-full bg-[var(--brand)]/12 px-3 py-1 text-[var(--brand)]">
+                                                        Reaction a une actualite
+                                                    </span>
+                                                @endif
                                                 <x-user-link :user="$topic->user">
                                                     {{ $topic->user->name }}
                                                 </x-user-link>
@@ -513,6 +518,9 @@
                                                     <span class="rounded-full bg-amber-500/10 px-3 py-1 text-amber-300">Suivi</span>
                                                 @endif
                                             @endauth
+                                            @if ($topic->newsArticle)
+                                                <span class="rounded-full bg-[var(--brand)]/12 px-3 py-1 text-[var(--brand)]">Reaction a une actualite</span>
+                                            @endif
                                             <span>{{ $topic->created_at->diffForHumans() }}</span>
                                         </div>
                                         <h4 class="text-[1.4rem] font-semibold leading-tight text-white">
@@ -520,6 +528,11 @@
                                                 {{ $topic->title }}
                                             </a>
                                         </h4>
+                                        @if ($topic->newsArticle)
+                                            <p class="text-sm font-medium text-[var(--brand)]/90">
+                                                A partir de : {{ $topic->newsArticle->title }}
+                                            </p>
+                                        @endif
                                         <p class="max-w-3xl text-[0.98rem] leading-7 text-white/72">
                                             {{ \Illuminate\Support\Str::limit($topic->content, 180) }}
                                         </p>

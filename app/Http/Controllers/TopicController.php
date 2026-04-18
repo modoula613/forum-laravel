@@ -66,6 +66,7 @@ class TopicController extends Controller
             ->with([
                 'user:id,name',
                 'category:id,name,slug',
+                'newsArticle:id,title,source_url,source_name,published_at',
             ])
             ->withCount(['replies', 'favorites', 'edits'])
             ->where('is_draft', false)
@@ -148,6 +149,9 @@ class TopicController extends Controller
         $prefillCategoryId = $request->filled('category_id')
             ? (string) $request->integer('category_id')
             : '';
+        $prefillNewsArticleId = $request->filled('news_article_id')
+            ? (string) $request->integer('news_article_id')
+            : '';
 
         if ($request->filled('news')) {
             $reactionArticle = NewsArticle::with('category')->find($request->integer('news'));
@@ -159,7 +163,8 @@ class TopicController extends Controller
             'reactionArticle',
             'prefillTitle',
             'prefillContent',
-            'prefillCategoryId'
+            'prefillCategoryId',
+            'prefillNewsArticleId'
         ));
     }
 
@@ -177,6 +182,7 @@ class TopicController extends Controller
             'title' => ['required', 'string', 'max:255'],
             'content' => ['required', 'string'],
             'category_id' => ['nullable', 'exists:categories,id'],
+            'news_article_id' => ['nullable', 'exists:news_articles,id'],
             'tags' => ['nullable', 'array'],
             'tags.*' => ['exists:tags,id'],
         ]);
@@ -240,6 +246,7 @@ class TopicController extends Controller
         $topic->load([
             'user.badges',
             'category',
+            'newsArticle',
             'tags',
             'favorites',
             'replies' => fn ($query) => $query
@@ -262,6 +269,7 @@ class TopicController extends Controller
         $prefillTitle = '';
         $prefillContent = '';
         $prefillCategoryId = '';
+        $prefillNewsArticleId = '';
 
         return view('topics.create', compact(
             'topic',
@@ -270,7 +278,8 @@ class TopicController extends Controller
             'reactionArticle',
             'prefillTitle',
             'prefillContent',
-            'prefillCategoryId'
+            'prefillCategoryId',
+            'prefillNewsArticleId'
         ));
     }
 
@@ -282,6 +291,7 @@ class TopicController extends Controller
             'title' => ['required', 'string', 'max:255'],
             'content' => ['required', 'string'],
             'category_id' => ['nullable', 'exists:categories,id'],
+            'news_article_id' => ['nullable', 'exists:news_articles,id'],
             'tags' => ['nullable', 'array'],
             'tags.*' => ['exists:tags,id'],
         ]);
@@ -358,7 +368,7 @@ class TopicController extends Controller
                 fn ($builder) => $builder->whereIn('user_id', $followedUserIds)
             )
             ->where('is_draft', false)
-            ->with(['user', 'category', 'tags'])
+            ->with(['user', 'category', 'tags', 'newsArticle:id,title,source_url,source_name,published_at'])
             ->withCount(['replies', 'favorites'])
             ->latest()
             ->paginate(10);

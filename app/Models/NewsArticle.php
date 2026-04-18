@@ -33,4 +33,9 @@ class NewsArticle extends Model
     {
         return $this->belongsTo(Category::class);
     }
+
+    public function topics()
+    {
+        return $this->hasMany(Topic::class);
+    }
 }

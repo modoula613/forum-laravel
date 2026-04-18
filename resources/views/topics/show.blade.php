@@ -27,6 +27,11 @@
                             Epingle
                         </span>
                     @endif
+                    @if ($topic->newsArticle)
+                        <span class="rounded-full bg-[rgba(79,70,229,0.12)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--brand)]">
+                            Reaction a une actualite
+                        </span>
+                    @endif
                     @if ($topic->category)
                         <a href="{{ route('categories.show', $topic->category) }}" class="rounded-full bg-[rgba(20,184,166,0.12)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--accent)] transition hover:bg-[rgba(20,184,166,0.2)]">
                             {{ $topic->category->name }}
@@ -118,6 +123,9 @@
                 <article class="glass-panel-strong rounded-[2rem] p-7 sm:p-8">
                     <div class="mb-6 flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-[0.2em] text-stone-500">
                         <span class="rounded-full bg-[rgba(79,70,229,0.12)] px-3 py-1 text-[var(--brand)]">Discussion ouverte</span>
+                        @if ($topic->newsArticle)
+                            <span class="rounded-full bg-[rgba(79,70,229,0.12)] px-3 py-1 text-[var(--brand)]">Reaction a une actualite</span>
+                        @endif
                         <span>{{ $topic->replies->count() }} message(s)</span>
                         <span>{{ $topic->favorites_count }} abonnes</span>
                         @foreach ($topic->tags as $tag)
@@ -126,6 +134,30 @@
                             </a>
                         @endforeach
                     </div>
+                    @if ($topic->newsArticle)
+                        <div class="mb-6 rounded-[1.5rem] border border-[rgba(79,70,229,0.14)] bg-[rgba(79,70,229,0.06)] px-5 py-5">
+                            <p class="section-kicker">Actualite source</p>
+                            <h3 class="mt-2 text-xl font-semibold text-stone-950">{{ $topic->newsArticle->title }}</h3>
+                            <div class="mt-3 flex flex-wrap items-center gap-3 text-sm text-stone-600">
+                                @if ($topic->newsArticle->source_name)
+                                    <span>{{ $topic->newsArticle->source_name }}</span>
+                                @endif
+                                @if ($topic->newsArticle->published_at)
+                                    <span>{{ $topic->newsArticle->published_at->format('d/m/Y H:i') }}</span>
+                                @endif
+                            </div>
+                            <div class="mt-4">
+                                <a
+                                    href="{{ $topic->newsArticle->source_url }}"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="text-sm font-semibold text-[var(--brand-deep)] transition hover:text-[var(--brand)]"
+                                >
+                                    Lire l'article d'origine
+                                </a>
+                            </div>
+                        </div>
+                    @endif
                     <div class="prose max-w-none text-stone-700">
                         <p>{!! nl2br(e($topic->content)) !!}</p>
                     </div>

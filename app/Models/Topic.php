@@ -15,6 +15,7 @@ class Topic extends Model
         'slug',
         'content',
         'category_id',
+        'news_article_id',
         'is_draft',
         'is_locked',
         'is_pinned',
@@ -57,6 +58,11 @@ class Topic extends Model
     public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function newsArticle()
+    {
+        return $this->belongsTo(NewsArticle::class);
     }
 
     public function tags()

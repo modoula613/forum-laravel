@@ -131,8 +131,43 @@ test('authenticated users can start a reaction topic from a news article', funct
         ->assertSee($article->title)
         ->assertSee('Reaction : '.$article->title)
         ->assertSee('Ce que j&#039;en pense :', false)
+        ->assertSee('name="news_article_id"', false)
+        ->assertSee('value="'.$article->id.'"', false)
         ->assertSee((string) $category->id, false)
         ->assertSee($article->source_url, false);
+});
+
+test('authenticated users can publish a topic linked to a news article', function () {
+    $user = User::factory()->create();
+    $category = Category::create([
+        'name' => 'Actualites et debats',
+        'slug' => 'actualites-et-debats',
+    ]);
+
+    $article = NewsArticle::create([
+        'category_id' => $category->id,
+        'title' => 'Un article a commenter',
+        'source_name' => 'Source test',
+        'source_url' => 'https://example.test/news/article-a-commenter',
+        'published_at' => now(),
+    ]);
+
+    $response = $this
+        ->actingAs($user)
+        ->post(route('topics.store'), [
+            'title' => 'Reaction : Un article a commenter',
+            'content' => "Je trouve ce sujet interessant.\n\nVoici mon avis.",
+            'category_id' => $category->id,
+            'news_article_id' => $article->id,
+        ]);
+
+    $topic = Topic::query()->latest('id')->first();
+
+    $response->assertRedirect(route('topics.show', $topic));
+
+    expect($topic)
+        ->not->toBeNull()
+        ->news_article_id->toBe($article->id);
 });
 
 test('authenticated users can start a topic from a feed example', function () {
@@ -192,6 +227,33 @@ test('topics index can search by title', function () {
         ->assertOk()
         ->assertSee('Laravel Horizon')
         ->assertDontSee('Vue Composer');
+});
+
+test('topics index marks topics that are reactions to news', function () {
+    $user = User::factory()->create();
+    $category = Category::create([
+        'name' => 'Actualites et debats',
+        'slug' => 'actualites-et-debats',
+    ]);
+    $article = NewsArticle::create([
+        'category_id' => $category->id,
+        'title' => 'Article important du jour',
+        'source_url' => 'https://example.test/news/article-important',
+        'published_at' => now(),
+    ]);
+
+    $user->topics()->create([
+        'title' => 'Mon avis sur l article',
+        'content' => 'Je pense que ce sujet merite un vrai debat.',
+        'category_id' => $category->id,
+        'news_article_id' => $article->id,
+    ]);
+
+    $this
+        ->get(route('topics.index'))
+        ->assertOk()
+        ->assertSee('Reaction a une actualite')
+        ->assertSee('A partir de : '.$article->title);
 });
 
 test('topics index redirects user search prefix to members search', function () {
@@ -454,6 +516,36 @@ test('topic show marks edited topics as modified', function () {
         ->get(route('topics.show', $topic))
         ->assertOk()
         ->assertSee('Modifie');
+});
+
+test('topic show highlights when a post is a reaction to news', function () {
+    $user = User::factory()->create();
+    $category = Category::create([
+        'name' => 'Actualites et debats',
+        'slug' => 'actualites-et-debats',
+    ]);
+    $article = NewsArticle::create([
+        'category_id' => $category->id,
+        'title' => 'Actualite source a afficher',
+        'source_name' => 'Source test',
+        'source_url' => 'https://example.test/news/source-a-afficher',
+        'published_at' => now(),
+    ]);
+    $topic = $user->topics()->create([
+        'title' => 'Mon point de vue',
+        'content' => 'Je partage ma reaction a cette actualite.',
+        'category_id' => $category->id,
+        'news_article_id' => $article->id,
+    ]);
+
+    $this
+        ->get(route('topics.show', $topic))
+        ->assertOk()
+        ->assertSee('Reaction a une actualite')
+        ->assertSee('Actualite source')
+        ->assertSee($article->title)
+        ->assertSee("Lire l'article d'origine", false)
+        ->assertSee($article->source_url, false);
 });
 
 test('authenticated users can view a personalized feed based on followed members', function () {

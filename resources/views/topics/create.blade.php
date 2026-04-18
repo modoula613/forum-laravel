@@ -21,12 +21,16 @@
                         </div>
                     @else
                         @php
+                            $associatedNewsArticle = $reactionArticle ?? ($topic->newsArticle ?? null);
                             $reactionTitle = isset($topic)
                                 ? ($topic->title ?? '')
                                 : ($reactionArticle ? 'Reaction : '.$reactionArticle->title : $prefillTitle);
                             $reactionCategoryId = isset($topic)
                                 ? ($topic->category_id ?? '')
                                 : ($reactionArticle?->category_id ?? $prefillCategoryId);
+                            $reactionNewsArticleId = isset($topic)
+                                ? ($topic->news_article_id ?? '')
+                                : ($reactionArticle?->id ?? $prefillNewsArticleId);
                             $reactionContent = isset($topic)
                                 ? ($topic->content ?? '')
                                 : ($reactionArticle
@@ -34,26 +38,26 @@
                                     : $prefillContent);
                         @endphp
 
-                        @if ($reactionArticle && ! isset($topic))
+                        @if ($associatedNewsArticle)
                             <div class="mb-6 rounded-[1.5rem] border border-[rgba(79,70,229,0.14)] bg-[rgba(79,70,229,0.06)] px-5 py-5">
                                 <p class="section-kicker">Reaction a une actualite</p>
-                                <h3 class="mt-2 text-xl font-semibold text-stone-950">{{ $reactionArticle->title }}</h3>
+                                <h3 class="mt-2 text-xl font-semibold text-stone-950">{{ $associatedNewsArticle->title }}</h3>
                                 <div class="mt-3 flex flex-wrap items-center gap-3 text-sm text-stone-600">
-                                    @if ($reactionArticle->category)
+                                    @if ($associatedNewsArticle->category)
                                         <span class="rounded-full bg-white/80 px-3 py-1 font-semibold text-[var(--brand)]">
-                                            {{ $reactionArticle->category->name }}
+                                            {{ $associatedNewsArticle->category->name }}
                                         </span>
                                     @endif
-                                    @if ($reactionArticle->source_name)
-                                        <span>{{ $reactionArticle->source_name }}</span>
+                                    @if ($associatedNewsArticle->source_name)
+                                        <span>{{ $associatedNewsArticle->source_name }}</span>
                                     @endif
-                                    @if ($reactionArticle->published_at)
-                                        <span>{{ $reactionArticle->published_at->format('d/m/Y H:i') }}</span>
+                                    @if ($associatedNewsArticle->published_at)
+                                        <span>{{ $associatedNewsArticle->published_at->format('d/m/Y H:i') }}</span>
                                     @endif
                                 </div>
                                 <div class="mt-4">
                                     <a
-                                        href="{{ $reactionArticle->source_url }}"
+                                        href="{{ $associatedNewsArticle->source_url }}"
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         class="text-sm font-semibold text-[var(--brand-deep)] transition hover:text-[var(--brand)]"
@@ -73,6 +77,7 @@
                             @isset($topic)
                                 @method('PUT')
                             @endisset
+                            <input type="hidden" name="news_article_id" value="{{ old('news_article_id', $reactionNewsArticleId) }}">
 
                             <div>
                                 <x-input-label for="title" :value="__('Titre')" />

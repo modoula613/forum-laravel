@@ -22,6 +22,11 @@
                         <div class="space-y-3">
                             <div class="flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-[0.18em] text-stone-500">
                                 <span class="rounded-full bg-amber-100 px-3 py-1 text-amber-700">Suivi</span>
+                                @if ($topic->newsArticle)
+                                    <span class="rounded-full bg-[rgba(79,70,229,0.12)] px-3 py-1 text-[var(--brand)]">
+                                        Reaction a une actualite
+                                    </span>
+                                @endif
                                 @if ($topic->category)
                                     <a href="{{ route('categories.show', $topic->category) }}" class="rounded-full bg-[rgba(20,184,166,0.12)] px-3 py-1 text-[var(--accent)] transition hover:bg-[rgba(20,184,166,0.2)]">
                                         {{ $topic->category->name }}
@@ -34,6 +39,11 @@
                                     {{ $topic->title }}
                                 </a>
                             </h3>
+                            @if ($topic->newsArticle)
+                                <p class="text-sm font-semibold text-[var(--brand)]">
+                                    A partir de : {{ $topic->newsArticle->title }}
+                                </p>
+                            @endif
                             <p class="text-sm text-stone-500">
                                 Par
                                 <x-user-link :user="$topic->user" class="font-semibold text-stone-700">
