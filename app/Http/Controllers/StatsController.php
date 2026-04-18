@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Reply;
-use App\Models\Tag;
 use App\Models\Topic;
 use App\Models\User;
 use App\Models\NewsArticle;
@@ -33,10 +32,6 @@ class StatsController extends Controller
         $topReputation = User::orderByDesc('reputation')
             ->take(5)
             ->get();
-        $popularTags = Tag::withCount('topics')
-            ->orderByDesc('topics_count')
-            ->take(10)
-            ->get();
         $newsCount = Schema::hasTable('news_articles')
             ? NewsArticle::count()
             : 0;
@@ -50,7 +45,6 @@ class StatsController extends Controller
             'topTopics',
             'topLevels',
             'topReputation',
-            'popularTags',
             'newsCount'
         ));
     }

@@ -110,28 +110,6 @@
                                 <x-input-error class="mt-2" :messages="$errors->get('category_id')" />
                             </div>
 
-                            <div>
-                                <x-input-label for="tags" :value="__('Tags')" />
-                                <select
-                                    id="tags"
-                                    name="tags[]"
-                                    multiple
-                                    class="mt-1 block min-h-36 w-full rounded-[1.5rem] border-[rgba(71,85,135,0.16)] bg-white/80 px-4 py-3 shadow-sm focus:border-[var(--brand)] focus:ring-[var(--brand)]"
-                                >
-                                    @php
-                                        $selectedTags = collect(old('tags', isset($topic) ? $topic->tags->pluck('id')->all() : []))->map(fn ($value) => (string) $value)->all();
-                                    @endphp
-                                    @foreach ($tags as $tag)
-                                        <option value="{{ $tag->id }}" @selected(in_array((string) $tag->id, $selectedTags, true))>
-                                            {{ $tag->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                <p class="mt-2 text-sm text-stone-500">Maintiens `Cmd` ou `Ctrl` pour selectionner plusieurs tags.</p>
-                                <x-input-error class="mt-2" :messages="$errors->get('tags')" />
-                                <x-input-error class="mt-2" :messages="$errors->get('tags.*')" />
-                            </div>
-
                             <div x-data="emojiComposer({ initialValue: @js(old('content', $reactionContent)) })">
                                 <x-input-label for="content" :value="__('Contenu')" />
                                 <div class="mt-3">

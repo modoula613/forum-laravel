@@ -24,7 +24,6 @@
                                 'replies' => 'Reponses',
                                 'messages' => 'Messages',
                                 'requests' => 'Demandes',
-                                'tags' => 'Tags',
                                 'moderation' => 'Moderation',
                             ];
                         @endphp
@@ -110,18 +109,6 @@
                                         Voir la demande
                                     </a>
                                 @endif
-                            @elseif (($notification->data['type'] ?? null) === 'new_topic_followed_tag')
-                                <div class="mt-4 flex flex-wrap items-center gap-3 text-sm text-stone-600">
-                                    <span class="rounded-full bg-amber-100 px-3 py-1 font-semibold text-amber-700">
-                                        {{ $notification->data['tag_name'] ?? 'Tag' }}
-                                    </span>
-                                    <span class="font-semibold text-stone-900">{{ $notification->data['topic_title'] ?? 'Sujet' }}</span>
-                                </div>
-                                @if (! empty($notification->data['url']))
-                                    <a href="{{ $notification->data['url'] }}" class="mt-4 inline-flex items-center rounded-full bg-amber-500 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-white transition hover:bg-amber-400">
-                                        Voir le sujet
-                                    </a>
-                                @endif
                             @elseif (($notification->data['type'] ?? null) === 'reply_reported')
                                 <div class="mt-4 flex flex-wrap items-center gap-3 text-sm text-stone-600">
                                     <span class="rounded-full bg-rose-100 px-3 py-1 font-semibold text-rose-700">
@@ -154,10 +141,6 @@
                             @elseif (($notification->data['type'] ?? null) === 'new_private_message')
                                 <div class="rounded-full bg-[rgba(139,92,246,0.12)] px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--brand)]">
                                     Message prive
-                                </div>
-                            @elseif (($notification->data['type'] ?? null) === 'new_topic_followed_tag')
-                                <div class="rounded-full bg-amber-100 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-amber-700">
-                                    Sujet recommande
                                 </div>
                             @elseif (($notification->data['type'] ?? null) === 'reply_reported')
                                 <div class="rounded-full bg-rose-100 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-rose-700">

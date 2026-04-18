@@ -22,9 +22,6 @@
                     @if (request()->filled('category'))
                         <input type="hidden" name="category" value="{{ request('category') }}">
                     @endif
-                    @if (request()->filled('tag'))
-                        <input type="hidden" name="tag" value="{{ request('tag') }}">
-                    @endif
                     @if (request()->filled('order'))
                         <input type="hidden" name="order" value="{{ request('order') }}">
                     @endif
@@ -121,7 +118,7 @@
                             >
                                 Filtres
                             </button>
-                            @if (request()->filled('search') || request()->filled('category') || request()->filled('tag') || request()->filled('order'))
+                            @if (request()->filled('search') || request()->filled('category') || request()->filled('order'))
                                 <a href="{{ route('topics.index') }}" class="rounded-full border border-white/10 px-4 py-3 text-sm font-semibold text-white/72 transition hover:bg-white/8 hover:text-white">
                                     Reinitialiser
                                 </a>
@@ -206,11 +203,10 @@
                 $activeFilters = array_filter([
                     request('search') ? 'Recherche : '.request('search') : null,
                     request('category') ? 'Categorie active' : null,
-                    request('tag') ? 'Tag : '.request('tag') : null,
                     request('order') === 'popular' ? 'Tri : plus actifs' : null,
                     $followingOnly ? 'Suivi des membres' : null,
                 ]);
-                $hasAdvancedFilters = request()->filled('category') || request()->filled('tag') || request()->filled('order');
+                $hasAdvancedFilters = request()->filled('category') || request()->filled('order');
             @endphp
 
             <div
@@ -258,23 +254,6 @@
                                 @foreach ($categories as $category)
                                     <option value="{{ $category->id }}" @selected((string) request('category') === (string) $category->id)>
                                         {{ $category->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div>
-                            <label for="tag" class="mb-2 block text-sm font-semibold uppercase tracking-[0.16em] text-stone-600">
-                                Tag
-                            </label>
-                            <select
-                                id="tag"
-                                name="tag"
-                                class="block w-full rounded-[1.25rem] border border-white/10 bg-white/5 px-4 py-3 text-white shadow-sm focus:border-[var(--brand)] focus:ring-[var(--brand)]"
-                            >
-                                <option value="">Tous les tags</option>
-                                @foreach ($tags as $tagOption)
-                                    <option value="{{ $tagOption->slug }}" @selected(request('tag') === $tagOption->slug)>
-                                        {{ $tagOption->name }}
                                     </option>
                                 @endforeach
                             </select>

@@ -187,7 +187,6 @@
                                         $notificationLabel = match ($notificationType) {
                                             'new_private_message' => 'Message prive',
                                             'follow_request' => 'Demande de suivi',
-                                            'new_topic_followed_tag' => 'Sujet recommande',
                                             'reply_reported' => 'Signalement',
                                             default => array_key_exists('warning_count', $notification->data) ? 'Moderation' : 'Nouvelle reponse',
                                         };
@@ -239,17 +238,6 @@
                                                     <a href="{{ $notification->data['requester_url'] }}" class="rounded-full bg-[rgba(139,92,246,0.12)] px-3 py-1 font-semibold text-[var(--brand)] transition hover:bg-[rgba(139,92,246,0.18)]">
                                                         {{ $notification->data['requester_name'] ?? 'Un membre' }}
                                                     </a>
-                                                @endif
-                                            </div>
-                                        @elseif (($notification->data['type'] ?? null) === 'new_topic_followed_tag')
-                                            <div class="flex flex-wrap items-center gap-3 text-sm text-stone-600">
-                                                @if (! empty($notification->data['topic_title']))
-                                                    <span class="font-semibold text-stone-900">{{ $notification->data['topic_title'] }}</span>
-                                                @endif
-                                                @if (! empty($notification->data['tag_name']))
-                                                    <span class="rounded-full bg-amber-100 px-3 py-1 font-semibold text-amber-700">
-                                                        {{ $notification->data['tag_name'] }}
-                                                    </span>
                                                 @endif
                                             </div>
                                         @endif

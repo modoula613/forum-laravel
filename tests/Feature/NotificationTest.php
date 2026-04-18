@@ -1,10 +1,8 @@
 <?php
 
-use App\Models\Tag;
 use App\Models\Topic;
 use App\Models\User;
 use App\Notifications\NewFollowRequestNotification;
-use App\Notifications\NewTopicForFollowedTagNotification;
 use App\Notifications\NewReplyNotification;
 use App\Notifications\TopicFollowedNewReplyNotification;
 use App\Notifications\UserWarnedNotification;
@@ -185,51 +183,4 @@ test('replying to a followed topic notifies followers', function () {
         ->assertRedirect(route('topics.show', $topic));
 
     Notification::assertSentTo($follower, TopicFollowedNewReplyNotification::class);
-});
-
-test('creating a topic notifies followers of its tags', function () {
-    Notification::fake();
-
-    $author = User::factory()->create();
-    $follower = User::factory()->create();
-    $tag = Tag::create([
-        'name' => 'Laravel',
-        'slug' => 'laravel',
-    ]);
-    $follower->followedTags()->attach($tag);
-
-    $this
-        ->actingAs($author)
-        ->post(route('topics.store'), [
-            'title' => 'Nouveau sujet Laravel',
-            'content' => 'Contenu',
-            'tags' => [$tag->id],
-        ])
-        ->assertRedirect();
-
-    Notification::assertSentTo($follower, NewTopicForFollowedTagNotification::class);
-    Notification::assertNothingSentTo($author, NewTopicForFollowedTagNotification::class);
-});
-
-test('notifications page shows followed tag topic notifications', function () {
-    $user = User::factory()->create();
-    $author = User::factory()->create();
-    $tag = Tag::create([
-        'name' => 'PHP',
-        'slug' => 'php',
-    ]);
-    $topic = $author->topics()->create([
-        'title' => 'Sujet PHP',
-        'content' => 'Contenu',
-    ]);
-
-    $user->notify(new NewTopicForFollowedTagNotification($topic, $tag));
-
-    $this
-        ->actingAs($user)
-        ->get(route('notifications.index'))
-        ->assertOk()
-        ->assertSee('Nouveau sujet dans un tag suivi')
-        ->assertSee('Sujet PHP')
-        ->assertSee('PHP');
 });

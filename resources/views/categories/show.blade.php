@@ -122,15 +122,6 @@
                                     <p class="muted-copy max-w-3xl text-base leading-8">
                                         {{ \Illuminate\Support\Str::limit($topic->content, 200) }}
                                     </p>
-                                    @if ($topic->tags->isNotEmpty())
-                                        <div class="flex flex-wrap gap-2">
-                                            @foreach ($topic->tags as $tag)
-                                                <a href="{{ route('tags.show', $tag) }}" class="rounded-full bg-[rgba(79,70,229,0.1)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--brand)] transition hover:bg-[rgba(79,70,229,0.16)]">
-                                                    {{ $tag->name }}
-                                                </a>
-                                            @endforeach
-                                        </div>
-                                    @endif
                                     <div class="flex flex-wrap items-center gap-4 text-sm text-stone-500">
                                         <span>{{ $topic->replies_count }} reponse(s)</span>
                                         <a href="{{ route('topics.show', $topic) }}" class="font-semibold text-[var(--brand-deep)] transition hover:text-[var(--brand)]">

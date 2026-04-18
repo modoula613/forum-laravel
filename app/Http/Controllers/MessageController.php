@@ -19,7 +19,10 @@ class MessageController extends Controller
         $currentUser = auth()->user();
         $search = trim((string) $request->string('search'));
         $unreadOnly = $request->boolean('unread');
-        $unreadNotificationCount = $currentUser->unreadNotifications()->count();
+        $visibleNotificationFilter = fn ($notification) => ($notification->data['type'] ?? null) !== 'new_topic_followed_tag';
+        $unreadNotificationCount = $currentUser->unreadNotifications
+            ->filter($visibleNotificationFilter)
+            ->count();
 
         $allConversationItems = Message::with(['sender', 'receiver'])
             ->where(function ($query) use ($currentUser) {
@@ -80,19 +83,23 @@ class MessageController extends Controller
 
         $conversationSummary['displayed'] = $conversationItems->count();
 
-        if ($unreadNotificationCount > 0) {
+        if ($currentUser->unreadNotifications->isNotEmpty()) {
             $currentUser->unreadNotifications->markAsRead();
         }
 
-        $notifications = $currentUser->notifications()
+        $allNotifications = $currentUser->notifications()
             ->latest()
-            ->take(12)
             ->get();
+
+        $notifications = $allNotifications
+            ->filter($visibleNotificationFilter)
+            ->take(12)
+            ->values();
 
         $inboxSummary = [
             'messages_unread' => $conversationSummary['unread'],
             'notifications_unread' => $unreadNotificationCount,
-            'notifications_total' => $currentUser->notifications()->count(),
+            'notifications_total' => $allNotifications->filter($visibleNotificationFilter)->count(),
         ];
 
         $currentPage = LengthAwarePaginator::resolveCurrentPage();

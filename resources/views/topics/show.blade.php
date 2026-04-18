@@ -128,11 +128,6 @@
                         @endif
                         <span>{{ $topic->replies->count() }} message(s)</span>
                         <span>{{ $topic->favorites_count }} abonnes</span>
-                        @foreach ($topic->tags as $tag)
-                            <a href="{{ route('tags.show', $tag) }}" class="rounded-full bg-[rgba(79,70,229,0.1)] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--brand)] transition hover:bg-[rgba(79,70,229,0.16)]">
-                                {{ $tag->name }}
-                            </a>
-                        @endforeach
                     </div>
                     @if ($topic->newsArticle)
                         <div class="mb-6 rounded-[1.5rem] border border-[rgba(79,70,229,0.14)] bg-[rgba(79,70,229,0.06)] px-5 py-5">

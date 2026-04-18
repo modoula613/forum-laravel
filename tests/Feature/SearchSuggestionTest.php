@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\Category;
-use App\Models\Tag;
 use App\Models\Topic;
 use App\Models\User;
 
@@ -44,17 +43,12 @@ test('search suggestions support user prefix', function () {
         ]);
 });
 
-test('search suggestions support hashtag prefix', function () {
-    $tag = Tag::create([
-        'name' => 'Actualite',
-        'slug' => 'actualite',
-    ]);
-
+test('search suggestions keep keyword search without hashtag suggestions', function () {
     $this->getJson(route('search.suggestions', ['query' => '#actu']))
         ->assertOk()
-        ->assertJsonFragment([
+        ->assertJsonPath('sections.0.items.0.title', 'actu')
+        ->assertJsonPath('sections.0.items.0.url', route('topics.index', ['search' => 'actu']))
+        ->assertJsonMissing([
             'type' => 'tag',
-            'title' => '#'.$tag->name,
-            'url' => route('tags.show', $tag),
         ]);
 });

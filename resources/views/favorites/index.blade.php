@@ -32,15 +32,6 @@
                                     {{ $topic->user->name }}
                                 </x-user-link>
                             </p>
-                            @if ($topic->tags->isNotEmpty())
-                                <div class="flex flex-wrap gap-2">
-                                    @foreach ($topic->tags as $tag)
-                                        <span class="rounded-full bg-[rgba(79,70,229,0.1)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--brand)]">
-                                            {{ $tag->name }}
-                                        </span>
-                                    @endforeach
-                                </div>
-                            @endif
                         </div>
                         <a href="{{ route('topics.show', $topic) }}" class="inline-flex items-center rounded-full bg-[var(--brand)] px-5 py-3 text-sm font-semibold uppercase tracking-[0.18em] text-white shadow-[0_18px_35px_rgba(79,70,229,0.28)] transition hover:-translate-y-0.5 hover:bg-[var(--brand-deep)]">
                             Ouvrir

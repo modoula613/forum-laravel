@@ -106,28 +106,5 @@
             </section>
         </div>
 
-        <div class="mx-auto mt-6 max-w-6xl px-4 sm:px-6 lg:px-8">
-            <section class="glass-panel rounded-[2rem] p-6">
-                <div class="flex items-center justify-between gap-4">
-                    <div>
-                        <p class="section-kicker">Tags</p>
-                        <h3 class="mt-3 text-3xl font-semibold text-stone-950">Tags populaires</h3>
-                    </div>
-                    <a href="{{ route('tags.index') }}" class="rounded-full border border-[rgba(71,85,135,0.16)] bg-white/70 px-4 py-2 text-sm font-semibold text-stone-700 transition hover:bg-white">
-                        Voir tous les tags
-                    </a>
-                </div>
-                <div class="mt-5 flex flex-wrap gap-2">
-                    @forelse ($popularTags as $tag)
-                        <a href="{{ route('tags.show', $tag) }}" class="rounded-full bg-white/80 px-4 py-2 text-sm font-semibold text-stone-800 transition hover:bg-white">
-                            {{ $tag->name }}
-                        </a>
-                    @empty
-                        <p class="text-sm text-stone-500">Aucun tag populaire pour le moment.</p>
-                    @endforelse
-                </div>
-            </section>
-        </div>
-
     </div>
 </x-app-layout>

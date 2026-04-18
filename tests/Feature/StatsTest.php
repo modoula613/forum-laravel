@@ -2,7 +2,6 @@
 
 use App\Models\Badge;
 use App\Models\Reply;
-use App\Models\Tag;
 use App\Models\User;
 
 test('guests can view forum statistics', function () {
@@ -63,26 +62,6 @@ test('stats page shows top users and top topics', function () {
         ->assertOk()
         ->assertSee('Alice')
         ->assertSee('Sujet populaire');
-});
-
-test('stats page shows popular tags', function () {
-    $tag = Tag::create([
-        'name' => 'Laravel',
-        'slug' => 'laravel',
-    ]);
-    $user = User::factory()->create();
-    $topic = $user->topics()->create([
-        'title' => 'Sujet tague',
-        'content' => 'Contenu',
-    ]);
-    $topic->tags()->attach($tag);
-
-    $this
-        ->get(route('stats.index'))
-        ->assertOk()
-        ->assertSee('Tags populaires')
-        ->assertSee('Laravel')
-        ->assertSee('1 sujets');
 });
 
 test('stats page shows banned users count and leaderboard is accessible', function () {

@@ -3,7 +3,6 @@
 use App\Models\Category;
 use App\Models\NewsArticle;
 use App\Models\Reply;
-use App\Models\Tag;
 use App\Models\Topic;
 use App\Models\User;
 
@@ -59,10 +58,6 @@ test('authenticated users can create a topic', function () {
         'name' => 'General',
         'slug' => 'general',
     ]);
-    $tag = Tag::create([
-        'name' => 'Laravel',
-        'slug' => 'laravel',
-    ]);
 
     $response = $this
         ->actingAs($user)
@@ -70,7 +65,6 @@ test('authenticated users can create a topic', function () {
             'title' => 'Sujet de test',
             'content' => 'Message principal',
             'category_id' => $category->id,
-            'tags' => [$tag->id],
         ]);
 
     $topic = Topic::first();
@@ -83,7 +77,6 @@ test('authenticated users can create a topic', function () {
         ->user_id->toBe($user->id)
         ->category_id->toBe($category->id);
     expect($topic->slug)->not->toBeNull();
-    expect($topic->tags()->pluck('tags.id')->all())->toBe([$tag->id]);
 });
 
 test('guests can view a topic by its slug', function () {
@@ -348,36 +341,6 @@ test('topics index can filter by category', function () {
         ->assertOk()
         ->assertSee('Sujet dev')
         ->assertDontSee('Sujet design');
-});
-
-test('topics index can filter by tag', function () {
-    $user = User::factory()->create();
-    $laravel = Tag::create([
-        'name' => 'Laravel',
-        'slug' => 'laravel',
-    ]);
-    $vue = Tag::create([
-        'name' => 'Vue',
-        'slug' => 'vue',
-    ]);
-
-    $topicWithLaravel = $user->topics()->create([
-        'title' => 'Sujet Laravel',
-        'content' => 'Contenu Laravel',
-    ]);
-    $topicWithLaravel->tags()->sync([$laravel->id]);
-
-    $topicWithVue = $user->topics()->create([
-        'title' => 'Sujet Vue',
-        'content' => 'Contenu Vue',
-    ]);
-    $topicWithVue->tags()->sync([$vue->id]);
-
-    $this
-        ->get(route('topics.index', ['tag' => 'laravel']))
-        ->assertOk()
-        ->assertSee('Sujet Laravel')
-        ->assertDontSee('Sujet Vue');
 });
 
 test('users can save a topic as draft', function () {

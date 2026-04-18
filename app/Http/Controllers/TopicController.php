@@ -7,11 +7,9 @@ use App\Models\Announcement;
 use App\Models\Badge;
 use App\Models\Category;
 use App\Models\NewsArticle;
-use App\Models\Tag;
 use App\Models\Topic;
 use App\Models\TopicEdit;
 use App\Models\UserActivity;
-use App\Notifications\NewTopicForFollowedTagNotification;
 use App\Notifications\UserWarnedNotification;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
@@ -34,15 +32,14 @@ class TopicController extends Controller
             ]));
         }
 
+        if (Str::startsWith($query, '#')) {
+            $query = trim(Str::after($query, '#'));
+        }
+
         $order = $request->string('order')->toString() ?: 'latest';
         $category = $request->input('category');
-        $tag = $request->input('tag');
         $followingOnly = $request->boolean('following') || $request->boolean('recommended');
         $categories = Category::query()
-            ->select(['id', 'name', 'slug'])
-            ->orderBy('name')
-            ->get();
-        $tags = Tag::query()
             ->select(['id', 'name', 'slug'])
             ->orderBy('name')
             ->get();
@@ -79,7 +76,6 @@ class TopicController extends Controller
                 })
             )
             ->when($category, fn ($builder) => $builder->where('category_id', $category))
-            ->when($tag, fn ($builder) => $builder->whereHas('tags', fn ($tagQuery) => $tagQuery->where('slug', $tag)))
             ->when(
                 $followingOnly && auth()->check(),
                 function ($builder) use ($followedUserIds) {
@@ -129,7 +125,6 @@ class TopicController extends Controller
             'topics',
             'pinnedTopics',
             'categories',
-            'tags',
             'topicsWithUnreadReplies',
             'followedAuthorIds',
             'followedUserIds',
@@ -142,7 +137,6 @@ class TopicController extends Controller
     public function create(Request $request): View
     {
         $categories = Category::orderBy('name')->get();
-        $tags = Tag::orderBy('name')->get();
         $reactionArticle = null;
         $prefillTitle = trim((string) $request->string('title'));
         $prefillContent = trim((string) $request->string('content'));
@@ -159,7 +153,6 @@ class TopicController extends Controller
 
         return view('topics.create', compact(
             'categories',
-            'tags',
             'reactionArticle',
             'prefillTitle',
             'prefillContent',
@@ -183,12 +176,7 @@ class TopicController extends Controller
             'content' => ['required', 'string'],
             'category_id' => ['nullable', 'exists:categories,id'],
             'news_article_id' => ['nullable', 'exists:news_articles,id'],
-            'tags' => ['nullable', 'array'],
-            'tags.*' => ['exists:tags,id'],
         ]);
-
-        $tagIds = $validated['tags'] ?? [];
-        unset($validated['tags']);
 
         $user = $request->user();
         $isDraft = $request->has('save_draft');
@@ -197,8 +185,6 @@ class TopicController extends Controller
             ...$validated,
             'is_draft' => $isDraft,
         ]);
-        $topic->tags()->sync($tagIds);
-        $topic->load('tags.followers');
         $user->addExperience(10);
 
         UserActivity::create([
@@ -221,14 +207,6 @@ class TopicController extends Controller
                 ->with('success', 'Brouillon enregistre.');
         }
 
-        foreach ($topic->tags as $tag) {
-            foreach ($tag->followers as $follower) {
-                if ($follower->id !== $user->id) {
-                    $follower->notify(new NewTopicForFollowedTagNotification($topic, $tag));
-                }
-            }
-        }
-
         return redirect()
             ->route('topics.show', $topic)
             ->with('success', 'Sujet cree avec succes.');
@@ -247,7 +225,6 @@ class TopicController extends Controller
             'user.badges',
             'category',
             'newsArticle',
-            'tags',
             'favorites',
             'replies' => fn ($query) => $query
                 ->with(['user.badges', 'likes', 'bookmarkedBy'])
@@ -264,7 +241,6 @@ class TopicController extends Controller
         abort_unless($topic->user_id === auth()->id(), 403);
 
         $categories = Category::orderBy('name')->get();
-        $tags = Tag::orderBy('name')->get();
         $reactionArticle = null;
         $prefillTitle = '';
         $prefillContent = '';
@@ -274,7 +250,6 @@ class TopicController extends Controller
         return view('topics.create', compact(
             'topic',
             'categories',
-            'tags',
             'reactionArticle',
             'prefillTitle',
             'prefillContent',
@@ -292,12 +267,7 @@ class TopicController extends Controller
             'content' => ['required', 'string'],
             'category_id' => ['nullable', 'exists:categories,id'],
             'news_article_id' => ['nullable', 'exists:news_articles,id'],
-            'tags' => ['nullable', 'array'],
-            'tags.*' => ['exists:tags,id'],
         ]);
-
-        $tagIds = $validated['tags'] ?? [];
-        unset($validated['tags']);
 
         TopicEdit::create([
             'topic_id' => $topic->id,
@@ -305,7 +275,6 @@ class TopicController extends Controller
         ]);
 
         $topic->update($validated);
-        $topic->tags()->sync($tagIds);
 
         if ($request->has('save_draft')) {
             $topic->update(['is_draft' => true]);

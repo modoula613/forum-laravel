@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
-use App\Models\Tag;
 use App\Models\Topic;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -30,8 +29,8 @@ class SearchSuggestionController extends Controller
             $searchMode = 'users';
             $searchTerm = trim(substr($query, 5));
         } elseif (str_starts_with($query, '#')) {
-            $searchMode = 'tags';
-            $searchTerm = trim(substr($query, 1));
+            $query = trim(substr($query, 1));
+            $searchTerm = $query;
         } elseif (str_starts_with($query, 'category:')) {
             $searchMode = 'categories';
             $searchTerm = trim(substr($query, 9));
@@ -68,12 +67,6 @@ class SearchSuggestionController extends Controller
                         'title' => 'user:'.$query,
                         'subtitle' => 'Rechercher un membre',
                         'query' => 'user:'.$query,
-                    ],
-                    [
-                        'type' => 'query',
-                        'title' => '#'.$query,
-                        'subtitle' => 'Explorer un hashtag',
-                        'query' => '#'.$query,
                     ],
                 ],
             ];
@@ -140,33 +133,6 @@ class SearchSuggestionController extends Controller
                 $sections[] = [
                     'label' => 'Membres',
                     'items' => $users,
-                ];
-            }
-        }
-
-        if (in_array($searchMode, ['global', 'tags'], true)) {
-            $tags = Tag::query()
-                ->select(['id', 'name', 'slug'])
-                ->where(function ($builder) use ($searchTerm) {
-                    $builder
-                        ->where('name', 'like', "%{$searchTerm}%")
-                        ->orWhere('slug', 'like', "%{$searchTerm}%");
-                })
-                ->orderBy('name')
-                ->take(4)
-                ->get()
-                ->map(fn (Tag $tag) => [
-                    'type' => 'tag',
-                    'title' => '#'.$tag->name,
-                    'subtitle' => 'Voir les sujets lies a ce tag',
-                    'url' => route('tags.show', $tag),
-                ])
-                ->all();
-
-            if ($tags !== []) {
-                $sections[] = [
-                    'label' => 'Tags',
-                    'items' => $tags,
                 ];
             }
         }

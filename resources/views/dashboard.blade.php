@@ -63,8 +63,8 @@
                     <a href="{{ route('messages.index') }}" class="rounded-[1.5rem] bg-white/70 p-5 transition hover:-translate-y-0.5 hover:bg-white">
                         <p class="text-lg font-semibold text-stone-950">Boite de reception</p>
                     </a>
-                    <a href="{{ route('tags.followed') }}" class="rounded-[1.5rem] bg-white/70 p-5 transition hover:-translate-y-0.5 hover:bg-white">
-                        <p class="text-lg font-semibold text-stone-950">Mes tags suivis</p>
+                    <a href="{{ route('topics.index') }}" class="rounded-[1.5rem] bg-white/70 p-5 transition hover:-translate-y-0.5 hover:bg-white">
+                        <p class="text-lg font-semibold text-stone-950">Recherche par mots-cles</p>
                     </a>
                 </div>
             </section>
