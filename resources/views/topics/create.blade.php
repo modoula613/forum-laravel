@@ -23,15 +23,15 @@
                         @php
                             $reactionTitle = isset($topic)
                                 ? ($topic->title ?? '')
-                                : ($reactionArticle ? 'Reaction : '.$reactionArticle->title : '');
+                                : ($reactionArticle ? 'Reaction : '.$reactionArticle->title : $prefillTitle);
                             $reactionCategoryId = isset($topic)
                                 ? ($topic->category_id ?? '')
-                                : ($reactionArticle?->category_id ?? '');
+                                : ($reactionArticle?->category_id ?? $prefillCategoryId);
                             $reactionContent = isset($topic)
                                 ? ($topic->content ?? '')
                                 : ($reactionArticle
                                     ? "Article : {$reactionArticle->title}\nSource : {$reactionArticle->source_url}\n\nCe que j'en pense :\n"
-                                    : '');
+                                    : $prefillContent);
                         @endphp
 
                         @if ($reactionArticle && ! isset($topic))

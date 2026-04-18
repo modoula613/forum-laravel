@@ -35,6 +35,21 @@ test('guests do not see the subscriptions feed tab', function () {
         ->assertDontSee('Abonnements');
 });
 
+test('topics index shows publishing examples in the for you feed', function () {
+    $user = User::factory()->create();
+    $user->topics()->create([
+        'title' => 'Sujet public',
+        'content' => 'Visible sans connexion',
+    ]);
+
+    $this
+        ->get(route('topics.index'))
+        ->assertOk()
+        ->assertSee("Besoin d'une idee pour publier ?", false)
+        ->assertSee('Se connecter pour publier')
+        ->assertSee('Quel langage ou framework vous a le plus aide a progresser cette annee ?');
+});
+
 test('authenticated users can create a topic', function () {
     $user = User::factory()->create();
     $category = Category::create([
@@ -118,6 +133,29 @@ test('authenticated users can start a reaction topic from a news article', funct
         ->assertSee('Ce que j&#039;en pense :', false)
         ->assertSee((string) $category->id, false)
         ->assertSee($article->source_url, false);
+});
+
+test('authenticated users can start a topic from a feed example', function () {
+    $user = User::factory()->create();
+    $category = Category::create([
+        'name' => 'Developpement',
+        'slug' => 'developpement',
+    ]);
+
+    $title = 'Quel langage vous a le plus aide ?';
+    $content = "Je lance ce sujet pour comparer les retours.\n\nQuel outil vous a le plus aide ?";
+
+    $this
+        ->actingAs($user)
+        ->get(route('topics.create', [
+            'title' => $title,
+            'content' => $content,
+            'category_id' => $category->id,
+        ]))
+        ->assertOk()
+        ->assertSee($title)
+        ->assertSee($content, false)
+        ->assertSee((string) $category->id, false);
 });
 
 test('topics index paginates results', function () {

@@ -143,12 +143,24 @@ class TopicController extends Controller
         $categories = Category::orderBy('name')->get();
         $tags = Tag::orderBy('name')->get();
         $reactionArticle = null;
+        $prefillTitle = trim((string) $request->string('title'));
+        $prefillContent = trim((string) $request->string('content'));
+        $prefillCategoryId = $request->filled('category_id')
+            ? (string) $request->integer('category_id')
+            : '';
 
         if ($request->filled('news')) {
             $reactionArticle = NewsArticle::with('category')->find($request->integer('news'));
         }
 
-        return view('topics.create', compact('categories', 'tags', 'reactionArticle'));
+        return view('topics.create', compact(
+            'categories',
+            'tags',
+            'reactionArticle',
+            'prefillTitle',
+            'prefillContent',
+            'prefillCategoryId'
+        ));
     }
 
     public function store(Request $request): RedirectResponse
@@ -247,8 +259,19 @@ class TopicController extends Controller
         $categories = Category::orderBy('name')->get();
         $tags = Tag::orderBy('name')->get();
         $reactionArticle = null;
+        $prefillTitle = '';
+        $prefillContent = '';
+        $prefillCategoryId = '';
 
-        return view('topics.create', compact('topic', 'categories', 'tags', 'reactionArticle'));
+        return view('topics.create', compact(
+            'topic',
+            'categories',
+            'tags',
+            'reactionArticle',
+            'prefillTitle',
+            'prefillContent',
+            'prefillCategoryId'
+        ));
     }
 
     public function update(Request $request, Topic $topic): RedirectResponse
