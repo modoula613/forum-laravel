@@ -105,8 +105,9 @@
                                 </div>
                             @endif
                             <article class="flex {{ $isCurrentUser ? 'justify-end' : 'justify-start' }}">
-                                <div class="max-w-[82%] sm:max-w-[70%]">
-                                    <div class="{{ $isCurrentUser ? 'ml-auto rounded-[2rem_2rem_0.55rem_2rem] bg-[#5b61ff] text-white' : 'rounded-[2rem_2rem_2rem_0.55rem] bg-[#262a33] text-white' }} px-4 py-3 shadow-[0_18px_36px_rgba(2,6,23,0.22)]">
+                                <div class="relative max-w-[82%] sm:max-w-[70%]">
+                                    <div class="pointer-events-none absolute inset-y-2 {{ $isCurrentUser ? 'right-0' : 'left-0' }} w-16 rounded-full {{ $isCurrentUser ? 'bg-[radial-gradient(circle,rgba(91,97,255,0.38)_0%,rgba(91,97,255,0.14)_45%,rgba(91,97,255,0)_75%)]' : 'bg-[radial-gradient(circle,rgba(148,163,184,0.24)_0%,rgba(124,58,237,0.1)_48%,rgba(124,58,237,0)_78%)]' }}"></div>
+                                    <div class="relative {{ $isCurrentUser ? 'ml-auto rounded-[2rem_2rem_0.55rem_2rem] bg-[#5b61ff] text-white ring-1 ring-[#7e83ff]/55' : 'rounded-[2rem_2rem_2rem_0.55rem] bg-[#262a33] text-white ring-1 ring-white/8' }} px-4 py-3 shadow-[0_18px_36px_rgba(2,6,23,0.22)]">
                                         <p class="whitespace-pre-line text-[0.95rem] leading-6">{{ $message->content }}</p>
                                     </div>
 
