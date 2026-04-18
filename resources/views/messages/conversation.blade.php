@@ -46,30 +46,36 @@
                             </div>
                         </div>
 
-                        <form method="GET" action="{{ route('messages.conversation', $user) }}" class="flex flex-col gap-3 sm:flex-row sm:items-center">
-                            <div class="relative flex-1">
-                                <label for="search" class="sr-only">Rechercher dans la conversation</label>
-                                <svg class="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/35" viewBox="0 0 24 24" aria-hidden="true">
-                                    <path fill="currentColor" d="M10.5 4a6.5 6.5 0 1 0 4.03 11.6l4.44 4.43 1.06-1.06-4.43-4.44A6.5 6.5 0 0 0 10.5 4Zm0 1.5a5 5 0 1 1 0 10 5 5 0 0 1 0-10Z"/>
-                                </svg>
-                                <input
-                                    id="search"
-                                    type="text"
-                                    name="search"
-                                    value="{{ request('search') }}"
-                                    placeholder="Rechercher dans les messages"
-                                    class="block w-full rounded-full border border-white/10 bg-white/6 py-3 pl-11 pr-4 text-sm text-white placeholder:text-white/35 focus:border-[#5b61ff] focus:bg-white/8 focus:ring-[#5b61ff]"
-                                >
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <button type="submit" class="inline-flex rounded-full bg-[#5b61ff] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#6b70ff]">
-                                    Rechercher
-                                </button>
-                                @if (request()->filled('search'))
-                                    <a href="{{ route('messages.conversation', $user) }}" class="text-sm font-semibold text-white/58 transition hover:text-white">
-                                        Reinitialiser
-                                    </a>
-                                @endif
+                        <form method="GET" action="{{ route('messages.conversation', $user) }}">
+                            <div class="rounded-[1.95rem] border border-white/10 bg-white/[0.04] p-2.5">
+                                <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
+                                    <div class="relative min-w-0 flex-1">
+                                        <label for="search" class="sr-only">Rechercher dans la conversation</label>
+                                        <svg class="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/30" viewBox="0 0 24 24" aria-hidden="true">
+                                            <path fill="currentColor" d="M10.5 4a6.5 6.5 0 1 0 4.03 11.6l4.44 4.43 1.06-1.06-4.43-4.44A6.5 6.5 0 0 0 10.5 4Zm0 1.5a5 5 0 1 1 0 10 5 5 0 0 1 0-10Z"/>
+                                        </svg>
+                                        <input
+                                            id="search"
+                                            type="text"
+                                            name="search"
+                                            value="{{ request('search') }}"
+                                            placeholder="Rechercher"
+                                            class="block w-full rounded-full border border-transparent bg-white/6 py-2.5 pl-11 pr-4 text-sm text-white placeholder:text-white/30 focus:border-[#5b61ff] focus:bg-white/8 focus:ring-[#5b61ff]"
+                                        >
+                                    </div>
+                                    <div class="flex items-center gap-2 sm:shrink-0">
+                                        <button type="submit" class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#5b61ff] text-white transition hover:bg-[#6b70ff]" aria-label="Rechercher">
+                                            <svg class="h-4.5 w-4.5" viewBox="0 0 24 24" aria-hidden="true">
+                                                <path fill="currentColor" d="M10.5 4a6.5 6.5 0 1 0 4.03 11.6l4.44 4.43 1.06-1.06-4.43-4.44A6.5 6.5 0 0 0 10.5 4Zm0 1.5a5 5 0 1 1 0 10 5 5 0 0 1 0-10Z"/>
+                                            </svg>
+                                        </button>
+                                        @if (request()->filled('search'))
+                                            <a href="{{ route('messages.conversation', $user) }}" class="inline-flex h-10 items-center rounded-full border border-white/10 px-3 text-sm font-semibold text-white/58 transition hover:bg-white/8 hover:text-white">
+                                                Reset
+                                            </a>
+                                        @endif
+                                    </div>
+                                </div>
                             </div>
                         </form>
                     </div>
@@ -100,7 +106,7 @@
                             @endif
                             <article class="flex {{ $isCurrentUser ? 'justify-end' : 'justify-start' }}">
                                 <div class="max-w-[82%] sm:max-w-[70%]">
-                                    <div class="{{ $isCurrentUser ? 'ml-auto rounded-[1.6rem_1.6rem_0.45rem_1.6rem] bg-[#5b61ff] text-white' : 'rounded-[1.6rem_1.6rem_1.6rem_0.45rem] bg-[#262a33] text-white' }} px-4 py-3 shadow-[0_18px_36px_rgba(2,6,23,0.22)]">
+                                    <div class="{{ $isCurrentUser ? 'ml-auto rounded-[2rem_2rem_0.55rem_2rem] bg-[#5b61ff] text-white' : 'rounded-[2rem_2rem_2rem_0.55rem] bg-[#262a33] text-white' }} px-4 py-3 shadow-[0_18px_36px_rgba(2,6,23,0.22)]">
                                         <p class="whitespace-pre-line text-[0.95rem] leading-6">{{ $message->content }}</p>
                                     </div>
 
@@ -117,7 +123,7 @@
                                 </div>
                             </article>
                         @empty
-                            <div class="mx-auto max-w-xl rounded-[1.9rem] border border-dashed border-white/10 bg-[#171a22] px-8 py-14 text-center">
+                            <div class="mx-auto max-w-xl rounded-[2.1rem] border border-dashed border-white/10 bg-[#171a22] px-8 py-14 text-center">
                                 <p class="text-xs font-semibold uppercase tracking-[0.2em] text-white/35">Aucun message</p>
                                 <h3 class="mt-3 text-3xl font-semibold text-white">La conversation n'a pas encore commence</h3>
                                 <p class="mt-3 text-sm leading-6 text-white/42">Envoyez le premier message pour lancer l'echange.</p>
@@ -130,7 +136,7 @@
                     <form method="POST" action="{{ route('messages.send') }}" class="mx-auto max-w-[760px]">
                         @csrf
                         <input type="hidden" name="receiver_id" value="{{ $user->id }}">
-                        <div class="flex items-end gap-3 rounded-[1.7rem] border border-white/10 bg-[#171a22] px-3 py-3 shadow-[0_16px_32px_rgba(2,6,23,0.18)]">
+                        <div class="flex items-end gap-3 rounded-[2.1rem] border border-white/10 bg-[#171a22] px-3 py-3 shadow-[0_16px_32px_rgba(2,6,23,0.18)]">
                             <label for="content" class="inline-flex h-10 w-10 cursor-text items-center justify-center rounded-full bg-white/6 text-white/62 transition hover:bg-white/10 hover:text-white" aria-label="Ecrire un message">
                                 <svg class="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
                                     <path fill="currentColor" d="M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20Zm0 1.5a8.5 8.5 0 1 0 0 17 8.5 8.5 0 0 0 0-17Zm-3 5.75a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5Zm6 0a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5Zm1.2 5.22.9.66A6.3 6.3 0 0 1 12 17.8a6.3 6.3 0 0 1-5.1-2.67l.9-.66A5.17 5.17 0 0 0 12 16.3a5.17 5.17 0 0 0 4.2-1.83Z"/>

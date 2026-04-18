@@ -54,45 +54,49 @@
                                 </div>
                             </div>
 
-                            <form method="GET" action="{{ route('messages.index') }}" class="mt-4 space-y-3">
-                                <div class="flex flex-col gap-3">
-                                    <div class="relative flex-1">
-                                        <label for="search" class="sr-only">Rechercher</label>
-                                        <svg class="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/35" viewBox="0 0 24 24" aria-hidden="true">
-                                            <path fill="currentColor" d="M10.5 4a6.5 6.5 0 1 0 4.03 11.6l4.44 4.43 1.06-1.06-4.43-4.44A6.5 6.5 0 0 0 10.5 4Zm0 1.5a5 5 0 1 1 0 10 5 5 0 0 1 0-10Z"/>
-                                        </svg>
-                                        <input
-                                            id="search"
-                                            type="text"
-                                            name="search"
-                                            value="{{ $search }}"
-                                            placeholder="Rechercher un membre ou un message"
-                                            class="block w-full rounded-full border border-white/10 bg-white/6 py-3 pl-11 pr-4 text-sm text-white placeholder:text-white/35 focus:border-[#5b61ff] focus:bg-white/8 focus:ring-[#5b61ff]"
-                                        >
-                                    </div>
-                                    <div class="flex items-center gap-2">
-                                        <label class="inline-flex items-center justify-center gap-2 rounded-full border border-white/10 bg-white/6 px-4 py-2.5 text-sm font-semibold text-white/72">
+                            <form method="GET" action="{{ route('messages.index') }}" class="mt-4">
+                                <div class="rounded-[1.95rem] border border-white/10 bg-white/[0.04] p-2.5">
+                                    <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
+                                        <div class="relative min-w-0 flex-1">
+                                            <label for="search" class="sr-only">Rechercher</label>
+                                            <svg class="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/30" viewBox="0 0 24 24" aria-hidden="true">
+                                                <path fill="currentColor" d="M10.5 4a6.5 6.5 0 1 0 4.03 11.6l4.44 4.43 1.06-1.06-4.43-4.44A6.5 6.5 0 0 0 10.5 4Zm0 1.5a5 5 0 1 1 0 10 5 5 0 0 1 0-10Z"/>
+                                            </svg>
                                             <input
-                                                type="checkbox"
-                                                name="unread"
-                                                value="1"
-                                                @checked($unreadOnly)
-                                                class="rounded border-white/20 bg-transparent text-[#5b61ff] shadow-sm focus:ring-[#5b61ff]"
+                                                id="search"
+                                                type="text"
+                                                name="search"
+                                                value="{{ $search }}"
+                                                placeholder="Rechercher"
+                                                class="block w-full rounded-full border border-transparent bg-white/6 py-2.5 pl-11 pr-4 text-sm text-white placeholder:text-white/30 focus:border-[#5b61ff] focus:bg-white/8 focus:ring-[#5b61ff]"
                                             >
-                                            Non lus
-                                        </label>
-                                        <button type="submit" class="inline-flex items-center justify-center rounded-full bg-[#5b61ff] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#6b70ff]">
-                                            Filtrer
-                                        </button>
-                                        @if ($search !== '' || $unreadOnly)
-                                            <a href="{{ route('messages.index') }}" class="text-sm font-semibold text-white/55 transition hover:text-white">
-                                                Reinitialiser
-                                            </a>
-                                        @endif
+                                        </div>
+                                        <div class="flex items-center gap-2 sm:shrink-0">
+                                            <label class="inline-flex items-center justify-center gap-2 rounded-full border border-white/10 bg-white/6 px-3.5 py-2.5 text-sm font-semibold text-white/72">
+                                                <input
+                                                    type="checkbox"
+                                                    name="unread"
+                                                    value="1"
+                                                    @checked($unreadOnly)
+                                                    class="rounded border-white/20 bg-transparent text-[#5b61ff] shadow-sm focus:ring-[#5b61ff]"
+                                                >
+                                                Non lus
+                                            </label>
+                                            <button type="submit" class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#5b61ff] text-white transition hover:bg-[#6b70ff]" aria-label="Appliquer les filtres">
+                                                <svg class="h-4.5 w-4.5" viewBox="0 0 24 24" aria-hidden="true">
+                                                    <path fill="currentColor" d="M10.5 4a6.5 6.5 0 1 0 4.03 11.6l4.44 4.43 1.06-1.06-4.43-4.44A6.5 6.5 0 0 0 10.5 4Zm0 1.5a5 5 0 1 1 0 10 5 5 0 0 1 0-10Z"/>
+                                                </svg>
+                                            </button>
+                                            @if ($search !== '' || $unreadOnly)
+                                                <a href="{{ route('messages.index') }}" class="inline-flex h-10 items-center rounded-full border border-white/10 px-3 text-sm font-semibold text-white/55 transition hover:bg-white/8 hover:text-white">
+                                                    Reset
+                                                </a>
+                                            @endif
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="flex flex-wrap items-center justify-between gap-3 text-xs font-medium text-white/42">
-                                    <span>{{ $conversationSummary['displayed'] ?? $conversations->total() }} conversation(s) affichee(s)</span>
+                                    <div class="mt-2 px-2 text-[11px] font-medium text-white/38">
+                                        {{ $conversationSummary['displayed'] ?? $conversations->total() }} conversation(s) affichee(s)
+                                    </div>
                                 </div>
                             </form>
                         </div>
@@ -105,7 +109,7 @@
                                         ? $conversation->last_message->created_at->format('H:i')
                                         : $conversation->last_message->created_at->format('d/m');
                                 @endphp
-                                <a href="{{ route('messages.conversation', $conversation->user) }}" class="group mb-1 flex items-center gap-3 rounded-[1.6rem] px-4 py-3 transition {{ $conversation->unread_count > 0 ? 'bg-[#171b24] hover:bg-[#1c212c]' : 'hover:bg-white/6' }}">
+                                <a href="{{ route('messages.conversation', $conversation->user) }}" class="group mb-1.5 flex items-center gap-3 rounded-[2rem] px-4 py-3.5 transition {{ $conversation->unread_count > 0 ? 'bg-[#171b24] hover:bg-[#1c212c]' : 'hover:bg-white/6' }}">
                                     <div class="relative shrink-0">
                                         <x-user-avatar :user="$conversation->user" class="h-12 w-12 bg-[linear-gradient(135deg,#5b61ff,#7c3aed)] text-sm font-semibold uppercase text-white shadow-[0_12px_24px_rgba(91,97,255,0.24)]" />
                                         @if ($conversation->unread_count > 0)
@@ -189,7 +193,7 @@
                                             $notificationUrl = $notification->data['url'] ?? null;
                                         @endphp
 
-                                        <article class="rounded-[1.6rem] border border-white/8 bg-[#171a22] px-4 py-4">
+                                        <article class="rounded-[2rem] border border-white/8 bg-[#171a22] px-4 py-4">
                                             <div class="flex flex-wrap items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/32">
                                                 <span>{{ $notificationLabel }}</span>
                                                 <span>{{ $notification->created_at->format('d/m/Y H:i') }}</span>
@@ -250,7 +254,7 @@
                                     @endforelse
                                 </div>
                             </div>
-                            <div class="mt-6 rounded-[1.6rem] border border-white/8 bg-[#171a22] px-5 py-4 text-sm text-white/45">
+                            <div class="mt-6 rounded-[2rem] border border-white/8 bg-[#171a22] px-5 py-4 text-sm text-white/45">
                                 Une conversation est plus lisible quand le premier message annonce directement le contexte ou la demande.
                             </div>
                         </div>
