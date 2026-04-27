@@ -38,35 +38,63 @@ class SearchSuggestionController extends Controller
 
         $searchTerm = trim($searchTerm);
 
+        $matchedCategory = null;
+
+        if ($searchMode === 'categories' && $searchTerm !== '') {
+            $matchedCategory = Category::query()
+                ->where('name', 'like', "%{$searchTerm}%")
+                ->orderBy('name')
+                ->first();
+        }
+
         $searchUrl = match ($searchMode) {
             'users' => route('users.index', array_filter(['search' => $searchTerm])),
+            'categories' => $matchedCategory
+                ? route('categories.show', $matchedCategory)
+                : route('topics.index', ['search' => 'category:'.$searchTerm]),
             default => route('topics.index', ['search' => $query]),
         };
 
+        $searchTitle = match ($searchMode) {
+            'users' => 'Chercher un membre : '.$searchTerm,
+            'categories' => 'Chercher une categorie : '.$searchTerm,
+            default => 'Rechercher : '.$query,
+        };
+
         $searchSubtitle = match ($searchMode) {
-            'users' => 'Lancer la recherche de membres',
-            default => 'Lancer la recherche dans le forum',
+            'users' => 'Voir la liste des membres correspondants',
+            'categories' => 'Ouvrir la categorie ou les sujets les plus proches',
+            default => 'Voir les sujets et reactions correspondants',
         };
 
         $sections[] = [
             'label' => 'Recherche',
             'items' => [[
                 'type' => 'search',
-                'title' => $query,
+                'title' => $searchTitle,
                 'subtitle' => $searchSubtitle,
                 'url' => $searchUrl,
+                'historyValue' => $query,
             ]],
         ];
 
         if ($searchMode === 'global') {
             $sections[] = [
-                'label' => 'Suggestions',
+                'label' => 'Raccourcis utiles',
                 'items' => [
                     [
+                        'type' => 'shortcut',
+                        'title' => 'Chercher ce mot parmi les membres',
+                        'subtitle' => 'Ouvrir directement la recherche des profils',
+                        'url' => route('users.index', ['search' => $query]),
+                        'historyValue' => 'user:'.$query,
+                    ],
+                    [
                         'type' => 'query',
-                        'title' => 'user:'.$query,
-                        'subtitle' => 'Rechercher un membre',
-                        'query' => 'user:'.$query,
+                        'title' => 'Chercher une categorie avec ce nom',
+                        'subtitle' => 'Utile si tu cherches un theme precis',
+                        'query' => 'category:'.$query,
+                        'historyValue' => 'category:'.$query,
                     ],
                 ],
             ];

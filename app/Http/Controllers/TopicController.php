@@ -32,6 +32,20 @@ class TopicController extends Controller
             ]));
         }
 
+        if (Str::startsWith(Str::lower($query), 'category:')) {
+            $categoryQuery = trim(Str::after($query, ':'));
+            $matchedCategory = Category::query()
+                ->where('name', 'like', "%{$categoryQuery}%")
+                ->orderBy('name')
+                ->first();
+
+            if ($matchedCategory) {
+                return redirect()->route('categories.show', $matchedCategory);
+            }
+
+            $query = $categoryQuery;
+        }
+
         if (Str::startsWith($query, '#')) {
             $query = trim(Str::after($query, '#'));
         }

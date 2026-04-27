@@ -118,28 +118,29 @@ Alpine.data('forumSearch', ({
         return this.activeIndex >= 0 ? this.optionId(this.activeIndex) : null;
     },
 
-    get visibleSections() {
-        if (this.query.trim() === '') {
-            const historyItems = this.history.map((entry) => ({
-                type: 'history',
-                title: entry,
-                subtitle: 'Recherche recente',
-                query: entry,
-                url: `${this.action}?search=${encodeURIComponent(entry)}`,
-            }));
+        get visibleSections() {
+            if (this.query.trim() === '') {
+                const historyItems = this.history.map((entry) => ({
+                    type: 'history',
+                    title: entry,
+                    subtitle: 'Recherche recente',
+                    query: entry,
+                    url: `${this.action}?search=${encodeURIComponent(entry)}`,
+                    historyValue: entry,
+                }));
 
-            return [
-                ...(historyItems.length ? [{ label: 'Recent', items: historyItems }] : []),
-                {
-                    label: 'Pour essayer',
-                    items: [
-                        { type: 'query', title: 'user:moh', subtitle: 'Chercher un membre', query: 'user:moh' },
-                        { type: 'query', title: '#actualite', subtitle: 'Chercher un hashtag', query: '#actualite' },
-                        { type: 'query', title: 'category:sport', subtitle: 'Filtrer une categorie', query: 'category:sport' },
-                    ],
-                },
-            ];
-        }
+                return [
+                    ...(historyItems.length ? [{ label: 'Recherches recentes', items: historyItems }] : []),
+                    {
+                        label: 'Exemples simples',
+                        items: [
+                            { type: 'query', title: 'Trouver un membre', subtitle: 'Exemple : Moh', query: 'user:moh', historyValue: 'moh' },
+                            { type: 'query', title: 'Chercher un sujet d actualite', subtitle: 'Exemple : actualite', query: '#actualite', historyValue: 'actualite' },
+                            { type: 'query', title: 'Ouvrir une categorie', subtitle: 'Exemple : sport', query: 'category:sport', historyValue: 'sport' },
+                        ],
+                    },
+                ];
+            }
 
         return this.sections;
     },
@@ -227,32 +228,36 @@ Alpine.data('forumSearch', ({
                 items: [
                     {
                         type: 'search',
-                        title: query,
-                        subtitle: 'Lancer la recherche dans le forum',
-                        query,
+                        title: `Rechercher : ${query}`,
+                        subtitle: 'Voir les sujets et reactions correspondants',
+                        url: `${this.action}?search=${encodeURIComponent(query)}`,
+                        historyValue: query,
                     },
                 ],
             },
             {
-                label: 'Suggestions',
+                label: 'Raccourcis utiles',
                 items: [
                     {
-                        type: 'query',
-                        title: `user:${query}`,
-                        subtitle: 'Chercher un membre',
-                        query: `user:${query}`,
+                        type: 'shortcut',
+                        title: 'Chercher ce mot parmi les membres',
+                        subtitle: 'Ouvrir directement la recherche des profils',
+                        url: `/users?search=${encodeURIComponent(query)}`,
+                        historyValue: `user:${query}`,
                     },
                     {
                         type: 'query',
-                        title: `#${query}`,
-                        subtitle: 'Explorer un hashtag',
+                        title: 'Chercher un sujet avec ce mot-cle',
+                        subtitle: 'Pratique pour retrouver un sujet ou un debat',
                         query: `#${query}`,
+                        historyValue: query,
                     },
                     {
                         type: 'query',
-                        title: `${query} avis`,
-                        subtitle: 'Suggestion de recherche',
-                        query: `${query} avis`,
+                        title: 'Chercher une categorie avec ce nom',
+                        subtitle: 'Utile si tu cherches un theme precis',
+                        query: `category:${query}`,
+                        historyValue: `category:${query}`,
                     },
                 ],
             },
@@ -332,17 +337,19 @@ Alpine.data('forumSearch', ({
             return;
         }
 
+        const historyValue = item.historyValue ?? item.query ?? item.title;
+
         if (item.query) {
             this.query = item.query;
-            this.storeHistory(item.query);
+            this.storeHistory(historyValue);
             this.close();
             this.$nextTick(() => this.$refs.form?.submit());
             return;
         }
 
         if (item.url) {
-            if (item.title) {
-                this.storeHistory(item.title);
+            if (historyValue) {
+                this.storeHistory(historyValue);
             }
 
             window.location.href = item.url;

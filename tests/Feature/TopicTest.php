@@ -235,6 +235,17 @@ test('topics index redirects user search prefix to members search', function () 
         ->assertRedirect(route('users.index', ['search' => 'camille']));
 });
 
+test('topics index redirects category search prefix to the matching category page', function () {
+    $category = Category::create([
+        'name' => 'Sport',
+        'slug' => 'sport',
+    ]);
+
+    $this
+        ->get(route('topics.index', ['search' => 'category:sport']))
+        ->assertRedirect(route('categories.show', $category));
+});
+
 test('topics index links author names to their public profiles', function () {
     $user = User::factory()->create([
         'name' => 'Camille',

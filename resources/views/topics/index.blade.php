@@ -43,8 +43,8 @@
                                     id="search-bar"
                                     type="text"
                                     name="search"
-                                    placeholder="Rechercher un sujet ou un membre"
-                                    aria-label="Rechercher un sujet ou un membre"
+                                    placeholder="Rechercher un sujet, un membre ou une categorie"
+                                    aria-label="Rechercher un sujet, un membre ou une categorie"
                                     role="combobox"
                                     aria-autocomplete="list"
                                     :aria-expanded="open"
@@ -108,6 +108,10 @@
                             </div>
                         </div>
                     </div>
+
+                    <p class="text-sm text-[var(--content-soft)]">
+                        Tu peux rechercher un sujet, un membre ou une categorie. Les suggestions ci-dessous te montrent des exemples simples.
+                    </p>
 
                     <div class="flex flex-wrap items-center justify-end gap-3">
                         <div class="flex flex-wrap items-center gap-3">
