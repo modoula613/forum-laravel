@@ -1,7 +1,7 @@
 <?php
 
+use App\Notifications\ResetPasswordNotification;
 use App\Models\User;
-use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\Facades\Notification;
 
 test('reset password link screen can be rendered', function () {
@@ -17,7 +17,7 @@ test('reset password link can be requested', function () {
 
     $this->post('/forgot-password', ['email' => $user->email]);
 
-    Notification::assertSentTo($user, ResetPassword::class);
+    Notification::assertSentTo($user, ResetPasswordNotification::class);
 });
 
 test('reset password screen can be rendered', function () {
@@ -27,7 +27,7 @@ test('reset password screen can be rendered', function () {
 
     $this->post('/forgot-password', ['email' => $user->email]);
 
-    Notification::assertSentTo($user, ResetPassword::class, function ($notification) {
+    Notification::assertSentTo($user, ResetPasswordNotification::class, function ($notification) {
         $response = $this->get('/reset-password/'.$notification->token);
 
         $response->assertStatus(200);
@@ -43,7 +43,7 @@ test('password can be reset with valid token', function () {
 
     $this->post('/forgot-password', ['email' => $user->email]);
 
-    Notification::assertSentTo($user, ResetPassword::class, function ($notification) use ($user) {
+    Notification::assertSentTo($user, ResetPasswordNotification::class, function ($notification) use ($user) {
         $response = $this->post('/reset-password', [
             'token' => $notification->token,
             'email' => $user->email,
@@ -66,7 +66,7 @@ test('password reset rejects unsafe password patterns', function () {
 
     $this->post('/forgot-password', ['email' => $user->email]);
 
-    Notification::assertSentTo($user, ResetPassword::class, function ($notification) use ($user) {
+    Notification::assertSentTo($user, ResetPasswordNotification::class, function ($notification) use ($user) {
         $response = $this->from('/reset-password/'.$notification->token)->post('/reset-password', [
             'token' => $notification->token,
             'email' => $user->email,
@@ -79,6 +79,24 @@ test('password reset rejects unsafe password patterns', function () {
             ->assertSessionHasErrors([
                 'password' => 'Le mot de passe contient des sequences interdites.',
             ]);
+
+        return true;
+    });
+});
+
+test('password reset email is written in french', function () {
+    Notification::fake();
+
+    $user = User::factory()->create();
+
+    $this->post('/forgot-password', ['email' => $user->email]);
+
+    Notification::assertSentTo($user, ResetPasswordNotification::class, function ($notification) use ($user) {
+        $mail = $notification->toMail($user);
+
+        expect($mail->subject)->toBe('Reinitialisation de votre mot de passe');
+        expect($mail->introLines)->toContain('Vous recevez cet email parce qu\'une demande de reinitialisation du mot de passe a ete effectuee pour votre compte Sphere.');
+        expect($mail->actionText)->toBe('Reinitialiser le mot de passe');
 
         return true;
     });
