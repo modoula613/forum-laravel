@@ -348,13 +348,16 @@
 
     .page-header-shell {
         animation: rise-in 420ms ease both;
-        overflow: hidden;
+        position: relative;
+        z-index: 30;
+        overflow: visible;
         border-radius: 2rem;
     }
 
     .app-header-card {
         background: var(--panel-strong);
         border-bottom: 1px solid var(--line);
+        border-radius: inherit;
         backdrop-filter: blur(14px);
     }
 
@@ -599,6 +602,10 @@
         background: rgba(255, 255, 255, 0.985);
         box-shadow: 0 12px 32px rgba(15, 20, 25, 0.18);
         backdrop-filter: blur(20px);
+    }
+
+    .x-search-shell.is-open {
+        z-index: 70;
     }
 
     .x-search-section + .x-search-section {
