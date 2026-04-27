@@ -7,6 +7,12 @@
         </p>
     </div>
 
+    @if (app()->environment('production') && config('mail.default') === 'log')
+        <div class="mb-4 rounded-[1.25rem] border border-amber-200 bg-amber-50/90 px-4 py-3 text-sm font-medium text-amber-800">
+            L'envoi d'e-mails n'est pas encore actif sur ce serveur. Le formulaire fonctionne, mais aucun message ne peut etre recu tant qu'un SMTP n'est pas configure.
+        </div>
+    @endif
+
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
