@@ -15,9 +15,26 @@ test('reset password link can be requested', function () {
 
     $user = User::factory()->create();
 
-    $this->post('/forgot-password', ['email' => $user->email]);
+    $this->post('/forgot-password', ['email' => $user->email])
+        ->assertSessionHas('password_reset_sent', true)
+        ->assertSessionHas('reset_email', $user->email)
+        ->assertSessionHas('status', 'Si un compte Sphere est associe a cette adresse, un lien de reinitialisation vient d\'etre envoye.');
 
     Notification::assertSentTo($user, ResetPasswordNotification::class);
+});
+
+test('forgot password screen keeps the email and explains that resubmitting is unnecessary', function () {
+    $user = User::factory()->create();
+
+    $this->withSession([
+        'password_reset_sent' => true,
+        'reset_email' => $user->email,
+        'status' => 'Si un compte Sphere est associe a cette adresse, un lien de reinitialisation vient d\'etre envoye.',
+    ])
+        ->get('/forgot-password')
+        ->assertSeeText($user->email)
+        ->assertSeeText('Le message peut prendre quelques secondes')
+        ->assertSeeText('Renvoyer le lien de reinitialisation');
 });
 
 test('reset password screen can be rendered', function () {
