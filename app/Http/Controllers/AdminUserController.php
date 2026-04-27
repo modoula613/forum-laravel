@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AdminLog;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
@@ -70,5 +71,37 @@ class AdminUserController extends Controller
         ]);
 
         return back()->with('success', 'Utilisateur debanni.');
+    }
+
+    public function destroy(User $user): RedirectResponse
+    {
+        if ($user->is(auth()->user())) {
+            return back()->with('error', 'Vous ne pouvez pas supprimer votre propre compte.');
+        }
+
+        DB::transaction(function () use ($user) {
+            AdminLog::create([
+                'admin_id' => auth()->id(),
+                'action' => 'delete_user',
+                'details' => "Utilisateur ID {$user->id} supprime",
+            ]);
+
+            DB::table('sessions')
+                ->where('user_id', $user->id)
+                ->delete();
+
+            DB::table('notifications')
+                ->where('notifiable_type', User::class)
+                ->where('notifiable_id', $user->id)
+                ->delete();
+
+            DB::table('password_reset_tokens')
+                ->where('email', $user->email)
+                ->delete();
+
+            $user->delete();
+        });
+
+        return back()->with('success', 'Utilisateur supprime.');
     }
 }

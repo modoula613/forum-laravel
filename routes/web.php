@@ -150,6 +150,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
         ->name('admin.users.ban');
     Route::patch('/admin/users/{user}/unban', [AdminUserController::class, 'unban'])
         ->name('admin.users.unban');
+    Route::delete('/admin/users/{user}', [AdminUserController::class, 'destroy'])
+        ->name('admin.users.destroy');
     Route::get('/admin/replies', [AdminReplyController::class, 'index'])
         ->name('admin.replies.index');
     Route::delete('/admin/replies/{reply}', [AdminReplyController::class, 'destroy'])

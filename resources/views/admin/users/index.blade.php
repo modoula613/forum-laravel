@@ -5,7 +5,7 @@
                 <p class="section-kicker">Administration</p>
                 <h2 class="mt-3 text-4xl font-semibold text-stone-950">Gestion des utilisateurs</h2>
                 <p class="mt-3 text-sm text-stone-500">
-                    Gere les comptes, surveille leur participation et bloque ou debloque les membres si necessaire.
+                    Gere les comptes, surveille leur participation et bloque, bannit ou supprime les membres si necessaire.
                 </p>
             </div>
         </div>
@@ -89,6 +89,16 @@
                                         class="rounded-full px-4 py-2 font-semibold text-white transition {{ $user->is_banned ? 'bg-[var(--brand)] hover:bg-[var(--brand-deep)]' : 'bg-stone-900 hover:bg-stone-800' }}"
                                     >
                                         {{ $user->is_banned ? 'Debannir' : 'Bannir' }}
+                                    </button>
+                                </form>
+                                <form method="POST" action="{{ route('admin.users.destroy', $user) }}" onsubmit="return confirm('Supprimer definitivement ce compte et toutes ses donnees ?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button
+                                        type="submit"
+                                        class="rounded-full px-4 py-2 font-semibold text-white transition bg-rose-950 hover:bg-rose-900"
+                                    >
+                                        Supprimer
                                     </button>
                                 </form>
                             </div>
