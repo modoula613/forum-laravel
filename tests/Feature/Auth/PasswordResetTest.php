@@ -36,6 +36,18 @@ test('reset password screen can be rendered', function () {
     });
 });
 
+test('reset password screen reuses the email from the reset link', function () {
+    $user = User::factory()->create();
+
+    $response = $this->get('/reset-password/demo-token?email='.urlencode($user->email));
+
+    $response
+        ->assertOk()
+        ->assertSee('Adresse associee')
+        ->assertSee($user->email)
+        ->assertDontSee('Adresse e-mail');
+});
+
 test('password can be reset with valid token', function () {
     Notification::fake();
 

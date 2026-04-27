@@ -1,4 +1,8 @@
 <x-guest-layout>
+    @php
+        $resetEmail = old('email', $request->email);
+    @endphp
+
     <div class="mb-8">
         <p class="section-kicker">Reinitialisation</p>
         <h1 class="mt-3 text-4xl font-semibold text-stone-950">Choisis un nouveau mot de passe</h1>
@@ -14,11 +18,20 @@
         <input type="hidden" name="token" value="{{ $request->route('token') }}">
 
         <!-- Email Address -->
-        <div>
-            <x-input-label for="email" value="Adresse e-mail" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email', $request->email)" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
+        @if ($resetEmail)
+            <input type="hidden" name="email" value="{{ $resetEmail }}">
+
+            <div class="rounded-[1.25rem] border border-[var(--line)] bg-[var(--surface-soft)]/70 px-4 py-3">
+                <p class="text-xs font-semibold uppercase tracking-[0.16em] text-stone-500">Adresse associee</p>
+                <p class="mt-2 text-sm font-medium text-stone-900">{{ $resetEmail }}</p>
+            </div>
+        @else
+            <div>
+                <x-input-label for="email" value="Adresse e-mail" />
+                <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="$resetEmail" required autofocus autocomplete="username" />
+                <x-input-error :messages="$errors->get('email')" class="mt-2" />
+            </div>
+        @endif
 
         <!-- Password -->
         <div class="mt-4">
