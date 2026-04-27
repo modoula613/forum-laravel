@@ -403,6 +403,41 @@
                 </div>
 
                 <aside class="space-y-4">
+                    @if ($topPoster && $topPoster->topics_count > 0)
+                        <section class="glass-panel rounded-[1.8rem] p-5">
+                            <div class="flex items-center justify-between gap-3">
+                                <div>
+                                    <p class="section-kicker">Membre a la une</p>
+                                    <h3 class="mt-2 text-xl font-semibold text-white">Le plus actif du moment</h3>
+                                </div>
+                            </div>
+                            <div class="mt-5 rounded-[1.35rem] border border-white/8 bg-white/[0.03] p-4">
+                                <div class="flex items-start gap-4">
+                                    <x-user-avatar :user="$topPoster" class="h-14 w-14 shrink-0 bg-[var(--brand)]/18 text-base font-semibold uppercase text-[var(--brand)]" />
+                                    <div class="min-w-0 flex-1">
+                                        <x-user-link :user="$topPoster" class="text-lg font-semibold text-white transition hover:text-[var(--brand)]">
+                                            {{ $topPoster->name }}
+                                        </x-user-link>
+                                        <p class="mt-2 text-sm leading-6 text-white/62">
+                                            {{ $topPoster->topics_count }} sujet(s) publie(s), {{ $topPoster->replies_count }} reponse(s) et {{ $topPoster->follower_users_count }} abonne(s).
+                                        </p>
+                                        <div class="mt-3 flex flex-wrap gap-2">
+                                            <span class="rounded-full bg-white/8 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-white/72">
+                                                Niveau {{ $topPoster->level }}
+                                            </span>
+                                            <span class="rounded-full bg-[var(--brand)]/15 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--brand)]">
+                                                {{ $topPoster->reputation }} reputation
+                                            </span>
+                                        </div>
+                                        <a href="{{ route('users.show', $topPoster) }}" class="mt-4 inline-flex rounded-full bg-[var(--brand)] px-4 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-white transition hover:bg-[var(--brand-deep)]">
+                                            Voir son profil
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    @endif
+
                     <section class="glass-panel rounded-[1.8rem] p-5">
                         <div class="flex items-center justify-between gap-3">
                             <div>

@@ -246,6 +246,30 @@ test('topics index redirects category search prefix to the matching category pag
         ->assertRedirect(route('categories.show', $category));
 });
 
+test('topics index highlights the member with the most topics', function () {
+    $topPoster = User::factory()->create(['name' => 'Nadia']);
+    $otherUser = User::factory()->create(['name' => 'Lina']);
+
+    foreach (range(1, 3) as $index) {
+        $topPoster->topics()->create([
+            'title' => "Sujet Nadia {$index}",
+            'content' => "Contenu Nadia {$index}",
+        ]);
+    }
+
+    $otherUser->topics()->create([
+        'title' => 'Sujet Lina',
+        'content' => 'Contenu Lina',
+    ]);
+
+    $this
+        ->get(route('topics.index'))
+        ->assertOk()
+        ->assertSee('Le plus actif du moment')
+        ->assertSee('Nadia')
+        ->assertSee('3 sujet(s) publie(s)');
+});
+
 test('topics index links author names to their public profiles', function () {
     $user = User::factory()->create([
         'name' => 'Camille',

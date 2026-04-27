@@ -9,6 +9,7 @@ use App\Models\Category;
 use App\Models\NewsArticle;
 use App\Models\Topic;
 use App\Models\TopicEdit;
+use App\Models\User;
 use App\Models\UserActivity;
 use App\Notifications\UserWarnedNotification;
 use Illuminate\Http\Request;
@@ -134,6 +135,12 @@ class TopicController extends Controller
             ->latest()
             ->take(3)
             ->get();
+        $topPoster = User::query()
+            ->withCount(['topics', 'replies', 'followerUsers'])
+            ->orderByDesc('topics_count')
+            ->orderByDesc('replies_count')
+            ->orderByDesc('reputation')
+            ->first();
 
         return view('topics.index', compact(
             'topics',
@@ -143,6 +150,7 @@ class TopicController extends Controller
             'followedAuthorIds',
             'followedUserIds',
             'followingOnly',
+            'topPoster',
             'forumNews',
             'announcements'
         ));

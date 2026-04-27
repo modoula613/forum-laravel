@@ -15,9 +15,9 @@
             (() => {
                 try {
                     const storedTheme = localStorage.getItem('sphere-theme');
-                    document.documentElement.dataset.theme = storedTheme === 'dark' ? 'dark' : 'light';
+                    document.documentElement.dataset.theme = storedTheme === 'light' ? 'light' : 'dark';
                 } catch (error) {
-                    document.documentElement.dataset.theme = 'light';
+                    document.documentElement.dataset.theme = 'dark';
                 }
             })();
         </script>

@@ -8,9 +8,9 @@ const THEME_KEY = 'sphere-theme';
 
 function resolveTheme() {
     try {
-        return window.localStorage.getItem(THEME_KEY) === 'dark' ? 'dark' : 'light';
+        return window.localStorage.getItem(THEME_KEY) === 'light' ? 'light' : 'dark';
     } catch {
-        return 'light';
+        return 'dark';
     }
 }
 
@@ -118,29 +118,29 @@ Alpine.data('forumSearch', ({
         return this.activeIndex >= 0 ? this.optionId(this.activeIndex) : null;
     },
 
-        get visibleSections() {
-            if (this.query.trim() === '') {
-                const historyItems = this.history.map((entry) => ({
-                    type: 'history',
-                    title: entry,
-                    subtitle: 'Recherche recente',
-                    query: entry,
-                    url: `${this.action}?search=${encodeURIComponent(entry)}`,
-                    historyValue: entry,
-                }));
+    get visibleSections() {
+        if (this.query.trim() === '') {
+            const historyItems = this.history.map((entry) => ({
+                type: 'history',
+                title: entry,
+                subtitle: 'Recherche recente',
+                query: entry,
+                url: `${this.action}?search=${encodeURIComponent(entry)}`,
+                historyValue: entry,
+            }));
 
-                return [
-                    ...(historyItems.length ? [{ label: 'Recherches recentes', items: historyItems }] : []),
-                    {
-                        label: 'Exemples simples',
-                        items: [
-                            { type: 'query', title: 'Trouver un membre', subtitle: 'Exemple : Moh', query: 'user:moh', historyValue: 'moh' },
-                            { type: 'query', title: 'Chercher un sujet d actualite', subtitle: 'Exemple : actualite', query: '#actualite', historyValue: 'actualite' },
-                            { type: 'query', title: 'Ouvrir une categorie', subtitle: 'Exemple : sport', query: 'category:sport', historyValue: 'sport' },
-                        ],
-                    },
-                ];
-            }
+            return [
+                ...(historyItems.length ? [{ label: 'Recherches recentes', items: historyItems }] : []),
+                {
+                    label: 'Exemples simples',
+                    items: [
+                        { type: 'query', title: 'Trouver un membre', subtitle: 'Exemple : Moh', query: 'user:moh', historyValue: 'moh' },
+                        { type: 'query', title: 'Chercher un sujet d actualite', subtitle: 'Exemple : actualite', query: '#actualite', historyValue: 'actualite' },
+                        { type: 'query', title: 'Ouvrir une categorie', subtitle: 'Exemple : sport', query: 'category:sport', historyValue: 'sport' },
+                    ],
+                },
+            ];
+        }
 
         return this.sections;
     },
