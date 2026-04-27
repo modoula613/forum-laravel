@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Message;
 use App\Models\User;
+use App\Rules\ForbidMarkup;
 use App\Notifications\NewPrivateMessageNotification;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Http\RedirectResponse;
@@ -158,7 +159,7 @@ class MessageController extends Controller
 
         $validated = $request->validate([
             'receiver_id' => ['required', 'exists:users,id'],
-            'content' => ['required', 'string', 'max:2000'],
+            'content' => ['required', 'string', 'max:2000', new ForbidMarkup()],
         ]);
 
         abort_if((int) $validated['receiver_id'] === (int) auth()->id(), 403);

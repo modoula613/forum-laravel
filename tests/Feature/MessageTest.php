@@ -95,6 +95,29 @@ test('authenticated users can send a private message', function () {
     Notification::assertSentTo($receiver, NewPrivateMessageNotification::class);
 });
 
+test('private messages reject markup and scripts', function () {
+    Notification::fake();
+
+    $sender = User::factory()->create();
+    $receiver = User::factory()->create();
+    $receiver->followingUsers()->attach($sender->id);
+
+    $this
+        ->actingAs($sender)
+        ->from(route('messages.conversation', $receiver))
+        ->post(route('messages.send'), [
+            'receiver_id' => $receiver->id,
+            'content' => '<script>alert(1)</script>',
+        ])
+        ->assertRedirect(route('messages.conversation', $receiver))
+        ->assertSessionHasErrors([
+            'content' => 'Les balises HTML, scripts et tags PHP ne sont pas autorises.',
+        ]);
+
+    expect(Message::count())->toBe(0);
+    Notification::assertNothingSent();
+});
+
 test('guests can view public user profile', function () {
     $user = User::factory()->create([
         'name' => 'Nadia',

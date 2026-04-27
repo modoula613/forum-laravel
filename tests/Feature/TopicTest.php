@@ -79,6 +79,24 @@ test('authenticated users can create a topic', function () {
     expect($topic->slug)->not->toBeNull();
 });
 
+test('topic creation rejects markup and scripts in public content', function () {
+    $user = User::factory()->create();
+
+    $response = $this
+        ->actingAs($user)
+        ->from(route('topics.create'))
+        ->post(route('topics.store'), [
+            'title' => 'Sujet <script>alert(1)</script>',
+            'content' => 'Contenu propre',
+        ]);
+
+    $response
+        ->assertRedirect(route('topics.create'))
+        ->assertSessionHasErrors([
+            'title' => 'Les balises HTML, scripts et tags PHP ne sont pas autorises.',
+        ]);
+});
+
 test('guests can view a topic by its slug', function () {
     $user = User::factory()->create();
     $topic = $user->topics()->create([

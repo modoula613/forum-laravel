@@ -7,6 +7,7 @@ use App\Models\Reply;
 use App\Models\ReplyEdit;
 use App\Models\Topic;
 use App\Models\UserActivity;
+use App\Rules\ForbidMarkup;
 use App\Notifications\NewReplyNotification;
 use App\Notifications\TopicFollowedNewReplyNotification;
 use Illuminate\Http\Request;
@@ -28,7 +29,7 @@ class ReplyController extends Controller
         abort_if($topic->is_locked, 403, 'Ce sujet est verrouille.');
 
         $validated = $request->validate([
-            'content' => ['required', 'string'],
+            'content' => ['required', 'string', new ForbidMarkup()],
         ]);
 
         $reply = Reply::create([
@@ -109,7 +110,7 @@ class ReplyController extends Controller
         abort_unless($reply->user_id === auth()->id(), 403);
 
         $validated = $request->validate([
-            'content' => ['required', 'string'],
+            'content' => ['required', 'string', new ForbidMarkup()],
         ]);
 
         ReplyEdit::create([

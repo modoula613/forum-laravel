@@ -11,6 +11,7 @@ use App\Models\Topic;
 use App\Models\TopicEdit;
 use App\Models\User;
 use App\Models\UserActivity;
+use App\Rules\ForbidMarkup;
 use App\Notifications\UserWarnedNotification;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
@@ -194,8 +195,8 @@ class TopicController extends Controller
         }
 
         $validated = $request->validate([
-            'title' => ['required', 'string', 'max:255'],
-            'content' => ['required', 'string'],
+            'title' => ['required', 'string', 'max:255', new ForbidMarkup()],
+            'content' => ['required', 'string', new ForbidMarkup()],
             'category_id' => ['nullable', 'exists:categories,id'],
             'news_article_id' => ['nullable', 'exists:news_articles,id'],
         ]);
@@ -285,8 +286,8 @@ class TopicController extends Controller
         abort_unless($topic->user_id === $request->user()->id, 403);
 
         $validated = $request->validate([
-            'title' => ['required', 'string', 'max:255'],
-            'content' => ['required', 'string'],
+            'title' => ['required', 'string', 'max:255', new ForbidMarkup()],
+            'content' => ['required', 'string', new ForbidMarkup()],
             'category_id' => ['nullable', 'exists:categories,id'],
             'news_article_id' => ['nullable', 'exists:news_articles,id'],
         ]);
